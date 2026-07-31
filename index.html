@@ -587,6 +587,7 @@
           </div>
           <div class="d-flex gap-2">
             <button class="btn btn-success" style="border-radius:10px;" onclick="downloadProdukLakuExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+            <button class="btn btn-danger" style="border-radius:10px;" onclick="downloadProdukLakuPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
           </div>
         </div>
         <div class="table-container mb-3">
@@ -984,7 +985,6 @@
 
       switch(period) {
         case 'today':
-          // start sudah hari ini
           break;
         case 'week':
           start = new Date(today);
@@ -1008,7 +1008,6 @@
       document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelector(`.period-btn[data-period="${period}"]`)?.classList.add('active');
       
-      // Kosongkan input date
       document.getElementById('pl-start').value = '';
       document.getElementById('pl-end').value = '';
       
@@ -1081,7 +1080,6 @@
         ? topProducts.map((p, i) => `<div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom"><span style="font-size:0.88rem"><span class="badge bg-secondary me-1" style="font-size:0.7rem;">${i + 1}</span> ${p.nama}</span><span class="fw-bold" style="color:var(--primary);font-size:0.85rem;">${p.qty}</span></div>`).join('')
         : '<p class="text-muted text-center mb-0" style="font-size:0.88rem;">Belum ada penjualan</p>';
 
-      // ========== GRAFIK: 1 BULAN / SESUAI FILTER ==========
       let startDate, endDate;
       const today = new Date();
       today.setHours(0,0,0,0);
@@ -1241,30 +1239,23 @@
     }
 
     // ==================== PRODUK LAKU ====================
-    function renderProdukLaku() {
+    function getProdukLakuData() {
       const search = document.getElementById('pl-search')?.value?.toLowerCase() || '';
-      const tbody = document.getElementById('table-produk-laku');
-      
-      // Ambil filter tanggal dari input jika ada
       const startInput = document.getElementById('pl-start')?.value;
       const endInput = document.getElementById('pl-end')?.value;
       
       let startDate = currentPeriodStart;
       let endDate = currentPeriodEnd;
       
-      // Jika ada input manual, override periode
       if (startInput || endInput) {
         startDate = startInput ? new Date(startInput + 'T00:00:00') : null;
         endDate = endInput ? new Date(endInput + 'T23:59:59') : null;
-        // Nonaktifkan tombol periode
         document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
       }
       
-      // Hitung total penjualan per produk dari transaksi yang sesuai periode
       const salesMap = {};
       appData.transactions.forEach(t => {
         const tDate = new Date(t.timestamp);
-        // Filter berdasarkan periode
         if (startDate && tDate < startDate) return;
         if (endDate && tDate > endDate) return;
         
@@ -1286,7 +1277,6 @@
         }
       });
 
-      // Konversi ke array dan filter berdasarkan pencarian
       let produkLaku = Object.values(salesMap);
       if (search) {
         produkLaku = produkLaku.filter(p => 
@@ -1295,9 +1285,13 @@
           p.kategori.toLowerCase().includes(search)
         );
       }
-
-      // Urutkan berdasarkan total terjual tertinggi
       produkLaku.sort((a, b) => b.totalTerjual - a.totalTerjual);
+      return produkLaku;
+    }
+
+    function renderProdukLaku() {
+      const tbody = document.getElementById('table-produk-laku');
+      const produkLaku = getProdukLakuData();
 
       if (produkLaku.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada produk yang terjual pada periode ini</td></tr>';
@@ -1316,53 +1310,7 @@
     }
 
     function downloadProdukLakuExcel() {
-      // Gunakan filter yang sama dengan render
-      const search = document.getElementById('pl-search')?.value?.toLowerCase() || '';
-      const startInput = document.getElementById('pl-start')?.value;
-      const endInput = document.getElementById('pl-end')?.value;
-      
-      let startDate = currentPeriodStart;
-      let endDate = currentPeriodEnd;
-      
-      if (startInput || endInput) {
-        startDate = startInput ? new Date(startInput + 'T00:00:00') : null;
-        endDate = endInput ? new Date(endInput + 'T23:59:59') : null;
-      }
-      
-      const salesMap = {};
-      appData.transactions.forEach(t => {
-        const tDate = new Date(t.timestamp);
-        if (startDate && tDate < startDate) return;
-        if (endDate && tDate > endDate) return;
-        
-        if (t.items) {
-          t.items.forEach(item => {
-            const key = item.id || item.nama;
-            if (!salesMap[key]) {
-              salesMap[key] = {
-                id: item.id || '-',
-                nama: item.nama,
-                kategori: item.kategori || '-',
-                totalTerjual: 0,
-                totalPendapatan: 0
-              };
-            }
-            salesMap[key].totalTerjual += item.qty;
-            salesMap[key].totalPendapatan += item.jual * item.qty;
-          });
-        }
-      });
-
-      let produkLaku = Object.values(salesMap);
-      if (search) {
-        produkLaku = produkLaku.filter(p => 
-          p.id.toLowerCase().includes(search) || 
-          p.nama.toLowerCase().includes(search) ||
-          p.kategori.toLowerCase().includes(search)
-        );
-      }
-      produkLaku.sort((a, b) => b.totalTerjual - a.totalTerjual);
-
+      const produkLaku = getProdukLakuData();
       if (produkLaku.length === 0) { showToast('Tidak ada data produk laku untuk diunduh!', 'error'); return; }
 
       const excelData = produkLaku.map((p, index) => ({ 
@@ -1381,6 +1329,86 @@
       const now = new Date(); const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
       XLSX.writeFile(wb, `Produk_Laku_${dateStr}.xlsx`);
       showToast('File Excel berhasil diunduh!', 'success');
+    }
+
+    function downloadProdukLakuPDF() {
+      const produkLaku = getProdukLakuData();
+      if (produkLaku.length === 0) { showToast('Tidak ada data produk laku untuk dicetak PDF!', 'error'); return; }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('portrait', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      // Header
+      doc.setFontSize(16);
+      doc.text('Laporan Produk Laku', pageWidth/2, 15, { align: 'center' });
+      doc.setFontSize(10);
+      
+      // Tentukan periode
+      const startInput = document.getElementById('pl-start')?.value;
+      const endInput = document.getElementById('pl-end')?.value;
+      let periodText = 'Semua Periode';
+      if (startInput && endInput) {
+        periodText = `Periode: ${startInput} s/d ${endInput}`;
+      } else if (currentPeriod !== 'all') {
+        const range = getPeriodRange(currentPeriod);
+        if (range.start && range.end) {
+          periodText = `Periode: ${range.start.toLocaleDateString('id-ID')} s/d ${range.end.toLocaleDateString('id-ID')}`;
+        }
+      }
+      doc.text(periodText, pageWidth/2, 22, { align: 'center' });
+      doc.text(`Total Data: ${produkLaku.length}`, pageWidth/2, 29, { align: 'center' });
+
+      // Hitung total
+      let totalTerjual = 0, totalPendapatan = 0;
+      produkLaku.forEach(p => {
+        totalTerjual += p.totalTerjual;
+        totalPendapatan += p.totalPendapatan;
+      });
+
+      // Tabel data
+      const rows = produkLaku.map((p, index) => [
+        index + 1,
+        p.id,
+        p.nama,
+        p.kategori,
+        p.totalTerjual,
+        formatRp(p.totalPendapatan)
+      ]);
+
+      doc.autoTable({
+        startY: 35,
+        head: [['No', 'ID', 'Nama Produk', 'Kategori', 'Total Terjual', 'Total Pendapatan']],
+        body: rows,
+        theme: 'striped',
+        headStyles: { fillColor: [230, 57, 70], textColor: [255,255,255], fontSize: 7, halign: 'center', cellPadding: 1 },
+        bodyStyles: { fontSize: 6.5, cellPadding: 0.8 },
+        columnStyles: {
+          0: { cellWidth: 8, halign: 'center' },
+          1: { cellWidth: 20, halign: 'center' },
+          2: { cellWidth: 50, halign: 'left' },
+          3: { cellWidth: 25, halign: 'center' },
+          4: { cellWidth: 20, halign: 'center' },
+          5: { cellWidth: 28, halign: 'right' }
+        },
+        margin: { left: 8, right: 8 },
+        tableWidth: 'auto',
+        styles: { overflow: 'visible' },
+        pageBreak: 'auto'
+      });
+
+      // Total di bawah tabel
+      const finalY = doc.lastAutoTable.finalY + 8;
+      doc.setFontSize(9);
+      doc.setFont(undefined, 'bold');
+      doc.text(`Total Terjual: ${totalTerjual}`, 14, finalY);
+      doc.text(`Total Pendapatan: ${formatRp(totalPendapatan)}`, 14, finalY + 5);
+      doc.setFont(undefined, 'normal');
+
+      const now = new Date(); 
+      const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+      doc.save(`Produk_Laku_${dateStr}.pdf`);
+      showToast('PDF berhasil diunduh!', 'success');
     }
 
     // ==================== RIWAYAT PRODUK MASUK ====================
@@ -1430,7 +1458,6 @@
       const doc = new jsPDF('portrait', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
 
-      // Header
       doc.setFontSize(16);
       doc.text('Riwayat Produk Masuk', pageWidth/2, 15, { align: 'center' });
       doc.setFontSize(10);
@@ -1438,14 +1465,12 @@
       doc.text(dateLabel, pageWidth/2, 22, { align: 'center' });
       doc.text(`Total Data: ${filtered.length}`, pageWidth/2, 29, { align: 'center' });
 
-      // Hitung total
       let totalQty = 0, totalModal = 0;
       filtered.forEach(h => {
         totalQty += h.qty || 0;
         totalModal += h.totalModal || 0;
       });
 
-      // Tabel data dengan nomor urut
       const rows = filtered.map((h, index) => [
         index + 1,
         h.productId || '-',
@@ -1476,7 +1501,6 @@
         pageBreak: 'auto'
       });
 
-      // Total di bawah tabel
       const finalY = doc.lastAutoTable.finalY + 8;
       doc.setFontSize(9);
       doc.setFont(undefined, 'bold');
@@ -1626,7 +1650,6 @@
       const doc = new jsPDF('portrait', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
 
-      // Header
       doc.setFontSize(16);
       doc.text('Pengeluaran Barang', pageWidth/2, 15, { align: 'center' });
       doc.setFontSize(10);
@@ -1634,14 +1657,12 @@
       doc.text(dateLabel, pageWidth/2, 22, { align: 'center' });
       doc.text(`Total Data: ${filtered.length}`, pageWidth/2, 29, { align: 'center' });
 
-      // Hitung total
       let totalQty = 0, totalModal = 0;
       filtered.forEach(s => {
         totalQty += s.qty || 0;
         totalModal += s.totalModal || 0;
       });
 
-      // Tabel data dengan nomor urut
       const rows = filtered.map((s, index) => [
         index + 1,
         s.productId || '-',
@@ -1670,7 +1691,6 @@
         pageBreak: 'auto'
       });
 
-      // Total di bawah tabel
       const finalY = doc.lastAutoTable.finalY + 8;
       doc.setFontSize(9);
       doc.setFont(undefined, 'bold');
