@@ -353,6 +353,31 @@
       border-color: var(--primary-hover);
     }
 
+    .period-btn {
+      border-radius: 8px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      transition: 0.2s;
+      cursor: pointer;
+    }
+    .period-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .period-btn.active {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+    }
+    .period-btn.active:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
     @media (max-width: 992px) {
       .sidebar { left: -270px; }
       .sidebar.show { left: 0; }
@@ -420,6 +445,7 @@
         <li class="active" onclick="showPage('dashboard', this)"><i class="bi bi-grid-1x2-fill"></i> Dashboard</li>
         <li onclick="showPage('pos', this)"><i class="bi bi-cart-plus-fill"></i> Kasir (POS)</li>
         <li onclick="showPage('products', this)"><i class="bi bi-box-seam-fill"></i> Produk</li>
+        <li onclick="showPage('produk-laku', this)"><i class="bi bi-graph-up-arrow"></i> Produk Laku</li>
         <li onclick="showPage('product-in-history', this)"><i class="bi bi-arrow-down-circle-fill"></i> Riwayat Produk Masuk</li>
         <li onclick="showPage('stock-out', this)"><i class="bi bi-arrow-up-circle-fill"></i> Pengeluaran Barang</li>
         <li onclick="showPage('categories', this)"><i class="bi bi-tags-fill"></i> Kategori</li>
@@ -547,6 +573,50 @@
             <table class="table table-hover align-middle">
               <thead><tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Stok</th><th>Modal</th><th>Jual</th><th>Aksi</th></tr></thead>
               <tbody id="table-products"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== PRODUK LAKU PAGE ====== -->
+      <div id="page-produk-laku" class="page-content" style="display:none;">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Produk Laku</h2>
+            <p class="mb-0">Semua produk yang pernah terjual beserta total penjualannya</p>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-success" style="border-radius:10px;" onclick="downloadProdukLakuExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+          </div>
+        </div>
+        <div class="table-container mb-3">
+          <div class="row align-items-end g-3">
+            <div class="col-md-12">
+              <label class="form-label fw-medium" style="font-size:0.85rem;">Filter Periode</label>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="period-btn active" data-period="all" onclick="setPeriod('all')">Semua</button>
+                <button class="period-btn" data-period="today" onclick="setPeriod('today')">Hari Ini</button>
+                <button class="period-btn" data-period="week" onclick="setPeriod('week')">Minggu Ini</button>
+                <button class="period-btn" data-period="month" onclick="setPeriod('month')">Bulan Ini</button>
+                <button class="period-btn" data-period="year" onclick="setPeriod('year')">Tahun Ini</button>
+                <div class="d-flex gap-2 ms-2">
+                  <input type="date" id="pl-start" class="form-control" style="width:auto;border-radius:10px;" placeholder="Dari">
+                  <input type="date" id="pl-end" class="form-control" style="width:auto;border-radius:10px;" placeholder="Sampai">
+                  <button class="btn btn-primary" style="border-radius:10px;" onclick="renderProdukLaku()"><i class="bi bi-search"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="table-container">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="pl-search" placeholder="Cari Produk" oninput="renderProdukLaku()">
+            <label for="pl-search">Cari ID atau Nama Produk...</label>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-hover align-middle">
+              <thead><tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Total Terjual</th><th>Total Pendapatan</th></tr></thead>
+              <tbody id="table-produk-laku"></tbody>
             </table>
           </div>
         </div>
@@ -759,6 +829,9 @@
     let historyDataGlobal = [];
     let listenersAttached = false;
     let currentChartType = 'bar';
+    let currentPeriod = 'all';
+    let currentPeriodStart = null;
+    let currentPeriodEnd = null;
 
     // ==================== TOAST ====================
     function showToast(message, type = 'info') {
@@ -842,6 +915,7 @@
         snapshot.forEach(child => { const t = child.val(); appData.transactions.push(t); historyDataGlobal.push(t); });
         historyDataGlobal.sort((a, b) => b.timestamp - a.timestamp);
         renderDashboard();
+        if (document.getElementById('page-produk-laku').style.display !== 'none') renderProdukLaku();
         if (document.getElementById('page-history').style.display !== 'none') filterHistory();
         if (document.getElementById('page-reports').style.display !== 'none') loadReport();
         showLoading(false); hideSync();
@@ -878,6 +952,7 @@
       if (page === 'dashboard') renderDashboard();
       if (page === 'pos') renderPosProducts();
       if (page === 'products') renderProducts();
+      if (page === 'produk-laku') renderProdukLaku();
       if (page === 'categories') renderCategories();
       if (page === 'reports') loadReport();
       if (page === 'history') filterHistory();
@@ -898,6 +973,54 @@
 
     function formatRp(angka) {
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+    }
+
+    function getPeriodRange(period) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      let start = new Date(today);
+      let end = new Date(today);
+      end.setHours(23, 59, 59, 999);
+
+      switch(period) {
+        case 'today':
+          // start sudah hari ini
+          break;
+        case 'week':
+          start = new Date(today);
+          start.setDate(today.getDate() - today.getDay());
+          break;
+        case 'month':
+          start = new Date(today.getFullYear(), today.getMonth(), 1);
+          break;
+        case 'year':
+          start = new Date(today.getFullYear(), 0, 1);
+          break;
+        case 'all':
+        default:
+          return { start: null, end: null };
+      }
+      return { start: start, end: end };
+    }
+
+    function setPeriod(period) {
+      currentPeriod = period;
+      document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`.period-btn[data-period="${period}"]`)?.classList.add('active');
+      
+      // Kosongkan input date
+      document.getElementById('pl-start').value = '';
+      document.getElementById('pl-end').value = '';
+      
+      if (period === 'all') {
+        currentPeriodStart = null;
+        currentPeriodEnd = null;
+      } else {
+        const range = getPeriodRange(period);
+        currentPeriodStart = range.start;
+        currentPeriodEnd = range.end;
+      }
+      renderProdukLaku();
     }
 
     // ==================== CHART TYPE TOGGLE ====================
@@ -1117,6 +1240,149 @@
       showToast('File Excel berhasil diunduh!', 'success');
     }
 
+    // ==================== PRODUK LAKU ====================
+    function renderProdukLaku() {
+      const search = document.getElementById('pl-search')?.value?.toLowerCase() || '';
+      const tbody = document.getElementById('table-produk-laku');
+      
+      // Ambil filter tanggal dari input jika ada
+      const startInput = document.getElementById('pl-start')?.value;
+      const endInput = document.getElementById('pl-end')?.value;
+      
+      let startDate = currentPeriodStart;
+      let endDate = currentPeriodEnd;
+      
+      // Jika ada input manual, override periode
+      if (startInput || endInput) {
+        startDate = startInput ? new Date(startInput + 'T00:00:00') : null;
+        endDate = endInput ? new Date(endInput + 'T23:59:59') : null;
+        // Nonaktifkan tombol periode
+        document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+      }
+      
+      // Hitung total penjualan per produk dari transaksi yang sesuai periode
+      const salesMap = {};
+      appData.transactions.forEach(t => {
+        const tDate = new Date(t.timestamp);
+        // Filter berdasarkan periode
+        if (startDate && tDate < startDate) return;
+        if (endDate && tDate > endDate) return;
+        
+        if (t.items) {
+          t.items.forEach(item => {
+            const key = item.id || item.nama;
+            if (!salesMap[key]) {
+              salesMap[key] = {
+                id: item.id || '-',
+                nama: item.nama,
+                kategori: item.kategori || '-',
+                totalTerjual: 0,
+                totalPendapatan: 0
+              };
+            }
+            salesMap[key].totalTerjual += item.qty;
+            salesMap[key].totalPendapatan += item.jual * item.qty;
+          });
+        }
+      });
+
+      // Konversi ke array dan filter berdasarkan pencarian
+      let produkLaku = Object.values(salesMap);
+      if (search) {
+        produkLaku = produkLaku.filter(p => 
+          p.id.toLowerCase().includes(search) || 
+          p.nama.toLowerCase().includes(search) ||
+          p.kategori.toLowerCase().includes(search)
+        );
+      }
+
+      // Urutkan berdasarkan total terjual tertinggi
+      produkLaku.sort((a, b) => b.totalTerjual - a.totalTerjual);
+
+      if (produkLaku.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">Tidak ada produk yang terjual pada periode ini</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = produkLaku.map(p => `
+        <tr>
+          <td class="fw-medium">${p.id}</td>
+          <td>${p.nama}</td>
+          <td><span class="badge-cat">${p.kategori}</span></td>
+          <td><span class="badge bg-primary" style="font-size:0.85rem;">${p.totalTerjual}</span></td>
+          <td class="fw-bold" style="color:var(--primary);">${formatRp(p.totalPendapatan)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function downloadProdukLakuExcel() {
+      // Gunakan filter yang sama dengan render
+      const search = document.getElementById('pl-search')?.value?.toLowerCase() || '';
+      const startInput = document.getElementById('pl-start')?.value;
+      const endInput = document.getElementById('pl-end')?.value;
+      
+      let startDate = currentPeriodStart;
+      let endDate = currentPeriodEnd;
+      
+      if (startInput || endInput) {
+        startDate = startInput ? new Date(startInput + 'T00:00:00') : null;
+        endDate = endInput ? new Date(endInput + 'T23:59:59') : null;
+      }
+      
+      const salesMap = {};
+      appData.transactions.forEach(t => {
+        const tDate = new Date(t.timestamp);
+        if (startDate && tDate < startDate) return;
+        if (endDate && tDate > endDate) return;
+        
+        if (t.items) {
+          t.items.forEach(item => {
+            const key = item.id || item.nama;
+            if (!salesMap[key]) {
+              salesMap[key] = {
+                id: item.id || '-',
+                nama: item.nama,
+                kategori: item.kategori || '-',
+                totalTerjual: 0,
+                totalPendapatan: 0
+              };
+            }
+            salesMap[key].totalTerjual += item.qty;
+            salesMap[key].totalPendapatan += item.jual * item.qty;
+          });
+        }
+      });
+
+      let produkLaku = Object.values(salesMap);
+      if (search) {
+        produkLaku = produkLaku.filter(p => 
+          p.id.toLowerCase().includes(search) || 
+          p.nama.toLowerCase().includes(search) ||
+          p.kategori.toLowerCase().includes(search)
+        );
+      }
+      produkLaku.sort((a, b) => b.totalTerjual - a.totalTerjual);
+
+      if (produkLaku.length === 0) { showToast('Tidak ada data produk laku untuk diunduh!', 'error'); return; }
+
+      const excelData = produkLaku.map((p, index) => ({ 
+        'No': index + 1, 
+        'ID Produk': p.id, 
+        'Nama Produk': p.nama, 
+        'Kategori': p.kategori, 
+        'Total Terjual': p.totalTerjual, 
+        'Total Pendapatan': p.totalPendapatan 
+      }));
+      
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(excelData);
+      ws['!cols'] = [{ wch: 5 }, { wch: 18 }, { wch: 30 }, { wch: 20 }, { wch: 15 }, { wch: 22 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Produk Laku');
+      const now = new Date(); const dateStr = now.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-');
+      XLSX.writeFile(wb, `Produk_Laku_${dateStr}.xlsx`);
+      showToast('File Excel berhasil diunduh!', 'success');
+    }
+
     // ==================== RIWAYAT PRODUK MASUK ====================
     function renderProductInHistory() {
       const start = document.getElementById('pih-start')?.value;
@@ -1179,7 +1445,7 @@
         totalModal += h.totalModal || 0;
       });
 
-      // Tabel data dengan nomor urut - TANPA kolom Tanggal dan Kategori
+      // Tabel data dengan nomor urut
       const rows = filtered.map((h, index) => [
         index + 1,
         h.productId || '-',
@@ -1375,7 +1641,7 @@
         totalModal += s.totalModal || 0;
       });
 
-      // Tabel data dengan nomor urut - TANPA kolom Tanggal dan Keterangan
+      // Tabel data dengan nomor urut
       const rows = filtered.map((s, index) => [
         index + 1,
         s.productId || '-',
@@ -1462,7 +1728,7 @@
       const product = appData.products.find(p => p.id === id); if (!product) return;
       const existing = cart.find(c => c.id === id);
       if (existing) { if (existing.qty < product.stok) existing.qty++; else { showToast('Stok tidak mencukupi!', 'error'); return; } }
-      else { cart.push({ id: product.id, nama: product.nama, jual: product.jual, modal: product.modal, qty: 1 }); }
+      else { cart.push({ id: product.id, nama: product.nama, jual: product.jual, modal: product.modal, qty: 1, kategori: product.kategori }); }
       renderCart();
     }
 
