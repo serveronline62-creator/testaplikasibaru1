@@ -300,25 +300,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            filter: blur(4px);
-            user-select: none;
-            cursor: default;
-            transition: filter 0.3s ease;
-        }
-        .chat-header .user-info .user-email:hover {
-            filter: blur(0px);
-        }
-        .chat-header .user-info .user-email .email-mask {
-            display: inline-block;
-        }
-        .chat-header .user-info .user-display-name {
-            font-weight: 600;
-            font-size: 14px;
-            color: #fff;
-            max-width: 100px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
         .chat-header .actions {
             display: flex;
@@ -1144,9 +1125,6 @@
         .call-overlay .call-controls .btn-toggle-video.video-off {
             background: #e67e22;
         }
-        .call-overlay .call-controls .btn-switch-camera {
-            background: #2d7d46;
-        }
         .call-overlay .call-info {
             position: absolute;
             top: 30px;
@@ -1536,10 +1514,6 @@
                 max-width: 80px;
                 font-size: 11px;
             }
-            .chat-header .user-info .user-display-name {
-                max-width: 70px;
-                font-size: 12px;
-            }
             .chat-header .logout-btn {
                 font-size: 13px;
                 padding: 4px 10px;
@@ -1786,8 +1760,7 @@
                 <div class="status"><span>Online</span></div>
             </div>
             <div class="user-info">
-                <span class="user-display-name" id="userDisplayName">User</span>
-                <span class="user-email" id="userEmailDisplay" title="Arahkan kursor untuk melihat email">••••••••@••••••••</span>
+                <span class="user-email" id="userEmailDisplay">user@email.com</span>
                 <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
             </div>
             <div class="actions">
@@ -1984,7 +1957,6 @@
         // Chat App
         const chatApp = document.getElementById('chatApp');
         const userEmailDisplay = document.getElementById('userEmailDisplay');
-        const userDisplayName = document.getElementById('userDisplayName');
         const logoutBtn = document.getElementById('logoutBtn');
 
         const container = document.getElementById('messageContainer');
@@ -2082,34 +2054,16 @@
             chatApp.style.display = 'none';
         }
 
-        function maskEmail(email) {
-            if (!email) return '••••••••@••••••••';
-            const parts = email.split('@');
-            if (parts.length !== 2) return email;
-            const local = parts[0];
-            const domain = parts[1];
-            let maskedLocal = local.length <= 2 ? local : local[0] + '••••' + local[local.length - 1];
-            let maskedDomain = domain.length <= 4 ? domain : domain.substring(0, 2) + '••••' + domain.substring(domain
-            .length - 2);
-            return maskedLocal + '@' + maskedDomain;
-        }
-
         function showChatApp(user) {
             loginPage.style.display = 'none';
             registerPage.style.display = 'none';
             chatApp.style.display = 'flex';
             chatApp.classList.add('show');
             currentUser = user;
+            userEmailDisplay.textContent = user.email || 'user@email.com';
 
-            // Tampilkan nama pengguna
+            // Set nama dari displayName atau email
             const displayName = user.displayName || user.email.split('@')[0] || 'User';
-            userDisplayName.textContent = displayName;
-
-            // Tampilkan email yang di-mask
-            userEmailDisplay.textContent = maskEmail(user.email);
-            userEmailDisplay.title = user.email || '';
-
-            // Set nama di input
             nameInput.value = displayName;
             sessionStorage.setItem('chat_user', displayName);
 
@@ -4128,8 +4082,8 @@
         observer.observe(container, { childList: true, subtree: true });
 
         console.log('💬 Ja\'O Chating & Call dengan Firebase Authentication siap!');
-        console.log('📋 Email disembunyikan untuk menjaga privasi.');
-        console.log('👤 Arahkan kursor ke email untuk melihat isinya.');
+        console.log('📋 Gunakan email dan password untuk login/daftar.');
+        console.log('👤 Atau masuk sebagai tamu tanpa registrasi.');
     </script>
 </body>
 </html>
