@@ -194,7 +194,7 @@
         }
 
         /* ================================================================
-           CHAT APP (dari kode sebelumnya)
+           CHAT APP
            ================================================================ */
         .chat-app {
             width: 100%;
@@ -287,7 +287,7 @@
         .chat-header .user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             color: #fff;
             font-size: 13px;
             font-weight: 500;
@@ -351,18 +351,22 @@
             background: rgba(255, 255, 255, 0.15);
             border: none;
             color: #fff;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 6px;
+            border-radius: 50%;
             transition: background 0.2s;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-weight: 500;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
         }
         .chat-header .logout-btn:hover {
             background: rgba(255, 255, 255, 0.3);
+        }
+        .chat-header .logout-btn:active {
+            transform: scale(0.9);
         }
 
         .header-dropdown {
@@ -1012,8 +1016,8 @@
         }
 
         /* ================================================================
-                   CALL UI (Overlay / Modal)
-                   ================================================================ */
+           CALL UI (Overlay / Modal)
+           ================================================================ */
         .call-overlay {
             position: absolute;
             top: 0;
@@ -1124,6 +1128,9 @@
         }
         .call-overlay .call-controls .btn-toggle-video.video-off {
             background: #e67e22;
+        }
+        .call-overlay .call-controls .btn-switch-camera {
+            background: #2d7d46;
         }
         .call-overlay .call-info {
             position: absolute;
@@ -1515,8 +1522,9 @@
                 font-size: 11px;
             }
             .chat-header .logout-btn {
-                font-size: 13px;
-                padding: 4px 10px;
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
             }
             .message .bubble {
                 font-size: 14px;
@@ -1713,7 +1721,7 @@
     </div>
 
     <!-- ================================================================
-    REGISTER PAGE (tersembunyi, di-login-page yang sama)
+    REGISTER PAGE
     ================================================================ -->
     <div class="login-page" id="registerPage" style="display:none;">
         <div class="logo"><i class="fas fa-user-plus"></i></div>
@@ -1749,7 +1757,7 @@
     </div>
 
     <!-- ================================================================
-    CHAT APP (konten utama)
+    CHAT APP
     ================================================================ -->
     <div class="chat-app" id="chatApp">
         <!-- HEADER -->
@@ -1761,7 +1769,7 @@
             </div>
             <div class="user-info">
                 <span class="user-email" id="userEmailDisplay">user@email.com</span>
-                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
+                <button class="logout-btn" id="logoutBtn" title="Keluar"><i class="fas fa-sign-out-alt"></i></button>
             </div>
             <div class="actions">
                 <button id="voiceCallBtn" title="Panggilan Suara"><i class="fas fa-phone"></i></button>
@@ -1821,9 +1829,7 @@
             </div>
         </div>
 
-        <!-- ============================================================= -->
         <!-- CALL OVERLAY -->
-        <!-- ============================================================= -->
         <div class="call-overlay" id="callOverlay">
             <div class="call-info">
                 <div class="caller-name" id="callerNameDisplay">Memanggil...</div>
@@ -1841,9 +1847,7 @@
             </div>
         </div>
 
-        <!-- ============================================================= -->
         <!-- INCOMING CALL POPUP -->
-        <!-- ============================================================= -->
         <div class="incoming-call" id="incomingCallPopup">
             <div class="inc-caller" id="incCallerName">User</div>
             <div class="inc-type" id="incCallType"><i class="fas fa-video"></i> Panggilan Video</div>
@@ -1853,9 +1857,7 @@
             </div>
         </div>
 
-        <!-- ============================================================= -->
         <!-- CALL HISTORY PANEL -->
-        <!-- ============================================================= -->
         <div class="call-history-overlay" id="callHistoryOverlay">
             <div class="call-history-panel">
                 <div class="call-history-header">
@@ -2311,7 +2313,7 @@
         });
 
         // ============================================================
-        // 11. SUARA (Chat + Ringtone) - sama seperti sebelumnya
+        // 11. SUARA (Chat + Ringtone)
         // ============================================================
         let audioCtx = null;
         let ringtoneNodes = null;
@@ -2419,7 +2421,7 @@
         }
 
         // ============================================================
-        // 12. FUNGSI BANTU (Chat) - sama seperti sebelumnya
+        // 12. FUNGSI BANTU (Chat)
         // ============================================================
         function formatTime(timestamp) {
             if (!timestamp) return '--:--';
@@ -2504,7 +2506,7 @@
         }
 
         // ============================================================
-        // 13. UPLOAD FILE (Chat) - sama seperti sebelumnya
+        // 13. UPLOAD FILE (Chat)
         // ============================================================
         const IMGUR_CLIENT_ID = '546c25a59c58ad7';
 
@@ -2557,7 +2559,7 @@
         }
 
         // ============================================================
-        // 14. HEADER DROPDOWN - sama seperti sebelumnya
+        // 14. HEADER DROPDOWN
         // ============================================================
         headerMenuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -2584,7 +2586,7 @@
         });
 
         // ============================================================
-        // 15. REPLY (Chat) - sama seperti sebelumnya
+        // 15. REPLY (Chat)
         // ============================================================
         let replyTo = null;
 
@@ -2603,7 +2605,7 @@
         cancelReplyBtn.addEventListener('click', clearReply);
 
         // ============================================================
-        // 16. CONTEXT MENU (Chat) - sama seperti sebelumnya
+        // 16. CONTEXT MENU (Chat)
         // ============================================================
         let currentMessageKey = null;
         let currentMessageElement = null;
@@ -2702,7 +2704,7 @@
         });
 
         // ============================================================
-        // 17. CLEANUP DATE SEPARATORS - sama seperti sebelumnya
+        // 17. CLEANUP DATE SEPARATORS
         // ============================================================
         function cleanupDateSeparators() {
             document.querySelectorAll('.date-separator').forEach(sep => {
@@ -2719,7 +2721,7 @@
         }
 
         // ============================================================
-        // 18. LINK PREVIEW (Chat) - sama seperti sebelumnya
+        // 18. LINK PREVIEW (Chat)
         // ============================================================
         const previewCache = new Map();
 
@@ -2797,7 +2799,7 @@
         }
 
         // ============================================================
-        // 19. RENDER MESSAGE (Chat) - sama seperti sebelumnya
+        // 19. RENDER MESSAGE (Chat)
         // ============================================================
         let lastDisplayedDateKey = null;
 
@@ -3278,7 +3280,7 @@
         });
 
         // ============================================================
-        // 24. CALL HISTORY UI - sama seperti sebelumnya
+        // 24. CALL HISTORY UI
         // ============================================================
 
         function openCallHistory() {
@@ -3482,7 +3484,7 @@
         });
 
         // ============================================================
-        // 26. WEBRTC - CALL LOGIC - sama seperti sebelumnya
+        // 26. WEBRTC - CALL LOGIC
         // ============================================================
 
         function getCallerName() {
@@ -4074,16 +4076,15 @@
         const savedName = sessionStorage.getItem('chat_user');
         if (savedName) nameInput.value = savedName;
 
-        // Tampilkan login page terlebih dahulu
         showLoginPage();
 
-        // Observer untuk empty state
         const observer = new MutationObserver(() => updateEmptyState());
         observer.observe(container, { childList: true, subtree: true });
 
         console.log('💬 Ja\'O Chating & Call dengan Firebase Authentication siap!');
         console.log('📋 Gunakan email dan password untuk login/daftar.');
         console.log('👤 Atau masuk sebagai tamu tanpa registrasi.');
+        console.log('🚪 Tombol logout hanya ikon (tanpa teks).');
     </script>
 </body>
 </html>
