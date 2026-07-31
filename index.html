@@ -194,7 +194,7 @@
         }
 
         /* ================================================================
-           CHAT APP
+           CHAT APP (dari kode sebelumnya)
            ================================================================ */
         .chat-app {
             width: 100%;
@@ -287,7 +287,7 @@
         .chat-header .user-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             color: #fff;
             font-size: 13px;
             font-weight: 500;
@@ -297,6 +297,25 @@
             font-size: 12px;
             font-weight: 400;
             max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            filter: blur(4px);
+            user-select: none;
+            cursor: default;
+            transition: filter 0.3s ease;
+        }
+        .chat-header .user-info .user-email:hover {
+            filter: blur(0px);
+        }
+        .chat-header .user-info .user-email .email-mask {
+            display: inline-block;
+        }
+        .chat-header .user-info .user-display-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #fff;
+            max-width: 100px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -351,22 +370,18 @@
             background: rgba(255, 255, 255, 0.15);
             border: none;
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
             cursor: pointer;
-            padding: 6px;
-            border-radius: 50%;
+            padding: 6px 12px;
+            border-radius: 20px;
             transition: background 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
+            gap: 6px;
+            font-weight: 500;
         }
         .chat-header .logout-btn:hover {
             background: rgba(255, 255, 255, 0.3);
-        }
-        .chat-header .logout-btn:active {
-            transform: scale(0.9);
         }
 
         .header-dropdown {
@@ -1016,8 +1031,8 @@
         }
 
         /* ================================================================
-           CALL UI (Overlay / Modal)
-           ================================================================ */
+                   CALL UI (Overlay / Modal)
+                   ================================================================ */
         .call-overlay {
             position: absolute;
             top: 0;
@@ -1521,10 +1536,13 @@
                 max-width: 80px;
                 font-size: 11px;
             }
+            .chat-header .user-info .user-display-name {
+                max-width: 70px;
+                font-size: 12px;
+            }
             .chat-header .logout-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
+                font-size: 13px;
+                padding: 4px 10px;
             }
             .message .bubble {
                 font-size: 14px;
@@ -1721,7 +1739,7 @@
     </div>
 
     <!-- ================================================================
-    REGISTER PAGE
+    REGISTER PAGE (tersembunyi, di-login-page yang sama)
     ================================================================ -->
     <div class="login-page" id="registerPage" style="display:none;">
         <div class="logo"><i class="fas fa-user-plus"></i></div>
@@ -1757,7 +1775,7 @@
     </div>
 
     <!-- ================================================================
-    CHAT APP
+    CHAT APP (konten utama)
     ================================================================ -->
     <div class="chat-app" id="chatApp">
         <!-- HEADER -->
@@ -1768,8 +1786,9 @@
                 <div class="status"><span>Online</span></div>
             </div>
             <div class="user-info">
-                <span class="user-email" id="userEmailDisplay">user@email.com</span>
-                <button class="logout-btn" id="logoutBtn" title="Keluar"><i class="fas fa-sign-out-alt"></i></button>
+                <span class="user-display-name" id="userDisplayName">User</span>
+                <span class="user-email" id="userEmailDisplay" title="Arahkan kursor untuk melihat email">••••••••@••••••••</span>
+                <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Keluar</button>
             </div>
             <div class="actions">
                 <button id="voiceCallBtn" title="Panggilan Suara"><i class="fas fa-phone"></i></button>
@@ -1829,7 +1848,9 @@
             </div>
         </div>
 
+        <!-- ============================================================= -->
         <!-- CALL OVERLAY -->
+        <!-- ============================================================= -->
         <div class="call-overlay" id="callOverlay">
             <div class="call-info">
                 <div class="caller-name" id="callerNameDisplay">Memanggil...</div>
@@ -1847,7 +1868,9 @@
             </div>
         </div>
 
+        <!-- ============================================================= -->
         <!-- INCOMING CALL POPUP -->
+        <!-- ============================================================= -->
         <div class="incoming-call" id="incomingCallPopup">
             <div class="inc-caller" id="incCallerName">User</div>
             <div class="inc-type" id="incCallType"><i class="fas fa-video"></i> Panggilan Video</div>
@@ -1857,7 +1880,9 @@
             </div>
         </div>
 
+        <!-- ============================================================= -->
         <!-- CALL HISTORY PANEL -->
+        <!-- ============================================================= -->
         <div class="call-history-overlay" id="callHistoryOverlay">
             <div class="call-history-panel">
                 <div class="call-history-header">
@@ -1959,6 +1984,7 @@
         // Chat App
         const chatApp = document.getElementById('chatApp');
         const userEmailDisplay = document.getElementById('userEmailDisplay');
+        const userDisplayName = document.getElementById('userDisplayName');
         const logoutBtn = document.getElementById('logoutBtn');
 
         const container = document.getElementById('messageContainer');
@@ -2056,16 +2082,34 @@
             chatApp.style.display = 'none';
         }
 
+        function maskEmail(email) {
+            if (!email) return '••••••••@••••••••';
+            const parts = email.split('@');
+            if (parts.length !== 2) return email;
+            const local = parts[0];
+            const domain = parts[1];
+            let maskedLocal = local.length <= 2 ? local : local[0] + '••••' + local[local.length - 1];
+            let maskedDomain = domain.length <= 4 ? domain : domain.substring(0, 2) + '••••' + domain.substring(domain
+            .length - 2);
+            return maskedLocal + '@' + maskedDomain;
+        }
+
         function showChatApp(user) {
             loginPage.style.display = 'none';
             registerPage.style.display = 'none';
             chatApp.style.display = 'flex';
             chatApp.classList.add('show');
             currentUser = user;
-            userEmailDisplay.textContent = user.email || 'user@email.com';
 
-            // Set nama dari displayName atau email
+            // Tampilkan nama pengguna
             const displayName = user.displayName || user.email.split('@')[0] || 'User';
+            userDisplayName.textContent = displayName;
+
+            // Tampilkan email yang di-mask
+            userEmailDisplay.textContent = maskEmail(user.email);
+            userEmailDisplay.title = user.email || '';
+
+            // Set nama di input
             nameInput.value = displayName;
             sessionStorage.setItem('chat_user', displayName);
 
@@ -2313,7 +2357,7 @@
         });
 
         // ============================================================
-        // 11. SUARA (Chat + Ringtone)
+        // 11. SUARA (Chat + Ringtone) - sama seperti sebelumnya
         // ============================================================
         let audioCtx = null;
         let ringtoneNodes = null;
@@ -2421,7 +2465,7 @@
         }
 
         // ============================================================
-        // 12. FUNGSI BANTU (Chat)
+        // 12. FUNGSI BANTU (Chat) - sama seperti sebelumnya
         // ============================================================
         function formatTime(timestamp) {
             if (!timestamp) return '--:--';
@@ -2506,7 +2550,7 @@
         }
 
         // ============================================================
-        // 13. UPLOAD FILE (Chat)
+        // 13. UPLOAD FILE (Chat) - sama seperti sebelumnya
         // ============================================================
         const IMGUR_CLIENT_ID = '546c25a59c58ad7';
 
@@ -2559,7 +2603,7 @@
         }
 
         // ============================================================
-        // 14. HEADER DROPDOWN
+        // 14. HEADER DROPDOWN - sama seperti sebelumnya
         // ============================================================
         headerMenuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -2586,7 +2630,7 @@
         });
 
         // ============================================================
-        // 15. REPLY (Chat)
+        // 15. REPLY (Chat) - sama seperti sebelumnya
         // ============================================================
         let replyTo = null;
 
@@ -2605,7 +2649,7 @@
         cancelReplyBtn.addEventListener('click', clearReply);
 
         // ============================================================
-        // 16. CONTEXT MENU (Chat)
+        // 16. CONTEXT MENU (Chat) - sama seperti sebelumnya
         // ============================================================
         let currentMessageKey = null;
         let currentMessageElement = null;
@@ -2704,7 +2748,7 @@
         });
 
         // ============================================================
-        // 17. CLEANUP DATE SEPARATORS
+        // 17. CLEANUP DATE SEPARATORS - sama seperti sebelumnya
         // ============================================================
         function cleanupDateSeparators() {
             document.querySelectorAll('.date-separator').forEach(sep => {
@@ -2721,7 +2765,7 @@
         }
 
         // ============================================================
-        // 18. LINK PREVIEW (Chat)
+        // 18. LINK PREVIEW (Chat) - sama seperti sebelumnya
         // ============================================================
         const previewCache = new Map();
 
@@ -2799,7 +2843,7 @@
         }
 
         // ============================================================
-        // 19. RENDER MESSAGE (Chat)
+        // 19. RENDER MESSAGE (Chat) - sama seperti sebelumnya
         // ============================================================
         let lastDisplayedDateKey = null;
 
@@ -3280,7 +3324,7 @@
         });
 
         // ============================================================
-        // 24. CALL HISTORY UI
+        // 24. CALL HISTORY UI - sama seperti sebelumnya
         // ============================================================
 
         function openCallHistory() {
@@ -3484,7 +3528,7 @@
         });
 
         // ============================================================
-        // 26. WEBRTC - CALL LOGIC
+        // 26. WEBRTC - CALL LOGIC - sama seperti sebelumnya
         // ============================================================
 
         function getCallerName() {
@@ -4076,15 +4120,16 @@
         const savedName = sessionStorage.getItem('chat_user');
         if (savedName) nameInput.value = savedName;
 
+        // Tampilkan login page terlebih dahulu
         showLoginPage();
 
+        // Observer untuk empty state
         const observer = new MutationObserver(() => updateEmptyState());
         observer.observe(container, { childList: true, subtree: true });
 
         console.log('💬 Ja\'O Chating & Call dengan Firebase Authentication siap!');
-        console.log('📋 Gunakan email dan password untuk login/daftar.');
-        console.log('👤 Atau masuk sebagai tamu tanpa registrasi.');
-        console.log('🚪 Tombol logout hanya ikon (tanpa teks).');
+        console.log('📋 Email disembunyikan untuk menjaga privasi.');
+        console.log('👤 Arahkan kursor ke email untuk melihat isinya.');
     </script>
 </body>
 </html>
