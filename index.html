@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>ServiceElektronik Pro · Sistem Manajemen Service</title>
+    <title>ServiceElektronik Pro - Sistem Manajemen Service</title>
     <script src="https://cdn.tailwindcss.com">
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js">
     </script>
@@ -21,52 +21,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
     </script>
     <style>
-        /* ============================================================
-           J&T EXPRESS INSPIRED THEME – clean, blue & white
-           ============================================================ */
+        /* ===== CSS VARIABLES ===== */
         :root,
         [data-theme="dark"] {
-            --bg: #f2f6fc;
-            --bg2: #ffffff;
-            --card: #ffffff;
-            --card2: #f8fafd;
-            --border: #e6edf5;
+            --bg: #0f0f12;
+            --bg2: #1a1a1f;
+            --card: #24242b;
+            --card2: #2d2d36;
+            --border: #3a3a45;
 
-            --text: #0b1e33;
-            --muted: #5f7d9c;
-            --accent: #0066ff;
-            --accent2: #0047cc;
-            --warn: #f5a623;
-            --danger: #e53e3e;
-            --info: #0066ff;
+            --text: #e8e8ed;
+            --muted: #8a8a9e;
+            --accent: #E31837;
+            --accent2: #ff1a3f;
+            --warn: #f59e0b;
+            --danger: #E31837;
+            --info: #3b82f6;
 
-            --input-bg: #ffffff;
-            --receipt-bg: #ffffff;
-            --receipt-text: #0b1e33;
-            --shadow: 0 6px 24px rgba(0, 60, 130, 0.08);
-            --radius: 16px;
+            --input-bg: #1a1a1f;
+            --receipt-bg: #fff;
+            --receipt-text: #111;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
         }
 
         [data-theme="light"] {
-            --bg: #f2f6fc;
-            --bg2: #ffffff;
+            --bg: #eef1f5;
+            --bg2: #f8f9fc;
             --card: #ffffff;
-            --card2: #f8fafd;
-            --border: #e6edf5;
+            --card2: #f1f3f7;
+            --border: #dce0e8;
 
-            --text: #0b1e33;
-            --muted: #5f7d9c;
-            --accent: #0066ff;
-            --accent2: #0047cc;
-            --warn: #f5a623;
-            --danger: #e53e3e;
-            --info: #0066ff;
+            --text: #12141a;
+            --muted: #6b7280;
+            --accent: #E31837;
+            --accent2: #ff1a3f;
+            --warn: #d97706;
+            --danger: #E31837;
+            --info: #2563eb;
 
-            --input-bg: #ffffff;
-            --receipt-bg: #ffffff;
-            --receipt-text: #0b1e33;
-            --shadow: 0 6px 24px rgba(0, 60, 130, 0.08);
-            --radius: 16px;
+            --input-bg: #f8f9fc;
+            --receipt-bg: #fff;
+            --receipt-text: #111;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
         }
 
         * {
@@ -80,179 +76,226 @@
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
-            transition: background 0.2s, color 0.2s;
+            transition: background 0.3s, color 0.3s;
         }
 
         ::-webkit-scrollbar {
-            width: 5px;
+            width: 4px;
         }
         ::-webkit-scrollbar-track {
             background: var(--bg2);
         }
         ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
             background: var(--accent);
-            border-radius: 20px;
         }
 
-        /* ===== SIDEBAR – J&T STYLE ===== */
-        .sidebar {
-            width: 270px;
-            min-height: 100vh;
-            background: #ffffff;
-            border-right: 1px solid var(--border);
+        /* ===== LOGIN ===== */
+        #loginPage {
             position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 50;
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-            color: var(--text);
-            box-shadow: 2px 0 12px rgba(0, 60, 130, 0.04);
-        }
-        .sidebar .brand {
-            padding: 20px 20px 12px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .sidebar .brand .logo-icon {
-            width: 38px;
-            height: 38px;
-            background: var(--accent);
-            border-radius: 12px;
+            inset: 0;
+            z-index: 9999;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: var(--bg);
+            transition: opacity 0.4s;
+            padding: 12px;
+        }
+        #loginPage.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .login-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 32px 24px;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: var(--shadow);
+        }
+        .login-box h1 {
+            font-size: 26px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 4px;
+            background: linear-gradient(135deg, #E31837, #ff1a3f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .login-box p.sub {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+
+        /* ===== APP LAYOUT ===== */
+        #appLayout {
+            display: none;
+        }
+        #appLayout.show {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR — MERAH LION PARCEL */
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #c41230 0%, #E31837 100%);
+            border-right: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 50;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            color: #fecaca;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar .sidebar-brand {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .sidebar .sidebar-brand .logo-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+        }
+        .sidebar .sidebar-brand h1 {
             color: #fff;
             font-size: 18px;
-        }
-        .sidebar .brand h1 {
-            font-size: 18px;
             font-weight: 700;
-            color: var(--text);
-            letter-spacing: -0.3px;
+            letter-spacing: -0.5px;
         }
-        .sidebar .brand p {
+        .sidebar .sidebar-brand p {
+            color: #fecaca;
             font-size: 11px;
-            color: var(--muted);
-            font-weight: 500;
+            font-weight: 400;
+            opacity: 0.85;
         }
 
         .sidebar .nav-section {
-            padding: 16px 12px 4px 20px;
+            padding: 16px 20px 8px;
             font-size: 10px;
             font-weight: 600;
-            color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.8px;
+            color: rgba(255, 255, 255, 0.5);
         }
 
         .sidebar .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 10px 16px;
-            margin: 2px 12px;
+            padding: 10px 18px;
+            margin: 2px 10px;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
+            color: rgba(255, 255, 255, 0.8);
             font-weight: 500;
             font-size: 13px;
-            color: var(--muted);
+            position: relative;
+        }
+        .sidebar .nav-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+        .sidebar .nav-item.active {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            box-shadow: inset 3px 0 0 #fff;
         }
         .sidebar .nav-item i {
             width: 20px;
-            font-size: 15px;
             text-align: center;
-            color: var(--muted);
-        }
-        .sidebar .nav-item:hover {
-            background: #eef4fa;
-            color: var(--text);
-        }
-        .sidebar .nav-item.active {
-            background: var(--accent);
-            color: #fff !important;
-            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
-        }
-        .sidebar .nav-item.active i {
-            color: #fff !important;
+            font-size: 15px;
         }
 
-        .sidebar .user-footer {
+        .sidebar .sidebar-footer {
+            margin-top: auto;
             padding: 16px 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
         }
-        .sidebar .user-footer .avatar {
-            width: 38px;
-            height: 38px;
-            background: var(--accent);
-            border-radius: 40px;
+        .sidebar .sidebar-footer .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 14px;
+            color: #fff;
         }
-        .sidebar .user-footer .user-info {
-            flex: 1;
-            margin-left: 10px;
-        }
-        .sidebar .user-footer .user-info .name {
+        .sidebar .sidebar-footer .user-name {
+            color: #fff;
             font-size: 13px;
             font-weight: 600;
-            color: var(--text);
         }
-        .sidebar .user-footer .user-info .email {
+        .sidebar .sidebar-footer .user-email {
+            color: #fecaca;
             font-size: 11px;
-            color: var(--muted);
+            opacity: 0.7;
         }
-        .sidebar .user-footer .logout-btn {
-            background: transparent;
-            border: none;
-            color: var(--muted);
+        .sidebar .sidebar-footer .logout-btn {
+            color: #fecaca;
             font-size: 16px;
+            background: none;
+            border: none;
             cursor: pointer;
-            padding: 6px;
-            border-radius: 8px;
-            transition: 0.2s;
+            transition: color 0.2s;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
-        .sidebar .user-footer .logout-btn:hover {
-            background: #fee9e9;
-            color: var(--danger);
+        .sidebar .sidebar-footer .logout-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* ===== MAIN ===== */
+        /* MAIN CONTENT */
         .main-content {
-            margin-left: 270px;
+            flex: 1;
+            margin-left: 260px;
             min-height: 100vh;
-            transition: margin 0.2s;
+            background: var(--bg);
+            transition: background 0.3s;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* HEADER J&T style */
+        /* HEADER — MERAH LION PARCEL */
         .main-content header {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            padding: 12px 28px;
+            background: linear-gradient(90deg, #c41230 0%, #E31837 100%) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff;
+            padding: 12px 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
             z-index: 40;
-            backdrop-filter: blur(4px);
-            background: rgba(255, 255, 255, 0.92);
         }
         .main-content header .page-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            color: var(--text);
+            color: #fff;
             letter-spacing: -0.3px;
         }
         .main-content header .header-actions {
@@ -260,91 +303,149 @@
             align-items: center;
             gap: 12px;
         }
-        .main-content header .theme-toggle {
+        .main-content header .header-actions .clock {
+            font-family: 'Inter', monospace;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .main-content header .header-actions .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .main-content header .mobile-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* THEME TOGGLE */
+        .theme-toggle {
             width: 44px;
             height: 24px;
-            border-radius: 40px;
-            background: var(--border);
-            border: none;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
             position: relative;
             cursor: pointer;
-            transition: 0.2s;
+            transition: background 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            flex-shrink: 0;
         }
-        .main-content header .theme-toggle::after {
+        .theme-toggle::after {
             content: '';
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             background: #fff;
-            transition: transform 0.25s;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
         }
-        .main-content header .theme-toggle .fa-moon {
-            position: absolute;
-            left: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 10px;
-            color: #5f7d9c;
-        }
-        .main-content header .theme-toggle .fa-sun {
-            position: absolute;
-            right: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 10px;
-            color: #f5a623;
-            opacity: 0.4;
-        }
-        [data-theme="light"] .main-content header .theme-toggle .fa-sun {
-            opacity: 1;
-        }
-        [data-theme="light"] .main-content header .theme-toggle .fa-moon {
-            opacity: 0.4;
-        }
-        [data-theme="light"] .main-content header .theme-toggle::after {
+        [data-theme="light"] .theme-toggle::after {
             transform: translateX(20px);
         }
-        .main-content header .clock {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--muted);
-            background: var(--bg2);
-            padding: 4px 12px;
-            border-radius: 40px;
-            border: 1px solid var(--border);
+        .theme-toggle .fa-moon {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
         }
-        .main-content header .mobile-toggle {
-            display: none;
-            background: transparent;
-            border: none;
-            font-size: 20px;
-            color: var(--text);
-            cursor: pointer;
+        .theme-toggle .fa-sun {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: #f59e0b;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        [data-theme="light"] .theme-toggle .fa-moon {
+            opacity: 0.3;
+        }
+        [data-theme="light"] .theme-toggle .fa-sun {
+            opacity: 1;
         }
 
-        /* ===== CARDS ===== */
+        /* CONTENT AREA — ABU MODERN */
+        .content-area {
+            flex: 1;
+            padding: 20px 24px;
+            background: var(--bg);
+        }
+
+        /* ===== COMPONENTS ===== */
         .stat-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 14px;
             padding: 18px 20px;
-            transition: all 0.2s;
-            box-shadow: var(--shadow);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.25s;
         }
         .stat-card:hover {
-            transform: translateY(-2px);
             border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(227, 24, 55, 0.06);
         }
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+        .stat-card .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
         .data-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: var(--shadow);
+            transition: background 0.3s, border-color 0.3s;
         }
         .data-card .card-header {
             padding: 14px 20px;
@@ -358,7 +459,9 @@
         .data-card .card-header h3 {
             font-size: 13px;
             font-weight: 600;
-            color: var(--text);
+        }
+        .data-card .card-body {
+            padding: 16px 20px;
         }
 
         /* BUTTONS */
@@ -366,133 +469,152 @@
             background: var(--accent);
             color: #fff;
             padding: 8px 18px;
-            border-radius: 40px;
+            border-radius: 8px;
             border: none;
             font-weight: 600;
             font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
+            font-family: inherit;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .btn-primary:hover {
             background: var(--accent2);
             transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(0, 102, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(227, 24, 55, 0.3);
         }
         .btn-secondary {
-            background: var(--bg2);
+            background: var(--card2);
             color: var(--text);
             padding: 8px 18px;
-            border-radius: 40px;
+            border-radius: 8px;
             border: 1px solid var(--border);
             font-weight: 500;
             font-size: 13px;
             cursor: pointer;
-            transition: 0.2s;
-            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            font-family: inherit;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .btn-secondary:hover {
             border-color: var(--accent);
-            background: #f0f6ff;
+            background: rgba(227, 24, 55, 0.04);
         }
         .btn-danger {
-            background: rgba(229, 62, 62, 0.08);
+            background: rgba(227, 24, 55, 0.12);
             color: var(--danger);
-            padding: 5px 14px;
-            border-radius: 30px;
-            border: 1px solid rgba(229, 62, 62, 0.15);
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(227, 24, 55, 0.2);
             font-weight: 500;
             font-size: 12px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            font-family: inherit;
         }
         .btn-danger:hover {
-            background: rgba(229, 62, 62, 0.15);
+            background: rgba(227, 24, 55, 0.2);
         }
         .btn-sm {
             padding: 4px 12px;
             font-size: 11px;
-            border-radius: 30px;
-        }
-        .btn-warn {
-            background: rgba(245, 166, 35, 0.08);
-            color: var(--warn);
-            padding: 5px 14px;
-            border-radius: 30px;
-            border: 1px solid rgba(245, 166, 35, 0.15);
-            font-weight: 500;
-            font-size: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-warn:hover {
-            background: rgba(245, 166, 35, 0.15);
+            border-radius: 6px;
         }
         .btn-success {
-            background: rgba(0, 200, 80, 0.08);
-            color: #00a854;
-            padding: 5px 14px;
-            border-radius: 30px;
-            border: 1px solid rgba(0, 200, 80, 0.15);
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
             font-weight: 500;
             font-size: 12px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
         .btn-success:hover {
-            background: rgba(0, 200, 80, 0.15);
-        }
-        .btn-info-sm {
-            background: rgba(0, 102, 255, 0.08);
-            color: var(--accent);
-            padding: 4px 12px;
-            border-radius: 30px;
-            border: 1px solid rgba(0, 102, 255, 0.1);
-            font-weight: 500;
-            font-size: 11px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-info-sm:hover {
-            background: rgba(0, 102, 255, 0.14);
+            background: rgba(16, 185, 129, 0.2);
+            transform: translateY(-1px);
         }
         .btn-whatsapp {
-            background: rgba(37, 211, 102, 0.08);
+            background: rgba(37, 211, 102, 0.12);
             color: #25D366;
             padding: 4px 12px;
-            border-radius: 30px;
-            border: 1px solid rgba(37, 211, 102, 0.12);
+            border-radius: 6px;
+            border: 1px solid rgba(37, 211, 102, 0.2);
             font-weight: 500;
             font-size: 11px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
         .btn-whatsapp:hover {
-            background: rgba(37, 211, 102, 0.15);
+            background: rgba(37, 211, 102, 0.2);
+            transform: translateY(-1px);
+        }
+        .btn-warn {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--warn);
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            font-weight: 500;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .btn-warn:hover {
+            background: rgba(245, 158, 11, 0.2);
+        }
+        .btn-info {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--info);
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-info:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: translateY(-1px);
         }
 
-        /* FORM */
         .form-input {
             width: 100%;
-            background: var(--bg2);
+            background: var(--input-bg);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 10px 14px;
             color: var(--text);
             font-size: 13px;
-            font-family: 'Inter', sans-serif;
-            transition: 0.2s;
+            font-family: inherit;
+            transition: border-color 0.2s, background 0.3s;
             outline: none;
         }
         .form-input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(227, 24, 55, 0.08);
+        }
+        .form-input::placeholder {
+            color: var(--muted);
         }
         .form-label {
             display: block;
@@ -500,13 +622,20 @@
             font-weight: 600;
             color: var(--muted);
             margin-bottom: 4px;
-            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 32px;
         }
 
-        /* BADGE */
         .badge {
             padding: 3px 12px;
-            border-radius: 40px;
+            border-radius: 20px;
             font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
@@ -514,35 +643,34 @@
             display: inline-block;
         }
         .badge-masuk {
-            background: rgba(0, 102, 255, 0.08);
-            color: #0066ff;
+            background: rgba(59, 130, 246, 0.12);
+            color: #3b82f6;
         }
         .badge-diperiksa {
-            background: rgba(245, 166, 35, 0.08);
-            color: #f5a623;
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
         }
         .badge-proses {
-            background: rgba(120, 80, 240, 0.08);
-            color: #7c5cfc;
+            background: rgba(139, 92, 246, 0.12);
+            color: #a78bfa;
         }
         .badge-selesai {
-            background: rgba(0, 200, 80, 0.08);
-            color: #00a854;
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
         }
         .badge-diambil {
-            background: rgba(95, 125, 156, 0.08);
-            color: #5f7d9c;
+            background: rgba(100, 116, 139, 0.12);
+            color: #94a3b8;
         }
         .badge-garansi {
-            background: rgba(0, 200, 80, 0.08);
-            color: #00a854;
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
         }
         .badge-garansi-habis {
-            background: rgba(229, 62, 62, 0.08);
-            color: #e53e3e;
+            background: rgba(227, 24, 55, 0.12);
+            color: #E31837;
         }
 
-        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -553,7 +681,7 @@
             font-size: 10px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
             color: var(--muted);
             text-align: left;
             border-bottom: 1px solid var(--border);
@@ -561,30 +689,29 @@
         tbody td {
             padding: 10px 14px;
             font-size: 12px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+            border-bottom: 1px solid rgba(31, 45, 71, 0.3);
             vertical-align: middle;
         }
-        tbody tr:hover {
-            background: rgba(0, 102, 255, 0.02);
+        tbody tr {
+            transition: background 0.15s;
         }
-        tbody tr.locked-row {
-            opacity: 0.7;
+        tbody tr:hover {
+            background: rgba(227, 24, 55, 0.03);
         }
 
-        /* MODAL */
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 20, 40, 0.6);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
             z-index: 100;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
-            transition: 0.25s;
-            padding: 16px;
+            transition: opacity 0.25s;
+            padding: 12px;
         }
         .modal-overlay.show {
             opacity: 1;
@@ -593,56 +720,74 @@
         .modal-box {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 16px;
             width: 100%;
             max-width: 480px;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
-            transform: translateY(12px);
-            transition: 0.25s;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            transform: translateY(20px);
+            transition: transform 0.25s;
+            padding: 0;
         }
         .modal-overlay.show .modal-box {
             transform: translateY(0);
         }
+        .modal-box .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .modal-box .modal-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .modal-box .modal-body {
+            padding: 20px;
+        }
 
-        /* TOAST */
         .toast-container {
             position: fixed;
-            top: 16px;
-            right: 16px;
+            top: 12px;
+            right: 12px;
             z-index: 200;
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-width: 360px;
+            max-width: 90%;
         }
         .toast {
             padding: 12px 18px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 12px;
             font-weight: 500;
             display: flex;
             align-items: center;
             gap: 10px;
-            animation: slideIn 0.25s ease, fadeOut 0.25s ease 2.7s;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+            min-width: 180px;
+            box-shadow: var(--shadow);
+            word-break: break-word;
             background: var(--card);
             border: 1px solid var(--border);
         }
         .toast-success {
-            border-left: 4px solid #00a854;
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.2);
         }
         .toast-error {
-            border-left: 4px solid #e53e3e;
+            color: #f87171;
+            border-color: rgba(227, 24, 55, 0.2);
         }
         .toast-info {
-            border-left: 4px solid #0066ff;
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.2);
         }
 
         @keyframes slideIn {
             from {
-                transform: translateX(60px);
+                transform: translateX(100px);
                 opacity: 0;
             }
             to {
@@ -661,7 +806,7 @@
 
         .page-section {
             display: none;
-            animation: pageIn 0.25s ease;
+            animation: pageIn 0.3s ease;
         }
         .page-section.active {
             display: block;
@@ -669,7 +814,7 @@
         @keyframes pageIn {
             from {
                 opacity: 0;
-                transform: translateY(8px);
+                transform: translateY(12px);
             }
             to {
                 opacity: 1;
@@ -678,61 +823,60 @@
         }
 
         .receipt-box {
-            background: #fff;
-            color: #0b1e33;
+            background: var(--receipt-bg);
+            color: var(--receipt-text);
             padding: 20px;
-            border-radius: 12px;
+            border-radius: 8px;
             font-family: 'Inter', monospace;
             font-size: 11px;
             line-height: 1.7;
-            max-width: 340px;
+            max-width: 320px;
             margin: 0 auto;
-            border: 1px solid #e6edf5;
         }
-
-        /* LOGIN */
-        #loginPage {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg);
-            transition: opacity 0.4s;
-            padding: 16px;
+        .receipt-box h3 {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 4px;
         }
-        #loginPage.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .login-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 30px 24px;
-            width: 100%;
-            max-width: 380px;
-            box-shadow: var(--shadow);
+        .receipt-box .divider {
+            border-top: 1px dashed #555;
+            margin: 8px 0;
         }
 
         .stok-summary {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: var(--radius);
+            border-radius: 12px;
             padding: 16px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
+            margin-bottom: 12px;
+        }
+        .stok-summary .total-item .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+        .stok-summary .total-item .value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent2);
+        }
+        .stok-summary .total-item .value.total-nilai {
+            color: var(--accent);
+            font-size: 18px;
         }
 
-        /* RESPONSIVE */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
-                width: 270px;
+                width: 280px;
             }
             .sidebar.open {
                 transform: translateX(0);
@@ -740,97 +884,199 @@
             .main-content {
                 margin-left: 0;
             }
-            .main-content header {
-                padding: 10px 16px;
-            }
             .main-content header .mobile-toggle {
-                display: block;
+                display: flex !important;
+            }
+            .content-area {
+                padding: 12px 14px;
+            }
+            .main-content header {
+                padding: 10px 14px;
             }
             .main-content header .page-title {
-                font-size: 16px;
+                font-size: 14px;
             }
-            .main-content header .clock {
-                display: none;
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+            }
+            .sm\:grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            .lg\:grid-cols-3,
+            .lg\:grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+            .lg\:col-span-2 {
+                grid-column: auto;
+            }
+            .flex-wrap.gap-4 {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .modal-box {
+                max-width: 100%;
+                margin: 10px;
+            }
+            .receipt-box {
+                max-width: 100%;
             }
             .stat-card {
                 padding: 14px 16px;
             }
             .data-card .card-header {
-                padding: 12px 16px;
+                padding: 12px 14px;
             }
-            .grid-cols-2 {
-                grid-template-columns: 1fr 1fr;
+            .data-card .card-body {
+                padding: 12px 14px;
             }
-            .lg\:grid-cols-3,
-            .lg\:grid-cols-4 {
-                grid-template-columns: 1fr 1fr;
+            table {
+                font-size: 11px;
+            }
+            thead th,
+            tbody td {
+                padding: 6px 8px;
+            }
+            .btn-primary,
+            .btn-secondary,
+            .btn-info {
+                padding: 6px 14px;
+                font-size: 12px;
+            }
+            .form-input {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+            .login-box {
+                padding: 24px 16px;
             }
             .stok-summary {
                 flex-direction: column;
                 align-items: stretch;
                 text-align: center;
             }
-            .modal-box {
-                max-width: 100%;
-                margin: 10px;
+            .stok-summary .total-item .value {
+                font-size: 16px;
+            }
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+            .toast {
+                min-width: auto;
+                width: 100%;
+                font-size: 11px;
+            }
+            .sidebar .nav-item {
+                padding: 8px 14px;
+                margin: 2px 8px;
+                font-size: 12px;
+            }
+            .text-2xl {
+                font-size: 18px;
+            }
+            .text-xl {
+                font-size: 16px;
+            }
+            .text-lg {
+                font-size: 14px;
+            }
+            .stat-card .text-base {
+                font-size: 14px;
+            }
+            .main-content header .header-actions .clock {
+                display: none;
             }
         }
 
         @media (max-width: 480px) {
-            .grid-cols-2 {
-                grid-template-columns: 1fr;
+            .content-area {
+                padding: 8px 10px;
             }
-            .lg\:grid-cols-3,
-            .lg\:grid-cols-4 {
-                grid-template-columns: 1fr;
+            .data-card .card-header {
+                flex-direction: column;
+                align-items: stretch;
             }
-            .main-content header .header-actions {
-                gap: 6px;
+            .data-card .card-header .flex-wrap {
+                flex-direction: column;
             }
-            .btn-primary,
-            .btn-secondary {
-                padding: 6px 14px;
-                font-size: 12px;
-            }
-            .data-card .card-header h3 {
-                font-size: 12px;
+            .stat-card .stat-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 13px;
             }
         }
 
-        /* utility */
-        .text-accent {
-            color: var(--accent);
+        .print-receipt {
+            /* untuk print */;
         }
-        .bg-accent-soft {
-            background: rgba(0, 102, 255, 0.04);
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            .print-receipt,
+            .print-receipt * {
+                visibility: visible !important;
+            }
+            .print-receipt {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: #fff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .receipt-box {
+                max-width: 100% !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                padding: 20px !important;
+            }
+            .no-print {
+                display: none !important;
+            }
         }
-        .border-accent {
-            border-color: var(--accent);
+
+        /* Scrollbar sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 3px;
         }
-        .rounded-2xl {
-            border-radius: var(--radius);
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
         }
-        .shadow-card {
-            box-shadow: var(--shadow);
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 3px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
         }
     </style>
 </head>
+
 <body>
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- ===== LOGIN ===== -->
     <div id="loginPage">
         <div class="login-box">
-            <div class="flex justify-center mb-3">
-                <div class="w-14 h-14 rounded-2xl flex items-center justify-center" style="background:var(--accent);color:#fff;font-size:28px">
-                    <i class="fas fa-bolt"></i>
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 rounded-2xl flex items-center justify-center" style="background:rgba(227,24,55,0.12)">
+                    <i class="fas fa-bolt" style="color:var(--accent);font-size:30px"></i>
                 </div>
             </div>
-            <h1 class="text-2xl font-bold text-center" style="color:var(--text)">ServicePro</h1>
-            <p class="text-center text-sm mb-5" style="color:var(--muted)">Sistem Manajemen Service</p>
+            <h1>ServicePro</h1>
+            <p class="sub">Masuk ke Sistem Manajemen Service</p>
             <form id="loginForm" onsubmit="return handleLogin(event)" class="space-y-4">
-                <div><label class="form-label">Email</label><input type="email" class="form-input" id="loginEmail" placeholder="Masukkan email" required autocomplete="email"></div>
-                <div><label class="form-label">Password</label><input type="password" class="form-input" id="loginPass" placeholder="Masukkan password" required autocomplete="current-password"></div>
+                <div>
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="Masukkan email" required autocomplete="email">
+                </div>
+                <div>
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" id="loginPass" placeholder="Masukkan password" required autocomplete="current-password">
+                </div>
                 <p id="loginError" class="text-sm hidden" style="color:var(--danger)"><i class="fas fa-exclamation-circle mr-1"></i>Email atau password salah</p>
                 <button type="submit" class="btn-primary w-full justify-center text-base py-3"><i class="fas fa-right-to-bracket"></i> Masuk</button>
             </form>
@@ -840,17 +1086,19 @@
 
     <!-- ===== APP ===== -->
     <div id="appLayout">
-        <!-- SIDEBAR J&T STYLE -->
+        <!-- SIDEBAR MERAH LION PARCEL -->
         <aside class="sidebar" id="sidebar">
-            <div class="brand">
-                <div class="logo-icon"><i class="fas fa-bolt"></i></div>
-                <div>
-                    <h1>ServicePro</h1>
-                    <p>Elektronik Management</p>
+            <div class="sidebar-brand">
+                <div class="flex items-center gap-3">
+                    <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+                    <div>
+                        <h1>ServicePro</h1>
+                        <p>Elektronik Management</p>
+                    </div>
                 </div>
             </div>
 
-            <nav class="py-3">
+            <nav style="flex:1;padding:8px 0;">
                 <div class="nav-section">Menu Utama</div>
                 <div class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')"><i class="fas fa-chart-pie"></i> Dashboard</div>
                 <div class="nav-item" data-page="terima" onclick="navigate('terima')"><i class="fas fa-box-open"></i> Terima Barang</div>
@@ -868,19 +1116,23 @@
                 <div class="nav-item" data-page="laporan" onclick="navigate('laporan')"><i class="fas fa-file-invoice-dollar"></i> Laporan</div>
             </nav>
 
-            <div class="user-footer">
-                <div class="avatar" id="userAvatar">AD</div>
-                <div class="user-info">
-                    <div class="name" id="userDisplayName">Admin</div>
-                    <div class="email" id="userEmailDisplay">user@email.com</div>
+            <div class="sidebar-footer">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="user-avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div class="user-name" id="userDisplayName">Admin</div>
+                            <div class="user-email" id="userEmailDisplay">user@email.com</div>
+                        </div>
+                    </div>
+                    <button onclick="handleLogout()" class="logout-btn" title="Keluar"><i class="fas fa-right-from-bracket"></i></button>
                 </div>
-                <button onclick="handleLogout()" class="logout-btn" title="Keluar"><i class="fas fa-right-from-bracket"></i></button>
             </div>
         </aside>
 
         <!-- MAIN -->
         <main class="main-content">
-            <!-- HEADER -->
+            <!-- HEADER MERAH LION PARCEL -->
             <header>
                 <div class="flex items-center gap-3">
                     <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
@@ -890,25 +1142,27 @@
                 </div>
                 <div class="header-actions">
                     <span class="clock" id="clockDisplay">--:--:--</span>
-                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Ganti tema">
+                    <div class="status-dot"></div>
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Ganti Tema" aria-label="Ganti tema terang/gelap">
                         <i class="fas fa-moon"></i>
                         <i class="fas fa-sun"></i>
                     </button>
                 </div>
             </header>
 
-            <div class="p-4 md:p-6">
+            <!-- CONTENT AREA — ABU MODERN -->
+            <div class="content-area">
                 <!-- DASHBOARD -->
                 <section class="page-section active" id="page-dashboard">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5" id="dashStats"></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5" id="dashStats"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div class="data-card">
                             <div class="card-header"><h3>Pendapatan 7 Hari</h3></div>
-                            <div class="p-3"><canvas id="revenueChart" height="180"></canvas></div>
+                            <div class="card-body"><canvas id="revenueChart" height="180"></canvas></div>
                         </div>
                         <div class="data-card">
                             <div class="card-header"><h3>Distribusi Status</h3></div>
-                            <div class="p-3"><canvas id="statusChart" height="180"></canvas></div>
+                            <div class="card-body"><canvas id="statusChart" height="180"></canvas></div>
                         </div>
                     </div>
                     <div class="data-card mt-4">
@@ -927,42 +1181,45 @@
 
                 <!-- TERIMA -->
                 <section class="page-section" id="page-terima">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-2 data-card">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="data-card">
                             <div class="card-header"><h3>Form Penerimaan</h3></div>
-                            <form id="formTerima" class="p-4 space-y-4" onsubmit="return simpanTerima(event)">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <form id="formTerima" class="card-body space-y-3" onsubmit="return simpanTerima(event)">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div><label class="form-label">Nama Pelanggan</label><input type="text" class="form-input" id="tNama" placeholder="Nama lengkap" required></div>
                                     <div><label class="form-label">No. Telepon</label><input type="tel" class="form-input" id="tTelp" placeholder="08xxxxxxxxxx" required></div>
                                 </div>
                                 <div><label class="form-label">Alamat</label><textarea class="form-input" id="tAlamat" rows="2" placeholder="Alamat lengkap..." required></textarea></div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div><label class="form-label">Jenis Barang</label><select class="form-input" id="tJenis" required><option value="">Pilih jenis barang</option></select></div>
                                     <div><label class="form-label">Merek / Model</label><input type="text" class="form-input" id="tMerek" placeholder="Contoh: Samsung UA43" required></div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     <div><label class="form-label">Type</label><input type="text" class="form-input" id="tType" placeholder="Contoh: UA43T6500" required></div>
                                     <div><label class="form-label">No. Seri</label><input type="text" class="form-input" id="tSeri" placeholder="SN perangkat"></div>
                                 </div>
                                 <div><label class="form-label">Keluhan / Masalah</label><textarea class="form-input" id="tKeluhan" rows="2" placeholder="Deskripsikan keluhan..." required></textarea></div>
                                 <div><label class="form-label">Kelengkapan Barang</label><input type="text" class="form-input" id="tKelengkapan" placeholder="Contoh: Charger, Remote" required></div>
                                 <div><label class="form-label">Estimasi Biaya (Rp)</label><input type="number" class="form-input" id="tEstimasi" placeholder="0" min="0"></div>
-                                <div class="flex gap-2"><button type="submit" class="btn-primary"><i class="fas fa-check"></i> Simpan</button><button type="reset" class="btn-secondary">Reset</button></div>
+                                <div class="pt-1 flex flex-wrap gap-2">
+                                    <button type="submit" class="btn-primary"><i class="fas fa-check"></i> Simpan</button>
+                                    <button type="reset" class="btn-secondary">Reset</button>
+                                </div>
                             </form>
                         </div>
                         <div class="space-y-4">
                             <div class="data-card">
                                 <div class="card-header"><h3>Panduan Singkat</h3></div>
-                                <div class="p-4 space-y-3 text-sm" style="color:var(--muted)">
-                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--accent);color:#fff">1</div><p>Isi data pelanggan dan barang dengan lengkap</p></div>
-                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--accent);color:#fff">2</div><p>Pilih jenis barang sesuai kategori yang tersedia</p></div>
-                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--accent);color:#fff">3</div><p>Cantumkan kelengkapan barang yang diterima</p></div>
-                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--accent);color:#fff">4</div><p>Bukti titip bisa diunduh setelah simpan</p></div>
+                                <div class="card-body space-y-3 text-xs" style="color:var(--muted)">
+                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style="background:rgba(227,24,55,0.12);color:var(--accent)">1</div><p>Isi data pelanggan dan barang dengan lengkap</p></div>
+                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style="background:rgba(227,24,55,0.12);color:var(--accent)">2</div><p>Pilih jenis barang sesuai kategori yang tersedia</p></div>
+                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style="background:rgba(227,24,55,0.12);color:var(--accent)">3</div><p>Cantumkan kelengkapan barang yang diterima</p></div>
+                                    <div class="flex gap-3"><div class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style="background:rgba(227,24,55,0.12);color:var(--accent)">4</div><p>Bukti titip bisa diunduh setelah simpan</p></div>
                                 </div>
                             </div>
                             <div class="data-card">
                                 <div class="card-header"><h3>Barang Diterima Hari Ini</h3></div>
-                                <div class="p-4" id="terimaHariIni"><p class="text-sm" style="color:var(--muted)">Belum ada barang hari ini</p></div>
+                                <div class="card-body" id="terimaHariIni"><p class="text-xs" style="color:var(--muted)">Belum ada barang hari ini</p></div>
                             </div>
                         </div>
                     </div>
@@ -972,9 +1229,9 @@
                 <section class="page-section" id="page-daftar">
                     <div class="data-card">
                         <div class="card-header">
-                            <div class="flex flex-wrap items-center gap-2 w-full">
-                                <input type="text" class="form-input flex-1 min-w-[120px]" placeholder="Cari no service / pelanggan..." id="searchDaftar" oninput="renderDaftar()">
-                                <select class="form-input flex-1 min-w-[100px]" id="filterStatus" onchange="renderDaftar()">
+                            <div class="flex items-center gap-2 flex-wrap w-full">
+                                <input type="text" class="form-input flex-1 min-w-[140px]" placeholder="Cari no service / pelanggan..." id="searchDaftar" oninput="renderDaftar()">
+                                <select class="form-input flex-1 min-w-[120px]" id="filterStatus" onchange="renderDaftar()">
                                     <option value="">Semua Status</option>
                                     <option value="masuk">Masuk</option>
                                     <option value="diperiksa">Diperiksa</option>
@@ -983,9 +1240,9 @@
                                     <option value="diambil">Diambil</option>
                                 </select>
                             </div>
-                            <div class="flex gap-2 w-full md:w-auto">
-                                <button class="btn-primary btn-sm flex-1" onclick="exportDaftarExcel()"><i class="fas fa-file-excel"></i> Excel</button>
-                                <button class="btn-primary btn-sm flex-1" onclick="navigate('terima')"><i class="fas fa-plus"></i> Baru</button>
+                            <div class="flex gap-2">
+                                <button class="btn-primary btn-sm" onclick="exportDaftarExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+                                <button class="btn-primary btn-sm" onclick="navigate('terima')"><i class="fas fa-plus"></i> Baru</button>
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -999,41 +1256,44 @@
 
                 <!-- ADMINISTRASI -->
                 <section class="page-section" id="page-administrasi">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                        <div class="lg:col-span-1 space-y-4">
-                            <div class="data-card">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div>
+                            <div class="data-card mb-4">
                                 <div class="card-header"><h3>Cari Barang</h3></div>
-                                <div class="p-4 space-y-3">
+                                <div class="card-body space-y-3">
                                     <div><label class="form-label">Nomor Service</label><input type="text" class="form-input" id="cariNoService" placeholder="SVC-XXXXXXXX"></div>
                                     <button class="btn-primary w-full" onclick="cariPengambilan()"><i class="fas fa-search"></i> Cari</button>
                                 </div>
-                                <div class="px-4 pb-4"><p class="text-xs font-semibold mb-2" style="color:var(--muted)">Barang Siap Diambil</p><div id="listSiapAmbil" class="space-y-2"></div></div>
+                                <div class="px-5 pb-4">
+                                    <p class="text-xs mb-2 font-semibold" style="color:var(--muted)">Barang Siap Diambil</p>
+                                    <div id="listSiapAmbil" class="space-y-2"></div>
+                                </div>
                             </div>
                             <div class="data-card" id="detailPengambilan" style="display:none">
                                 <div class="card-header"><h3>Detail Service</h3></div>
-                                <div class="p-4" id="detailAmbilContent"></div>
+                                <div class="card-body" id="detailAmbilContent"></div>
                             </div>
                         </div>
-                        <div class="lg:col-span-2">
+                        <div>
                             <div class="data-card" id="formPengambilanCard" style="display:none">
                                 <div class="card-header"><h3>Form Administrasi</h3></div>
-                                <form class="p-4 space-y-4" id="formAmbil" onsubmit="return prosesAdministrasi(event)">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <form class="card-body space-y-3" id="formAmbil" onsubmit="return prosesAdministrasi(event)">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div><label class="form-label">Biaya Service (Rp)</label><input type="number" class="form-input" id="aBiaya" required min="0"></div>
-                                        <div><label class="form-label">Total Biaya Sparepart (Rp)</label><input type="number" class="form-input" id="aSparepart" value="0" min="0" readonly style="background:var(--bg2);cursor:not-allowed"></div>
+                                        <div><label class="form-label">Total Biaya Sparepart (Rp)</label><input type="number" class="form-input" id="aSparepart" value="0" min="0" readonly style="background:var(--card2);cursor:not-allowed"></div>
                                     </div>
                                     <div class="p-3 rounded-xl" style="background:var(--bg2);border:1px solid var(--border)">
-                                        <div class="flex items-center justify-between mb-3">
-                                            <h4 class="text-sm font-semibold" style="color:var(--accent)"><i class="fas fa-puzzle-piece mr-2"></i>Sparepart</h4>
-                                            <div class="flex gap-2">
-                                                <button type="button" class="btn-secondary btn-sm" onclick="tambahBarisSparepart()"><i class="fas fa-plus"></i> Tambah</button>
-                                                <button type="button" class="btn-primary btn-sm" onclick="simpanSparepartKeDatabase()"><i class="fas fa-save"></i> Simpan</button>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <h4 class="text-xs font-semibold" style="color:var(--accent)"><i class="fas fa-puzzle-piece mr-1"></i>Sparepart</h4>
+                                            <div class="flex gap-1">
+                                                <button type="button" class="btn-secondary btn-sm" onclick="tambahBarisSparepart()"><i class="fas fa-plus"></i></button>
+                                                <button type="button" class="btn-primary btn-sm" onclick="simpanSparepartKeDatabase()"><i class="fas fa-save"></i></button>
                                             </div>
                                         </div>
                                         <div class="overflow-x-auto">
                                             <table>
                                                 <thead><tr><th style="background:transparent;padding:4px 4px;font-size:10px">Sparepart</th><th style="background:transparent;padding:4px 4px;font-size:10px">Harga</th><th style="background:transparent;padding:4px 4px;font-size:10px;width:50px">Stok</th><th style="background:transparent;padding:4px 4px;font-size:10px;width:60px">Qty</th><th style="background:transparent;padding:4px 4px;font-size:10px">Subtotal</th><th style="background:transparent;padding:4px 4px;font-size:10px;width:30px"></th></tr></thead>
-                                                <tbody id="sparepartPickerBody"><tr id="sparepartEmptyRow"><td colspan="6" class="text-center py-3 text-sm" style="color:var(--muted)">Klik "Tambah" untuk memilih sparepart</td></tr></tbody>
+                                                <tbody id="sparepartPickerBody"><tr id="sparepartEmptyRow"><td colspan="6" class="text-center py-2 text-xs" style="color:var(--muted)">Klik "Tambah" untuk memilih sparepart</td></tr></tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -1043,7 +1303,7 @@
                                     </div>
                                 </form>
                             </div>
-                            <div id="strukContainer" style="display:none" class="data-card p-4 print-receipt mt-4"></div>
+                            <div id="strukContainer" style="display:none" class="data-card p-4 mt-4 print-receipt"></div>
                         </div>
                     </div>
                 </section>
@@ -1053,7 +1313,7 @@
                     <div class="data-card">
                         <div class="card-header">
                             <h3>Barang Service Selesai</h3>
-                            <input type="text" class="form-input flex-1 min-w-[120px]" placeholder="Cari..." id="searchSelesai" oninput="renderSelesai()">
+                            <input type="text" class="form-input flex-1 min-w-[140px] max-w-xs" placeholder="Cari..." id="searchSelesai" oninput="renderSelesai()">
                         </div>
                         <div class="overflow-x-auto">
                             <table>
@@ -1069,7 +1329,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div class="data-card">
                             <div class="card-header"><h3>Tambah Jenis Barang</h3></div>
-                            <form class="p-4 space-y-4" id="formJenis" onsubmit="return simpanJenis(event)">
+                            <form class="card-body space-y-3" id="formJenis" onsubmit="return simpanJenis(event)">
                                 <div><label class="form-label">Nama Jenis Barang</label><input type="text" class="form-input" id="jNama" placeholder="Contoh: Televisi LED" required></div>
                                 <div><label class="form-label">Biaya Service Dasar (Rp)</label><input type="number" class="form-input" id="jBiaya" placeholder="0" required min="0"></div>
                                 <div><label class="form-label">Deskripsi</label><textarea class="form-input" id="jDeskripsi" rows="2" placeholder="Keterangan tambahan..."></textarea></div>
@@ -1093,24 +1353,24 @@
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                         <div class="data-card">
                             <div class="card-header"><h3>Tambah Sparepart</h3></div>
-                            <form class="p-4 space-y-4" id="formStok" onsubmit="return simpanSparepart(event)">
+                            <form class="card-body space-y-3" id="formStok" onsubmit="return simpanSparepart(event)">
                                 <div><label class="form-label">Nama Sparepart</label><input type="text" class="form-input" id="sNama" placeholder="Contoh: Kapasitor 450V" required></div>
-                                <div class="grid grid-cols-2 gap-3"><div><label class="form-label">Jumlah</label><input type="number" class="form-input" id="sJumlah" placeholder="0" required min="0"></div><div><label class="form-label">Harga (Rp)</label><input type="number" class="form-input" id="sHarga" placeholder="0" required min="0"></div></div>
+                                <div class="grid grid-cols-2 gap-2"><div><label class="form-label">Jumlah</label><input type="number" class="form-input" id="sJumlah" placeholder="0" required min="0"></div><div><label class="form-label">Harga (Rp)</label><input type="number" class="form-input" id="sHarga" placeholder="0" required min="0"></div></div>
                                 <div><label class="form-label">Kategori</label><input type="text" class="form-input" id="sKategori" placeholder="Contoh: Kapasitor, IC, Kabel"></div>
                                 <button type="submit" class="btn-primary w-full"><i class="fas fa-plus"></i> Simpan Sparepart</button>
                             </form>
                         </div>
-                        <div class="lg:col-span-2 space-y-4">
+                        <div class="lg:col-span-2">
                             <div class="stok-summary" id="stokSummary">
-                                <div class="total-item"><span class="text-xs uppercase font-semibold" style="color:var(--muted)"><i class="fas fa-cubes mr-1"></i> Total Jenis</span><span class="text-xl font-bold" style="color:var(--accent)" id="totalJenis">0</span></div>
-                                <div class="total-item"><span class="text-xs uppercase font-semibold" style="color:var(--muted)"><i class="fas fa-boxes mr-1"></i> Total Unit</span><span class="text-xl font-bold" style="color:var(--accent)" id="totalUnit">0</span></div>
-                                <div class="total-item"><span class="text-xs uppercase font-semibold" style="color:var(--muted)"><i class="fas fa-money-bill-wave mr-1"></i> Total Nilai</span><span class="text-xl font-bold" style="color:var(--accent)" id="totalNilai">Rp 0</span></div>
+                                <div class="total-item"><span class="label"><i class="fas fa-cubes mr-1"></i> Total Jenis</span><span class="value" id="totalJenis">0</span></div>
+                                <div class="total-item"><span class="label"><i class="fas fa-boxes mr-1"></i> Total Unit</span><span class="value" id="totalUnit">0</span></div>
+                                <div class="total-item"><span class="label"><i class="fas fa-money-bill-wave mr-1"></i> Total Nilai</span><span class="value total-nilai" id="totalNilai">Rp 0</span></div>
                             </div>
                             <div class="data-card">
                                 <div class="card-header">
                                     <h3>Daftar Stok</h3>
-                                    <div class="flex gap-2 w-full md:w-auto">
-                                        <input type="text" class="form-input flex-1 min-w-[100px]" placeholder="Cari..." id="searchStok" oninput="renderStok()">
+                                    <div class="flex gap-2 flex-wrap">
+                                        <input type="text" class="form-input flex-1 min-w-[140px]" placeholder="Cari..." id="searchStok" oninput="renderStok()">
                                         <button class="btn-success btn-sm" onclick="exportStokExcel()"><i class="fas fa-file-excel"></i> Excel</button>
                                     </div>
                                 </div>
@@ -1129,12 +1389,12 @@
                 <section class="page-section" id="page-riwayatstok">
                     <div class="data-card">
                         <div class="card-header">
-                            <h3><i class="fas fa-clock-rotate-left mr-2"></i>Riwayat Stok Masuk</h3>
-                            <div class="flex flex-wrap gap-2">
-                                <input type="date" class="form-input flex-1 min-w-[90px]" id="riwayatStokDari" onchange="renderRiwayatStok()">
-                                <span class="text-sm" style="color:var(--muted)">s/d</span>
-                                <input type="date" class="form-input flex-1 min-w-[90px]" id="riwayatStokSampai" onchange="renderRiwayatStok()">
-                                <input type="text" class="form-input flex-1 min-w-[100px]" placeholder="Cari..." id="searchRiwayatStok" oninput="renderRiwayatStok()">
+                            <h3><i class="fas fa-clock-rotate-left mr-1"></i>Riwayat Stok Masuk</h3>
+                            <div class="flex gap-2 flex-wrap">
+                                <input type="date" class="form-input flex-1 min-w-[110px]" id="riwayatStokDari" onchange="renderRiwayatStok()">
+                                <span class="text-xs" style="color:var(--muted)">s/d</span>
+                                <input type="date" class="form-input flex-1 min-w-[110px]" id="riwayatStokSampai" onchange="renderRiwayatStok()">
+                                <input type="text" class="form-input flex-1 min-w-[120px]" placeholder="Cari..." id="searchRiwayatStok" oninput="renderRiwayatStok()">
                                 <button class="btn-success btn-sm" onclick="exportRiwayatStokExcel()"><i class="fas fa-file-excel"></i> Excel</button>
                             </div>
                         </div>
@@ -1152,11 +1412,11 @@
                 <section class="page-section" id="page-riwayat">
                     <div class="data-card">
                         <div class="card-header">
-                            <div class="flex flex-wrap items-center gap-2 w-full">
-                                <input type="date" class="form-input flex-1 min-w-[90px]" id="riwayatDari" onchange="renderRiwayat()">
-                                <span class="text-sm" style="color:var(--muted)">s/d</span>
-                                <input type="date" class="form-input flex-1 min-w-[90px]" id="riwayatSampai" onchange="renderRiwayat()">
-                                <input type="text" class="form-input flex-1 min-w-[100px]" placeholder="Cari..." id="searchRiwayat" oninput="renderRiwayat()">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <input type="date" class="form-input flex-1 min-w-[110px]" id="riwayatDari" onchange="renderRiwayat()">
+                                <span class="text-xs" style="color:var(--muted)">s/d</span>
+                                <input type="date" class="form-input flex-1 min-w-[110px]" id="riwayatSampai" onchange="renderRiwayat()">
+                                <input type="text" class="form-input flex-1 min-w-[120px]" placeholder="Cari..." id="searchRiwayat" oninput="renderRiwayat()">
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -1170,22 +1430,22 @@
 
                 <!-- LAPORAN -->
                 <section class="page-section" id="page-laporan">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-5" id="laporanStats"></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-5" id="laporanStats"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
                         <div class="data-card">
                             <div class="card-header"><h3>Pendapatan Bulanan</h3></div>
-                            <div class="p-3"><canvas id="monthlyChart" height="200"></canvas></div>
+                            <div class="card-body"><canvas id="monthlyChart" height="200"></canvas></div>
                         </div>
                         <div class="data-card">
                             <div class="card-header"><h3>Jenis Barang Terbanyak</h3></div>
-                            <div class="p-3"><canvas id="jenisChart" height="200"></canvas></div>
+                            <div class="card-body"><canvas id="jenisChart" height="200"></canvas></div>
                         </div>
                     </div>
                     <div class="data-card">
                         <div class="card-header">
                             <h3>Detail Laporan</h3>
-                            <div class="flex gap-2">
-                                <input type="month" class="form-input" style="width:130px" id="laporanBulan" onchange="renderLaporan()">
+                            <div class="flex gap-2 flex-wrap">
+                                <input type="month" class="form-input" style="width:140px" id="laporanBulan" onchange="renderLaporan()">
                                 <button class="btn-primary btn-sm" onclick="exportLaporanExcel()"><i class="fas fa-file-excel"></i> Excel</button>
                             </div>
                         </div>
@@ -1205,11 +1465,11 @@
     <!-- MODAL -->
     <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
         <div class="modal-box">
-            <div class="p-4 border-b flex items-center justify-between" style="border-color:var(--border)">
-                <h3 class="font-semibold" id="modalTitle">Edit</h3>
+            <div class="modal-header">
+                <h3 id="modalTitle">Edit</h3>
                 <button onclick="closeModal()" style="color:var(--muted);font-size:18px;background:none;border:none;cursor:pointer"><i class="fas fa-xmark"></i></button>
             </div>
-            <div class="p-4" id="modalBody"></div>
+            <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
 
@@ -1246,7 +1506,6 @@
             unsubscribeJenis = null,
             unsubscribeSparepart = null,
             unsubscribeRiwayatStok = null;
-        let sparepartRows = [];
 
         // ===== AUTH =====
         function handleLogin(e) {
@@ -1332,7 +1591,7 @@
             }
         });
 
-        // ===== THEME =====
+        // ===== THEME TOGGLE =====
         function toggleTheme() {
             const html = document.documentElement;
             const current = html.getAttribute('data-theme');
@@ -1346,7 +1605,7 @@
             if (saved) document.documentElement.setAttribute('data-theme', saved);
         }
 
-        // ===== REALTIME =====
+        // ===== REALTIME LISTENERS =====
         function initRealtimeListeners() {
             if (unsubscribeServices) unsubscribeServices();
             unsubscribeServices = db.collection('services')
@@ -2128,7 +2387,7 @@ Hp: 085333071119`;
                 tD = allServices.filter(s => s.status === 'diambil'),
                 pn = tD.reduce((a, s) => a + (Number(s.biayaService || 0) + Number(s.biayaSparepart || 0)), 0);
             document.getElementById('dashStats').innerHTML =
-                `<div class="stat-card"><div class="flex items-center justify-between"><span class="text-sm font-semibold" style="color:var(--muted)">Total</span><i class="fas fa-boxes-stacked" style="color:var(--accent);font-size:18px"></i></div><p class="text-2xl font-bold mt-1">${tM}</p><p class="text-xs" style="color:var(--muted)">Barang Diterima</p></div><div class="stat-card"><div class="flex items-center justify-between"><span class="text-sm font-semibold" style="color:var(--muted)">Aktif</span><i class="fas fa-gears" style="color:var(--warn);font-size:18px"></i></div><p class="text-2xl font-bold mt-1">${tP}</p><p class="text-xs" style="color:var(--muted)">Sedang Dikerjakan</p></div><div class="stat-card"><div class="flex items-center justify-between"><span class="text-sm font-semibold" style="color:var(--muted)">Siap</span><i class="fas fa-circle-check" style="color:#00a854;font-size:18px"></i></div><p class="text-2xl font-bold mt-1">${tS}</p><p class="text-xs" style="color:var(--muted)">Siap Diambil</p></div><div class="stat-card"><div class="flex items-center justify-between"><span class="text-sm font-semibold" style="color:var(--muted)">Pendapatan</span><i class="fas fa-money-bill-wave" style="color:var(--accent);font-size:18px"></i></div><p class="text-2xl font-bold mt-1">${formatRupiah(pn)}</p><p class="text-xs" style="color:var(--muted)">Total Pendapatan</p></div>`;
+                `<div class="stat-card"><div class="flex items-center justify-between mb-2"><div class="stat-icon" style="background:rgba(59,130,246,0.12)"><i class="fas fa-boxes-stacked" style="color:#3b82f6;font-size:16px"></i></div><span class="text-xs font-mono" style="color:var(--muted)">TOTAL</span></div><p class="text-xl font-bold">${tM}</p><p class="text-xs mt-1" style="color:var(--muted)">Barang Diterima</p></div><div class="stat-card"><div class="flex items-center justify-between mb-2"><div class="stat-icon" style="background:rgba(245,158,11,0.12)"><i class="fas fa-gears" style="color:#f59e0b;font-size:16px"></i></div><span class="text-xs font-mono" style="color:var(--muted)">AKTIF</span></div><p class="text-xl font-bold">${tP}</p><p class="text-xs mt-1" style="color:var(--muted)">Sedang Dikerjakan</p></div><div class="stat-card"><div class="flex items-center justify-between mb-2"><div class="stat-icon" style="background:rgba(16,185,129,0.12)"><i class="fas fa-circle-check" style="color:#10b981;font-size:16px"></i></div><span class="text-xs font-mono" style="color:var(--muted)">SIAP</span></div><p class="text-xl font-bold">${tS}</p><p class="text-xs mt-1" style="color:var(--muted)">Siap Diambil</p></div><div class="stat-card"><div class="flex items-center justify-between mb-2"><div class="stat-icon" style="background:rgba(16,185,129,0.12)"><i class="fas fa-money-bill-wave" style="color:#34d399;font-size:16px"></i></div><span class="text-xs font-mono" style="color:var(--muted)">PENDAPATAN</span></div><p class="text-xl font-bold">${formatRupiah(pn)}</p><p class="text-xs mt-1" style="color:var(--muted)">Total Pendapatan</p></div>`;
             const rc = allServices.slice(0, 5);
             document.getElementById('dashRecentTable').innerHTML = rc.length ? rc.map(s =>
                 `<tr><td class="font-mono text-xs" style="color:var(--accent)">${s.noService}</td><td>${s.namaPelanggan}</td><td>${s.merek||'-'}</td><td>${statusBadge(s.status)}</td></tr>`
@@ -2161,10 +2420,10 @@ Hp: 085333071119`;
                     datasets: [{
                         label: 'Pendapatan',
                         data: revs,
-                        backgroundColor: 'rgba(0,102,255,0.25)',
-                        borderColor: '#0066ff',
+                        backgroundColor: 'rgba(227,24,55,0.2)',
+                        borderColor: '#E31837',
                         borderWidth: 2,
-                        borderRadius: 6
+                        borderRadius: 4
                     }]
                 },
                 options: {
@@ -2173,7 +2432,7 @@ Hp: 085333071119`;
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { ticks: { color: '#64748B', callback: v => 'Rp ' + (v / 1000) + 'k' },
-                            grid: { color: 'rgba(0,0,0,0.04)' } },
+                            grid: { color: 'rgba(31,45,71,0.5)' } },
                         x: { ticks: { color: '#64748B' }, grid: { display: false } }
                     }
                 }
@@ -2191,14 +2450,14 @@ Hp: 085333071119`;
                     labels: ['Masuk', 'Diperiksa', 'Proses', 'Selesai', 'Diambil'],
                     datasets: [{
                         data: Object.values(c),
-                        backgroundColor: ['#0066ff', '#f5a623', '#7c5cfc', '#00a854', '#8ba0b8'],
+                        backgroundColor: ['#3b82f6', '#f59e0b', '#a78bfa', '#10b981', '#64748b'],
                         borderWidth: 0
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
-                    plugins: { legend: { position: 'bottom', labels: { color: '#64748B', padding: 8, font: { size: 11 } } } },
+                    plugins: { legend: { position: 'bottom', labels: { color: '#94A3B8', padding: 8, font: { size: 10 } } } },
                     cutout: '65%'
                 }
             });
@@ -2221,9 +2480,9 @@ Hp: 085333071119`;
                     return d && d.toDateString() === td;
                 }),
                 ct = document.getElementById('terimaHariIni');
-            if (hi.length === 0) ct.innerHTML = '<p class="text-sm" style="color:var(--muted)">Belum ada barang hari ini</p>';
+            if (hi.length === 0) ct.innerHTML = '<p class="text-xs" style="color:var(--muted)">Belum ada barang hari ini</p>';
             else ct.innerHTML = hi.map(s =>
-                    `<div class="flex items-center justify-between py-2 border-b" style="border-color:var(--border)"><div><p class="text-sm font-semibold">${s.noService}</p><p class="text-xs" style="color:var(--muted)">${s.merek} - ${s.namaPelanggan}</p></div>${statusBadge(s.status)}</div>`
+                    `<div class="flex items-center justify-between py-2 border-b" style="border-color:var(--border)"><div><p class="text-xs font-semibold">${s.noService}</p><p class="text-xs" style="color:var(--muted)">${s.merek} - ${s.namaPelanggan}</p></div>${statusBadge(s.status)}</div>`
                     )
                 .join('');
         }
@@ -2285,13 +2544,14 @@ Hp: 085333071119`;
                 let aksiButtons = '';
                 if (isLocked) {
                     aksiButtons =
-                        `<span class="text-xs font-medium px-2 py-1 rounded-full" style="background:#eef2f6;color:#5f7d9c"><i class="fas fa-lock mr-1"></i>Final</span>`;
+                        `<span class="btn-danger btn-sm" style="opacity:0.6;cursor:not-allowed"><i class="fas fa-lock"></i> Final</span>`;
                 } else {
                     aksiButtons =
                         `
                     <button class="btn-secondary btn-sm" onclick="editService('${s.id}')" title="Edit"><i class="fas fa-pen"></i></button>
                     <button class="btn-warn btn-sm" onclick="downloadBuktiTitip(allServices.find(x=>x.id==='${s.id}'))" title="PDF"><i class="fas fa-file-pdf"></i></button>
                     <button class="btn-danger btn-sm" onclick="hapusService('${s.id}')" title="Hapus"><i class="fas fa-trash"></i></button>
+                    <button class="btn-success btn-sm" onclick="ubahStatus('${s.id}','${s.status}')" title="Lanjutkan Status"><i class="fas fa-forward"></i></button>
                 `;
                 }
 
@@ -2299,19 +2559,19 @@ Hp: 085333071119`;
                 <td class="font-mono text-xs" style="color:var(--accent)">${s.noService}</td>
                 <td class="text-xs" style="color:var(--muted)">${formatDate(s.tanggalMasuk)}</td>
                 <td>
-                    <div class="font-semibold text-sm">${s.namaPelanggan}</div>
+                    <div class="font-semibold text-xs">${s.namaPelanggan}</div>
                     <div class="text-xs" style="color:var(--muted)">${s.noTelp||''}</div>
                     <div class="text-xs" style="color:var(--muted)">${s.alamat?s.alamat.substring(0,20)+(s.alamat.length>20?'...':''):''}</div>
                 </td>
                 <td>
-                    <div class="text-sm">${s.jenisBarang}</div>
+                    <div class="text-xs">${s.jenisBarang}</div>
                     <div class="text-xs" style="color:var(--muted)">${s.merek}</div>
                 </td>
                 <td class="text-xs font-mono">${s.typeBarang||'-'}</td>
                 <td class="text-xs font-mono">${s.noSeri||'-'}</td>
                 <td class="text-xs" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.kelengkapan||'-'}">${s.kelengkapan||'-'}</td>
                 <td class="text-xs" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.keluhan}">${s.keluhan}</td>
-                <td class="font-mono font-semibold text-sm" style="color:var(--accent)">${formatRupiah(totalBiaya)}</td>
+                <td class="font-mono font-semibold text-xs" style="color:var(--accent2)">${formatRupiah(totalBiaya)}</td>
                 <td>${statusBadge(s.status)}</td>
                 <td><div class="flex gap-1 flex-wrap">${aksiButtons}</div></td>
             </tr>`;
@@ -2350,12 +2610,12 @@ Hp: 085333071119`;
                 return;
             }
             openModal('Edit Service',
-                `<form id="formEditService" class="space-y-4" onsubmit="return simpanEditService(event,'${id}')">
+                `<form id="formEditService" class="space-y-3" onsubmit="return simpanEditService(event,'${id}')">
             <div><label class="form-label">Nama Pelanggan</label><input type="text" class="form-input" id="eNama" value="${s.namaPelanggan}" required></div>
             <div><label class="form-label">No. Telepon</label><input type="tel" class="form-input" id="eTelp" value="${s.noTelp||''}"></div>
             <div><label class="form-label">Alamat</label><textarea class="form-input" id="eAlamat" rows="2">${s.alamat||''}</textarea></div>
-            <div class="grid grid-cols-2 gap-3"><div><label class="form-label">Jenis Barang</label><input type="text" class="form-input" id="eJenis" value="${s.jenisBarang||''}"></div><div><label class="form-label">Merek</label><input type="text" class="form-input" id="eMerek" value="${s.merek||''}"></div></div>
-            <div class="grid grid-cols-2 gap-3"><div><label class="form-label">Type</label><input type="text" class="form-input" id="eType" value="${s.typeBarang||''}"></div><div><label class="form-label">No. Seri</label><input type="text" class="form-input" id="eSeri" value="${s.noSeri||''}"></div></div>
+            <div class="grid grid-cols-2 gap-2"><div><label class="form-label">Jenis Barang</label><input type="text" class="form-input" id="eJenis" value="${s.jenisBarang||''}"></div><div><label class="form-label">Merek</label><input type="text" class="form-input" id="eMerek" value="${s.merek||''}"></div></div>
+            <div class="grid grid-cols-2 gap-2"><div><label class="form-label">Type</label><input type="text" class="form-input" id="eType" value="${s.typeBarang||''}"></div><div><label class="form-label">No. Seri</label><input type="text" class="form-input" id="eSeri" value="${s.noSeri||''}"></div></div>
             <div><label class="form-label">Kelengkapan</label><input type="text" class="form-input" id="eKelengkapan" value="${s.kelengkapan||''}"></div>
             <div><label class="form-label">Keluhan</label><textarea class="form-input" id="eKeluhan" rows="2">${s.keluhan||''}</textarea></div>
             <div><label class="form-label">Status</label><select class="form-input" id="eStatus"><option value="masuk" ${s.status==='masuk'?'selected':''}>Masuk</option><option value="diperiksa" ${s.status==='diperiksa'?'selected':''}>Diperiksa</option><option value="proses" ${s.status==='proses'?'selected':''}>Dalam Proses</option><option value="selesai" ${s.status==='selesai'?'selected':''}>Selesai</option></select></div>
@@ -2414,11 +2674,11 @@ Hp: 085333071119`;
             const siapAmbil = allServices.filter(s => s.status === 'selesai');
             const container = document.getElementById('listSiapAmbil');
             if (siapAmbil.length === 0) {
-                container.innerHTML = '<p class="text-sm" style="color:var(--muted)">Tidak ada barang siap diambil</p>';
+                container.innerHTML = '<p class="text-xs" style="color:var(--muted)">Tidak ada barang siap diambil</p>';
             } else {
                 container.innerHTML = siapAmbil.map(s => {
                     const hasDraft = savedSparepartDrafts[s.id] && savedSparepartDrafts[s.id].length > 0;
-                    return `<button class="w-full text-left p-3 rounded-xl transition-all ${hasDraft?'border-amber-500':'hover:border-emerald-500'}" style="background:var(--bg2);border:1px solid ${hasDraft?'rgba(245,166,35,0.5)':'var(--border)'}" onclick="pilihPengambilan('${s.id}')"><div class="flex items-center justify-between"><div><p class="font-mono text-sm font-semibold" style="color:var(--accent)">${s.noService}</p><p class="text-sm mt-1">${s.namaPelanggan} - ${s.merek}</p></div>${hasDraft?'<span class="text-xs px-2 py-1 rounded-full" style="background:rgba(245,166,35,0.12);color:#f5a623"><i class="fas fa-puzzle-piece mr-1"></i>Ada Sparepart</span>':''}</div></button>`;
+                    return `<button class="w-full text-left p-2 rounded-lg transition-all ${hasDraft?'border-amber-500':'hover:border-emerald-500'}" style="background:var(--bg);border:1px solid ${hasDraft?'rgba(245,158,11,0.5)':'var(--border)'}" onclick="pilihPengambilan('${s.id}')"><div class="flex items-center justify-between"><div><p class="font-mono text-xs font-semibold" style="color:var(--accent)">${s.noService}</p><p class="text-xs mt-1">${s.namaPelanggan} - ${s.merek}</p></div>${hasDraft?'<span class="text-xs px-2 py-1 rounded-full" style="background:rgba(245,158,11,0.12);color:#F59E0B"><i class="fas fa-puzzle-piece mr-1"></i>Ada Sparepart</span>':''}</div></button>`;
                 }).join('');
             }
             document.getElementById('detailPengambilan').style.display = 'none';
@@ -2450,7 +2710,7 @@ Hp: 085333071119`;
             if (!s) return;
             document.getElementById('detailPengambilan').style.display = 'block';
             document.getElementById('detailAmbilContent').innerHTML =
-                `<div class="grid grid-cols-2 gap-3 text-sm"><div><span class="form-label">No. Service</span><p class="font-mono font-semibold" style="color:var(--accent)">${s.noService}</p></div><div><span class="form-label">Status</span><p>${statusBadge(s.status)}</p></div><div><span class="form-label">Pelanggan</span><p>${s.namaPelanggan}</p></div><div><span class="form-label">Telepon</span><p>${s.noTelp||'-'}</p></div><div class="col-span-2"><span class="form-label">Alamat</span><p>${s.alamat||'-'}</p></div><div><span class="form-label">Jenis Barang</span><p>${s.jenisBarang}</p></div><div><span class="form-label">Merek</span><p>${s.merek}</p></div><div><span class="form-label">Type</span><p>${s.typeBarang||'-'}</p></div><div><span class="form-label">No. Seri</span><p>${s.noSeri||'-'}</p></div><div class="col-span-2"><span class="form-label">Kelengkapan</span><p>${s.kelengkapan||'-'}</p></div><div class="col-span-2"><span class="form-label">Keluhan</span><p>${s.keluhan}</p></div><div><span class="form-label">Tanggal Masuk</span><p>${formatDateTime(s.tanggalMasuk)}</p></div><div><span class="form-label">Estimasi Biaya</span><p class="font-semibold">${formatRupiah(s.estimasiBiaya)}</p></div></div>`;
+                `<div class="grid grid-cols-2 gap-3 text-xs"><div><span class="form-label">No. Service</span><p class="font-mono font-semibold" style="color:var(--accent)">${s.noService}</p></div><div><span class="form-label">Status</span><p>${statusBadge(s.status)}</p></div><div><span class="form-label">Pelanggan</span><p>${s.namaPelanggan}</p></div><div><span class="form-label">Telepon</span><p>${s.noTelp||'-'}</p></div><div class="col-span-2"><span class="form-label">Alamat</span><p>${s.alamat||'-'}</p></div><div><span class="form-label">Jenis Barang</span><p>${s.jenisBarang}</p></div><div><span class="form-label">Merek</span><p>${s.merek}</p></div><div><span class="form-label">Type</span><p>${s.typeBarang||'-'}</p></div><div><span class="form-label">No. Seri</span><p>${s.noSeri||'-'}</p></div><div class="col-span-2"><span class="form-label">Kelengkapan</span><p>${s.kelengkapan||'-'}</p></div><div class="col-span-2"><span class="form-label">Keluhan</span><p>${s.keluhan}</p></div><div><span class="form-label">Tanggal Masuk</span><p>${formatDateTime(s.tanggalMasuk)}</p></div><div><span class="form-label">Estimasi Biaya</span><p class="font-semibold">${formatRupiah(s.estimasiBiaya)}</p></div></div>`;
             document.getElementById('formPengambilanCard').style.display = 'block';
             document.getElementById('aBiaya').value = s.estimasiBiaya || 0;
             document.getElementById('aCatatan').value = '';
@@ -2509,7 +2769,7 @@ Hp: 085333071119`;
             const tbody = document.getElementById('sparepartPickerBody');
             if (sparepartRows.length === 0) {
                 tbody.innerHTML =
-                    `<tr id="sparepartEmptyRow"><td colspan="6" class="text-center py-3 text-sm" style="color:var(--muted)">Klik "Tambah" untuk memilih sparepart</td></tr>`;
+                    `<tr id="sparepartEmptyRow"><td colspan="6" class="text-center py-2 text-xs" style="color:var(--muted)">Klik "Tambah" untuk memilih sparepart</td></tr>`;
                 return;
             }
             const av = allSparepart.filter(s => Number(s.jumlah) > 0);
@@ -2521,7 +2781,7 @@ Hp: 085333071119`;
                     w = sp && row.qty > st;
                 const opts = av.map(s => `<option value="${s.id}" ${s.id===row.sparepartId?'selected':''}>${s.nama} (Stok: ${s.jumlah})</option>`)
                     .join('');
-                return `<tr><td style="padding:4px 4px"><select class="form-input" style="font-size:12px;padding:4px 6px;min-width:100px" onchange="onSparepartSelect(${row.rowId},this.value)"><option value="">-- Pilih --</option>${opts}</select></td><td style="padding:4px 4px"><span class="font-mono text-sm" style="color:${sp?'var(--accent)':'var(--muted)'}">${sp?formatRupiah(h):'-'}</span></td><td style="padding:4px 4px"><span class="font-mono text-sm" style="color:${w?'var(--danger)':'var(--text)'}">${sp?st:'-'}</span></td><td style="padding:4px 4px"><input type="number" class="form-input" style="font-size:12px;padding:4px 6px;width:60px;text-align:center" value="${row.qty}" min="1" max="${st||999}" onchange="onQtyChange(${row.rowId},this.value)" ${!sp?'disabled':''}></td><td style="padding:4px 4px"><span class="font-mono text-sm font-bold" style="color:var(--accent)">${sp?formatRupiah(sub):'-'}</span></td><td style="padding:4px 4px;text-align:center"><button type="button" class="btn-danger btn-sm" style="padding:2px 6px" onclick="hapusBarisSparepart(${row.rowId})"><i class="fas fa-times"></i></button></td></tr>`;
+                return `<tr><td style="padding:4px 4px"><select class="form-input" style="font-size:11px;padding:4px 6px;min-width:100px" onchange="onSparepartSelect(${row.rowId},this.value)"><option value="">-- Pilih --</option>${opts}</select></td><td style="padding:4px 4px"><span class="font-mono text-xs" style="color:${sp?'var(--accent)':'var(--muted)'}">${sp?formatRupiah(h):'-'}</span></td><td style="padding:4px 4px"><span class="font-mono text-xs" style="color:${w?'var(--danger)':'var(--text)'}">${sp?st:'-'}</span></td><td style="padding:4px 4px"><input type="number" class="form-input" style="font-size:11px;padding:4px 6px;width:60px;text-align:center" value="${row.qty}" min="1" max="${st||999}" onchange="onQtyChange(${row.rowId},this.value)" ${!sp?'disabled':''}></td><td style="padding:4px 4px"><span class="font-mono text-xs font-bold" style="color:var(--accent2)">${sp?formatRupiah(sub):'-'}</span></td><td style="padding:4px 4px;text-align:center"><button type="button" class="btn-danger btn-sm" style="padding:2px 6px" onclick="hapusBarisSparepart(${row.rowId})"><i class="fas fa-times"></i></button></td></tr>`;
             }).join('');
         }
 
@@ -2634,7 +2894,7 @@ Hp: 085333071119`;
             const container = document.getElementById('strukContainer');
             container.style.display = 'block';
             container.innerHTML =
-                `<div class="receipt-box" id="receiptContent"><h3>SERVICE ELEKTRONIK</h3><p style="text-align:center;font-size:9px;color:#666">Jl. R.W. Monginsidi - Bhoanawa - Ende - Hp: 085333071119</p><div class="divider"></div><p>No : ${s.noService}</p><p>Tgl: ${new Date().toLocaleDateString('id-ID')}</p><div class="divider"></div><p>Pelanggan: ${s.namaPelanggan}</p><p>Alamat   : ${s.alamat||'-'}</p><p>Barang   : ${s.jenisBarang}</p><p>Merek    : ${s.merek}</p><p>Type     : ${s.typeBarang||'-'}</p><p>No. Seri : ${s.noSeri||'-'}</p><p>Kelengkapan: ${s.kelengkapan||'-'}</p><p>Keluhan  : ${s.keluhan}</p>${sd}<div class="divider"></div><p>Biaya Service  : ${formatRupiah(b)}</p><p>Biaya Sparepart: ${formatRupiah(sp)}</p><div class="divider"></div><p style="font-size:13px;font-weight:bold">TOTAL: ${formatRupiah(t)}</p><div class="divider"></div><p style="text-align:center;font-size:9px;color:#666">Terima kasih atas kepercayaan Anda</p></div><div class="mt-3 text-center no-print"><button class="btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Cetak</button></div>`;
+                `<div class="receipt-box" id="receiptContent"><h3>SERVICE ELETRONIK</h3><p style="text-align:center;font-size:9px;color:#666">Jl. R.W. Monginsidi - Bhoanawa - Ende - Hp: 085333071119</p><div class="divider"></div><p>No : ${s.noService}</p><p>Tgl: ${new Date().toLocaleDateString('id-ID')}</p><div class="divider"></div><p>Pelanggan: ${s.namaPelanggan}</p><p>Alamat   : ${s.alamat||'-'}</p><p>Barang   : ${s.jenisBarang}</p><p>Merek    : ${s.merek}</p><p>Type     : ${s.typeBarang||'-'}</p><p>No. Seri : ${s.noSeri||'-'}</p><p>Kelengkapan: ${s.kelengkapan||'-'}</p><p>Keluhan  : ${s.keluhan}</p>${sd}<div class="divider"></div><p>Biaya Service  : ${formatRupiah(b)}</p><p>Biaya Sparepart: ${formatRupiah(sp)}</p><div class="divider"></div><p style="font-size:13px;font-weight:bold">TOTAL: ${formatRupiah(t)}</p><div class="divider"></div><p style="text-align:center;font-size:9px;color:#666">Terima kasih atas kepercayaan Anda</p></div><div class="mt-3 text-center no-print"><button class="btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Cetak</button></div>`;
         }
 
         // ===== SERVICE SELESAI =====
@@ -2660,19 +2920,19 @@ Hp: 085333071119`;
                 <td class="font-mono text-xs" style="color:var(--accent)">${s.noService}</td>
                 <td class="text-xs" style="color:var(--muted)">${formatDate(s.tanggalMasuk)}</td>
                 <td>
-                    <div class="font-semibold text-sm">${s.namaPelanggan}</div>
+                    <div class="font-semibold text-xs">${s.namaPelanggan}</div>
                     <div class="text-xs" style="color:var(--muted)">${s.noTelp||''}</div>
                     <div class="text-xs" style="color:var(--muted)">${s.alamat?s.alamat.substring(0,20)+(s.alamat.length>20?'...':''):''}</div>
                 </td>
                 <td>
-                    <div class="text-sm">${s.jenisBarang}</div>
+                    <div class="text-xs">${s.jenisBarang}</div>
                     <div class="text-xs" style="color:var(--muted)">${s.merek}</div>
                 </td>
                 <td class="text-xs font-mono">${s.typeBarang||'-'}</td>
                 <td class="text-xs font-mono">${s.noSeri||'-'}</td>
                 <td class="text-xs" style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.kelengkapan||'-'}">${s.kelengkapan||'-'}</td>
                 <td class="text-xs" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${s.keluhan}">${s.keluhan}</td>
-                <td class="font-mono font-semibold text-sm" style="color:var(--accent)">${formatRupiah(totalBiaya)}</td>
+                <td class="font-mono font-semibold text-xs" style="color:var(--accent2)">${formatRupiah(totalBiaya)}</td>
                 <td>${statusBadge(s.status)}</td>
                 <td>
                     <div class="flex gap-1 flex-wrap">
@@ -2694,7 +2954,7 @@ Hp: 085333071119`;
                 tb.innerHTML = '<tr><td colspan="4" class="text-center py-4" style="color:var(--muted)">Belum ada data.</td></tr>';
             } else {
                 tb.innerHTML = allJenis.map(j =>
-                    `<tr><td class="font-semibold text-sm">${j.nama}</td><td class="font-mono font-semibold text-sm" style="color:var(--accent)">${formatRupiah(j.biaya)}</td><td class="text-sm" style="color:var(--muted)">${j.deskripsi||'-'}</td><td><div class="flex gap-1"><button class="btn-secondary btn-sm" onclick="editJenis('${j.id}')"><i class="fas fa-pen"></i></button><button class="btn-danger btn-sm" onclick="hapusJenis('${j.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`
+                    `<tr><td class="font-semibold text-xs">${j.nama}</td><td class="font-mono font-semibold text-xs" style="color:var(--accent)">${formatRupiah(j.biaya)}</td><td class="text-xs" style="color:var(--muted)">${j.deskripsi||'-'}</td><td><div class="flex gap-1"><button class="btn-secondary btn-sm" onclick="editJenis('${j.id}')"><i class="fas fa-pen"></i></button><button class="btn-danger btn-sm" onclick="hapusJenis('${j.id}')"><i class="fas fa-trash"></i></button></div></td></tr>`
                     ).join('');
             }
         }
@@ -2719,7 +2979,7 @@ Hp: 085333071119`;
             const j = allJenis.find(x => x.id === id);
             if (!j) return;
             openModal('Edit Jenis',
-                `<form class="space-y-4" onsubmit="return simpanEditJenis(event,'${id}')"><div><label class="form-label">Nama</label><input type="text" class="form-input" id="ejNama" value="${j.nama}" required></div><div><label class="form-label">Biaya (Rp)</label><input type="number" class="form-input" id="ejBiaya" value="${j.biaya}" required min="0"></div><div><label class="form-label">Deskripsi</label><textarea class="form-input" id="ejDeskripsi" rows="2">${j.deskripsi||''}</textarea></div><div class="flex gap-2"><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Simpan</button><button type="button" class="btn-secondary" onclick="closeModal()">Batal</button></div></form>`
+                `<form class="space-y-3" onsubmit="return simpanEditJenis(event,'${id}')"><div><label class="form-label">Nama</label><input type="text" class="form-input" id="ejNama" value="${j.nama}" required></div><div><label class="form-label">Biaya (Rp)</label><input type="number" class="form-input" id="ejBiaya" value="${j.biaya}" required min="0"></div><div><label class="form-label">Deskripsi</label><textarea class="form-input" id="ejDeskripsi" rows="2">${j.deskripsi||''}</textarea></div><div class="flex gap-2"><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Simpan</button><button type="button" class="btn-secondary" onclick="closeModal()">Batal</button></div></form>`
             );
         }
 
@@ -2776,11 +3036,11 @@ Hp: 085333071119`;
                 const subtotal = (Number(s.jumlah) || 0) * (Number(s.harga) || 0);
                 return `<tr>
                 <td class="text-xs" style="color:var(--muted)">${index + 1}</td>
-                <td class="font-semibold text-sm">${s.nama}</td>
+                <td class="font-semibold text-xs">${s.nama}</td>
                 <td class="text-xs" style="color:var(--muted)">${s.kategori||'-'}</td>
-                <td><span class="font-mono font-bold text-sm" style="${sr?'color:var(--danger)':'color:var(--accent)'}">${s.jumlah}</span>${sr?'<span class="ml-1 text-xs" style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i></span>':''}</td>
-                <td class="font-mono text-sm">${formatRupiah(s.harga)}</td>
-                <td class="font-mono font-semibold text-sm" style="color:var(--accent)">${formatRupiah(subtotal)}</td>
+                <td><span class="font-mono font-bold text-xs" style="${sr?'color:var(--danger)':'color:var(--accent)'}">${s.jumlah}</span>${sr?'<span class="ml-1 text-xs" style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i></span>':''}</td>
+                <td class="font-mono text-xs">${formatRupiah(s.harga)}</td>
+                <td class="font-mono font-semibold text-xs" style="color:var(--accent2)">${formatRupiah(subtotal)}</td>
                 <td><div class="flex gap-1"><button class="btn-secondary btn-sm" onclick="editSparepart('${s.id}')"><i class="fas fa-pen"></i></button><button class="btn-secondary btn-sm" onclick="tambahStok('${s.id}')"><i class="fas fa-plus"></i></button><button class="btn-danger btn-sm" onclick="hapusSparepart('${s.id}')"><i class="fas fa-trash"></i></button></div></td>
             </tr>`;
             }).join('');
@@ -2854,7 +3114,7 @@ Hp: 085333071119`;
             const s = allSparepart.find(x => x.id === id);
             if (!s) return;
             openModal('Edit Sparepart',
-                `<form class="space-y-4" onsubmit="return simpanEditSparepart(event,'${id}')"><div><label class="form-label">Nama</label><input type="text" class="form-input" id="esNama" value="${s.nama}" required></div><div class="grid grid-cols-2 gap-3"><div><label class="form-label">Jumlah</label><input type="number" class="form-input" id="esJumlah" value="${s.jumlah}" required min="0"></div><div><label class="form-label">Harga (Rp)</label><input type="number" class="form-input" id="esHarga" value="${s.harga}" required min="0"></div></div><div><label class="form-label">Kategori</label><input type="text" class="form-input" id="esKategori" value="${s.kategori||''}"></div><div class="flex gap-2"><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Simpan</button><button type="button" class="btn-secondary" onclick="closeModal()">Batal</button></div></form>`
+                `<form class="space-y-3" onsubmit="return simpanEditSparepart(event,'${id}')"><div><label class="form-label">Nama</label><input type="text" class="form-input" id="esNama" value="${s.nama}" required></div><div class="grid grid-cols-2 gap-2"><div><label class="form-label">Jumlah</label><input type="number" class="form-input" id="esJumlah" value="${s.jumlah}" required min="0"></div><div><label class="form-label">Harga (Rp)</label><input type="number" class="form-input" id="esHarga" value="${s.harga}" required min="0"></div></div><div><label class="form-label">Kategori</label><input type="text" class="form-input" id="esKategori" value="${s.kategori||''}"></div><div class="flex gap-2"><button type="submit" class="btn-primary"><i class="fas fa-save"></i> Simpan</button><button type="button" class="btn-secondary" onclick="closeModal()">Batal</button></div></form>`
             );
         }
 
@@ -2935,11 +3195,11 @@ Hp: 085333071119`;
 
                 return `<tr>
                 <td class="text-xs" style="color:var(--muted)">${formatDateTime(item.tanggal)}</td>
-                <td class="font-semibold text-sm">${item.namaSparepart || '-'}</td>
+                <td class="font-semibold text-xs">${item.namaSparepart || '-'}</td>
                 <td class="text-xs" style="color:var(--muted)">${item.kategori || '-'}</td>
-                <td class="font-mono font-bold text-sm" style="color:var(--accent)">${unit}</td>
-                <td class="font-mono text-sm">${formatRupiah(harga)}</td>
-                <td class="font-mono font-semibold text-sm" style="color:var(--accent)">${formatRupiah(subtotal)}</td>
+                <td class="font-mono font-bold text-xs" style="color:var(--accent)">${unit}</td>
+                <td class="font-mono text-xs">${formatRupiah(harga)}</td>
+                <td class="font-mono font-semibold text-xs" style="color:var(--accent2)">${formatRupiah(subtotal)}</td>
                 <td class="text-xs" style="color:var(--muted)">${item.keterangan || 'Tambah Stok'}</td>
             </tr>`;
             }).join('');
@@ -2947,10 +3207,10 @@ Hp: 085333071119`;
             document.getElementById('riwayatStokTotal').innerHTML =
                 `
             <div class="text-right">
-                <span class="text-sm" style="color:var(--muted)">Total Unit Masuk: </span>
-                <span class="text-lg font-bold" style="color:var(--accent)">${totalUnit}</span>
-                <span class="text-sm ml-3" style="color:var(--muted)">Total Nilai: </span>
-                <span class="text-lg font-bold" style="color:var(--accent)">${formatRupiah(totalNilai)}</span>
+                <span class="text-xs" style="color:var(--muted)">Total Unit Masuk: </span>
+                <span class="text-sm font-bold" style="color:var(--accent)">${totalUnit}</span>
+                <span class="text-xs ml-2" style="color:var(--muted)">Total Nilai: </span>
+                <span class="text-sm font-bold" style="color:var(--accent)">${formatRupiah(totalNilai)}</span>
             </div>
             `;
         }
@@ -3017,9 +3277,9 @@ Hp: 085333071119`;
                     <span style="font-weight:600">${tglJatuhTempo}</span>
                     ${badgeGaransi}
                 </td>
-                <td class="text-sm">${s.namaPelanggan}</td>
-                <td class="text-sm">${s.jenisBarang} - ${s.merek}</td>
-                <td class="font-mono font-semibold text-sm">${formatRupiah(tl)}</td>
+                <td class="text-xs">${s.namaPelanggan}</td>
+                <td class="text-xs">${s.jenisBarang} - ${s.merek}</td>
+                <td class="font-mono font-semibold text-xs">${formatRupiah(tl)}</td>
                 <td>
                     <div class="flex gap-1">
                         <button class="btn-secondary btn-sm" onclick="lihatStrukRiwayat('${s.id}')" title="Lihat"><i class="fas fa-receipt"></i></button>
@@ -3054,7 +3314,7 @@ Hp: 085333071119`;
                 ra = ts > 0 ? Math.round(tp / ts) : 0,
                 sr = allSparepart.filter(s => Number(s.jumlah) <= 5).length;
             document.getElementById('laporanStats').innerHTML =
-                `<div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Total Pendapatan</p><p class="text-xl font-bold mt-1">${formatRupiah(tp)}</p></div><div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Service Selesai</p><p class="text-xl font-bold mt-1">${ts}</p></div><div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Rata-rata Biaya</p><p class="text-xl font-bold mt-1">${formatRupiah(ra)}</p></div><div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Stok Rendah</p><p class="text-xl font-bold mt-1" style="color:${sr>0?'var(--danger)':'var(--accent)'}">${sr}</p></div>`;
+                `<div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Total Pendapatan</p><p class="text-base font-bold mt-1">${formatRupiah(tp)}</p></div><div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Service Selesai</p><p class="text-base font-bold mt-1">${ts}</p></div><div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Rata-rata Biaya</p><p class="text-base font-bold mt-1">${formatRupiah(ra)}</p></div><div class="stat-card"><p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--muted)">Stok Rendah</p><p class="text-base font-bold mt-1" style="color:${sr>0?'var(--danger)':'var(--accent)'}">${sr}</p></div>`;
             const bv = document.getElementById('laporanBulan')?.value;
             let dl = diambil;
             if (bv) {
@@ -3075,11 +3335,11 @@ Hp: 085333071119`;
                         bp = Number(s.biayaSparepart || 0),
                         t = bs + bp;
                     gt += t;
-                    return `<tr><td class="text-xs">${i+1}</td><td class="font-mono text-xs" style="color:var(--accent)">${s.noService}</td><td class="text-xs">${formatDate(s.tanggalAmbil)}</td><td class="text-sm">${s.namaPelanggan}</td><td class="text-sm">${s.jenisBarang}</td><td class="font-mono text-sm">${formatRupiah(bs)}</td><td class="font-mono text-sm">${formatRupiah(bp)}</td><td class="font-mono font-bold text-sm">${formatRupiah(t)}</td></tr>`;
+                    return `<tr><td class="text-xs">${i+1}</td><td class="font-mono text-xs" style="color:var(--accent)">${s.noService}</td><td class="text-xs">${formatDate(s.tanggalAmbil)}</td><td class="text-xs">${s.namaPelanggan}</td><td class="text-xs">${s.jenisBarang}</td><td class="font-mono text-xs">${formatRupiah(bs)}</td><td class="font-mono text-xs">${formatRupiah(bp)}</td><td class="font-mono font-bold text-xs">${formatRupiah(t)}</td></tr>`;
                 }).join('');
             }
             document.getElementById('laporanTotal').innerHTML =
-                `<div class="text-right"><span class="text-sm" style="color:var(--muted)">Grand Total: </span><span class="text-xl font-bold" style="color:var(--accent)">${formatRupiah(gt)}</span></div>`;
+                `<div class="text-right"><span class="text-xs" style="color:var(--muted)">Grand Total: </span><span class="text-sm font-bold" style="color:var(--accent)">${formatRupiah(gt)}</span></div>`;
             renderMonthlyChart();
             renderJenisChart();
         }
@@ -3108,12 +3368,12 @@ Hp: 085333071119`;
                     datasets: [{
                         label: 'Pendapatan',
                         data: rvs,
-                        borderColor: '#0066ff',
-                        backgroundColor: 'rgba(0,102,255,0.08)',
+                        borderColor: '#E31837',
+                        backgroundColor: 'rgba(227,24,55,0.08)',
                         fill: true,
                         tension: 0.4,
-                        pointBackgroundColor: '#0066ff',
-                        pointRadius: 4
+                        pointBackgroundColor: '#E31837',
+                        pointRadius: 3
                     }]
                 },
                 options: {
@@ -3122,7 +3382,7 @@ Hp: 085333071119`;
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { ticks: { color: '#64748B', callback: v => 'Rp ' + (v / 1000) + 'k' },
-                            grid: { color: 'rgba(0,0,0,0.04)' } },
+                            grid: { color: 'rgba(31,45,71,0.5)' } },
                         x: { ticks: { color: '#64748B' }, grid: { display: false } }
                     }
                 }
@@ -3135,7 +3395,7 @@ Hp: 085333071119`;
             const c = {};
             allServices.forEach(s => { c[s.jenisBarang] = (c[s.jenisBarang] || 0) + 1; });
             const sorted = Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 6),
-                colors = ['#0066ff', '#f5a623', '#7c5cfc', '#00a854', '#e53e3e', '#14b8a6'];
+                colors = ['#E31837', '#3b82f6', '#f59e0b', '#a78bfa', '#10b981', '#ec4899'];
             jenisChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -3146,7 +3406,7 @@ Hp: 085333071119`;
                         backgroundColor: colors.map(c => c + '33'),
                         borderColor: colors,
                         borderWidth: 2,
-                        borderRadius: 6
+                        borderRadius: 4
                     }]
                 },
                 options: {
@@ -3155,8 +3415,8 @@ Hp: 085333071119`;
                     indexAxis: 'y',
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { ticks: { color: '#64748B' }, grid: { color: 'rgba(0,0,0,0.04)' } },
-                        y: { ticks: { color: '#64748B', font: { size: 10 } }, grid: { display: false } }
+                        x: { ticks: { color: '#64748B' }, grid: { color: 'rgba(31,45,71,0.5)' } },
+                        y: { ticks: { color: '#94A3B8', font: { size: 9 } }, grid: { display: false } }
                     }
                 }
             });
