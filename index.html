@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* ... (CSS tetap sama seperti sebelumnya) ... */
+        /* ... semua style tetap sama seperti sebelumnya ... */
         * {
             margin: 0;
             padding: 0;
@@ -920,7 +920,6 @@
             text-decoration: underline;
         }
 
-        /* Icon keluarga & tamu style */
         .icon-keluarga, .icon-tamu {
             display: inline-flex;
             align-items: center;
@@ -1802,9 +1801,9 @@
     // CLOUDINARY CONFIGURATION
     // ======================================================================
     const CLOUDINARY_CONFIG = {
-        cloudName: 'dldjr0ik',
-        uploadPreset: 'rt_kita_upload', // Buat upload preset di Cloudinary dashboard
-        apiKey: '293477751524544' // API Key dari Cloudinary
+        uploadPreset: 'rt_kita_upload',  // Ganti dengan upload preset Anda
+        cloudName: 'your_cloud_name',    // Ganti dengan cloud name Anda
+        apiKey: '488812177986188'        // API Key Anda
     };
 
     // ======================================================================
@@ -1850,11 +1849,9 @@
                                 url: response.secure_url,
                                 publicId: response.public_id,
                                 fileName: file.name,
-                                fileSize: file.size,
-                                fileType: file.type,
+                                size: file.size,
                                 format: response.format,
-                                width: response.width,
-                                height: response.height
+                                resourceType: response.resource_type
                             });
                         } else {
                             reject(new Error('Cloudinary upload error: ' + (response.error?.message || 'Unknown error')));
@@ -1871,7 +1868,7 @@
                 reject(new Error('Network error during upload'));
             };
 
-            xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`, true);
+            xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/auto/upload`, true);
             xhr.send(formData);
         });
     }
@@ -2430,7 +2427,7 @@
     }
 
     // ======================================================================
-    // KARTU KELUARGA - DENGAN UPLOAD ANGGOTA
+    // KARTU KELUARGA
     // ======================================================================
     let currentKKIndex = -1;
 
@@ -2665,7 +2662,7 @@
                 
                 fileUrl = result.url;
                 fileName = result.fileName;
-                fileSize = result.fileSize;
+                fileSize = selectedFileAnggota.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -3532,7 +3529,7 @@
                 
                 fotoUrl = result.url;
                 fileName = result.fileName;
-                fileSize = result.fileSize;
+                fileSize = selectedFileDok.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -3605,32 +3602,42 @@
         });
     });
 
-    document.getElementById('settingLogoProvinsi').addEventListener('change', async function(e) {
+    document.getElementById('settingLogoProvinsi').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
-        try {
-            const result = await uploadToCloudinary(file);
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            document.getElementById('previewProvinsi').innerHTML = `<img src="${ev.target.result}" alt="Logo Provinsi" />`;
+        };
+        reader.readAsDataURL(file);
+        
+        uploadToCloudinary(file, null).then(result => {
             settingsData.logoProvinsi = result.url;
-            document.getElementById('previewProvinsi').innerHTML = `<img src="${result.url}" alt="Logo Provinsi" />`;
+            localStorage.setItem('rt_logoProvinsi', result.url);
             renderHeaderLogos();
             alert('Logo provinsi berhasil diupload ke Cloudinary!');
-        } catch (err) {
+        }).catch(err => {
             alert('Gagal upload logo ke Cloudinary: ' + err.message);
-        }
+        });
     });
 
-    document.getElementById('settingLogoKabupaten').addEventListener('change', async function(e) {
+    document.getElementById('settingLogoKabupaten').addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
-        try {
-            const result = await uploadToCloudinary(file);
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            document.getElementById('previewKabupaten').innerHTML = `<img src="${ev.target.result}" alt="Logo Kabupaten" />`;
+        };
+        reader.readAsDataURL(file);
+        
+        uploadToCloudinary(file, null).then(result => {
             settingsData.logoKabupaten = result.url;
-            document.getElementById('previewKabupaten').innerHTML = `<img src="${result.url}" alt="Logo Kabupaten" />`;
+            localStorage.setItem('rt_logoKabupaten', result.url);
             renderHeaderLogos();
             alert('Logo kabupaten berhasil diupload ke Cloudinary!');
-        } catch (err) {
+        }).catch(err => {
             alert('Gagal upload logo ke Cloudinary: ' + err.message);
-        }
+        });
     });
 
     document.getElementById('simpanLogo').addEventListener('click', function() {
@@ -3720,7 +3727,7 @@
                 
                 fileUrl = result.url;
                 fileName = result.fileName;
-                fileSize = result.fileSize;
+                fileSize = selectedFileTamu.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -3823,7 +3830,7 @@
                 
                 fileUrl = result.url;
                 fileName = result.fileName;
-                fileSize = result.fileSize;
+                fileSize = selectedFile.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -4024,6 +4031,10 @@
     // ======================================================================
     // INIT
     // ======================================================================
+    if (CLOUDINARY_CONFIG.cloudName === 'your_cloud_name') {
+        console.warn('⚠️ Cloudinary cloud name belum diatur. Silakan ganti CLOUDINARY_CONFIG.cloudName dengan cloud name Anda.');
+    }
+
     updateAnggotaCounter();
 
     loadAllData();
