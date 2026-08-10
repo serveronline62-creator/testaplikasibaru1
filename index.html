@@ -10,7 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        /* ... semua style tetap sama seperti sebelumnya ... */
+        /* === ALL STYLES SAME AS BEFORE === */
         * {
             margin: 0;
             padding: 0;
@@ -1801,9 +1801,9 @@
     // CLOUDINARY CONFIGURATION
     // ======================================================================
     const CLOUDINARY_CONFIG = {
-        uploadPreset: 'rt_kita_upload',  // Ganti dengan upload preset Anda
-        cloudName: 'your_cloud_name',    // Ganti dengan cloud name Anda
-        apiKey: '488812177986188'        // API Key Anda
+        cloudName: 'YOUR_CLOUD_NAME', // Ganti dengan cloud name Anda
+        uploadPreset: 'YOUR_UPLOAD_PRESET', // Ganti dengan upload preset Anda
+        apiKey: '488812177986188' // API Key yang diberikan
     };
 
     // ======================================================================
@@ -1849,12 +1849,11 @@
                                 url: response.secure_url,
                                 publicId: response.public_id,
                                 fileName: file.name,
-                                size: file.size,
                                 format: response.format,
-                                resourceType: response.resource_type
+                                bytes: response.bytes
                             });
                         } else {
-                            reject(new Error('Cloudinary upload error: ' + (response.error?.message || 'Unknown error')));
+                            reject(new Error('Cloudinary upload failed: Invalid response'));
                         }
                     } catch (e) {
                         reject(new Error('Invalid response from Cloudinary: ' + e.message));
@@ -1865,10 +1864,10 @@
             };
 
             xhr.onerror = function() {
-                reject(new Error('Network error during upload'));
+                reject(new Error('Network error during upload to Cloudinary'));
             };
 
-            xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/auto/upload`, true);
+            xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/upload`, true);
             xhr.send(formData);
         });
     }
@@ -2427,7 +2426,7 @@
     }
 
     // ======================================================================
-    // KARTU KELUARGA
+    // KARTU KELUARGA - DENGAN UPLOAD ANGGOTA
     // ======================================================================
     let currentKKIndex = -1;
 
@@ -2548,6 +2547,7 @@
             </div>
         `;
 
+        // Event listeners untuk tombol upload anggota
         document.querySelectorAll('.btn-upload-anggota').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -2557,6 +2557,7 @@
             });
         });
 
+        // Event listeners untuk tombol view file anggota
         document.querySelectorAll('.btn-file-view-anggota').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -2574,7 +2575,7 @@
     }
 
     // ======================================================================
-    // UPLOAD ANGGOTA
+    // UPLOAD ANGGOTA (CLOUDINARY)
     // ======================================================================
     let selectedFileAnggota = null;
 
@@ -2662,7 +2663,7 @@
                 
                 fileUrl = result.url;
                 fileName = result.fileName;
-                fileSize = selectedFileAnggota.size;
+                fileSize = result.bytes || selectedFileAnggota.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -2678,17 +2679,20 @@
             return;
         }
 
+        // Update anggota data
         a.fileUrl = fileUrl;
         a.fileName = fileName;
         a.fileType = jenis;
         a.fileSize = fileSize;
         a.fileTime = fileTime;
 
+        // Update ke Firebase
         keluargaRef.doc(k.id).update({
             anggotaDetail: k.anggotaDetail
         }).then(() => {
             loadAllData();
             closeModal('modalUploadAnggota');
+            // Re-open kartu keluarga
             setTimeout(() => {
                 showKartuKeluarga(keluargaIndex);
             }, 300);
@@ -3446,7 +3450,7 @@
     });
 
     // ======================================================================
-    // SIMPAN DOKUMENTASI
+    // SIMPAN DOKUMENTASI (CLOUDINARY)
     // ======================================================================
     let uploadDokIndex = -1;
     let selectedFileDok = null;
@@ -3529,7 +3533,7 @@
                 
                 fotoUrl = result.url;
                 fileName = result.fileName;
-                fileSize = selectedFileDok.size;
+                fileSize = result.bytes || selectedFileDok.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -3583,7 +3587,7 @@
     });
 
     // ======================================================================
-    // SETTINGS SAVE
+    // SETTINGS SAVE (CLOUDINARY FOR LOGOS)
     // ======================================================================
     document.getElementById('simpanPengurus').addEventListener('click', function() {
         const data = {
@@ -3602,42 +3606,47 @@
         });
     });
 
-    document.getElementById('settingLogoProvinsi').addEventListener('change', function(e) {
+    document.getElementById('settingLogoProvinsi').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (!file) return;
+        
+        // Tampilkan preview
         const reader = new FileReader();
         reader.onload = function(ev) {
             document.getElementById('previewProvinsi').innerHTML = `<img src="${ev.target.result}" alt="Logo Provinsi" />`;
         };
         reader.readAsDataURL(file);
         
-        uploadToCloudinary(file, null).then(result => {
+        try {
+            const result = await uploadToCloudinary(file);
             settingsData.logoProvinsi = result.url;
-            localStorage.setItem('rt_logoProvinsi', result.url);
+            await settingsRef.set({ logoProvinsi: result.url }, { merge: true });
             renderHeaderLogos();
             alert('Logo provinsi berhasil diupload ke Cloudinary!');
-        }).catch(err => {
+        } catch (err) {
             alert('Gagal upload logo ke Cloudinary: ' + err.message);
-        });
+        }
     });
 
-    document.getElementById('settingLogoKabupaten').addEventListener('change', function(e) {
+    document.getElementById('settingLogoKabupaten').addEventListener('change', async function(e) {
         const file = e.target.files[0];
         if (!file) return;
+        
         const reader = new FileReader();
         reader.onload = function(ev) {
             document.getElementById('previewKabupaten').innerHTML = `<img src="${ev.target.result}" alt="Logo Kabupaten" />`;
         };
         reader.readAsDataURL(file);
         
-        uploadToCloudinary(file, null).then(result => {
+        try {
+            const result = await uploadToCloudinary(file);
             settingsData.logoKabupaten = result.url;
-            localStorage.setItem('rt_logoKabupaten', result.url);
+            await settingsRef.set({ logoKabupaten: result.url }, { merge: true });
             renderHeaderLogos();
             alert('Logo kabupaten berhasil diupload ke Cloudinary!');
-        }).catch(err => {
+        } catch (err) {
             alert('Gagal upload logo ke Cloudinary: ' + err.message);
-        });
+        }
     });
 
     document.getElementById('simpanLogo').addEventListener('click', function() {
@@ -3653,7 +3662,7 @@
     });
 
     // ======================================================================
-    // UPLOAD TAMU
+    // UPLOAD TAMU (CLOUDINARY)
     // ======================================================================
     let uploadTamuIndex = -1;
     let selectedFileTamu = null;
@@ -3727,7 +3736,7 @@
                 
                 fileUrl = result.url;
                 fileName = result.fileName;
-                fileSize = selectedFileTamu.size;
+                fileSize = result.bytes || selectedFileTamu.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -3756,7 +3765,7 @@
     });
 
     // ======================================================================
-    // UPLOAD KELUARGA
+    // UPLOAD KELUARGA (CLOUDINARY)
     // ======================================================================
     let uploadTargetIndex = -1;
     let selectedFile = null;
@@ -3830,7 +3839,7 @@
                 
                 fileUrl = result.url;
                 fileName = result.fileName;
-                fileSize = selectedFile.size;
+                fileSize = result.bytes || selectedFile.size;
                 fileTime = new Date().toISOString();
                 progressDiv.style.display = 'none';
             } catch (err) {
@@ -4031,14 +4040,15 @@
     // ======================================================================
     // INIT
     // ======================================================================
-    if (CLOUDINARY_CONFIG.cloudName === 'your_cloud_name') {
-        console.warn('⚠️ Cloudinary cloud name belum diatur. Silakan ganti CLOUDINARY_CONFIG.cloudName dengan cloud name Anda.');
+    // Check Cloudinary config
+    if (CLOUDINARY_CONFIG.cloudName === 'YOUR_CLOUD_NAME' || CLOUDINARY_CONFIG.uploadPreset === 'YOUR_UPLOAD_PRESET') {
+        console.warn('⚠️ Cloudinary configuration belum diatur. Silakan ganti cloudName dan uploadPreset dengan milik Anda.');
     }
 
     updateAnggotaCounter();
-
     loadAllData();
 
+    // Real-time listeners
     keluargaRef.onSnapshot(() => { loadAllData(); });
     dokumentasiRef.onSnapshot(() => { loadAllData(); });
     tamuRef.onSnapshot(() => { loadAllData(); });
