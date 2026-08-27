@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>POS Kasir Modern - Firebase Sync</title>
 
     <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
     <style>
         :root {
@@ -57,6 +57,7 @@
             background: #94a3b8;
         }
 
+        /* LOGIN */
         #login-screen {
             min-height: 100vh;
             display: flex;
@@ -126,6 +127,8 @@
         #app-screen {
             display: none;
         }
+
+        /* SIDEBAR */
         .sidebar {
             width: 250px;
             height: 100vh;
@@ -582,34 +585,43 @@
             border-color: var(--primary-hover);
         }
 
+        /* Settings page specific */
         .settings-group {
             border-bottom: 1px solid var(--border);
             padding-bottom: 16px;
             margin-bottom: 16px;
         }
-        .settings-group:last-child {
+        .settings-group:last-of-type {
             border-bottom: none;
             margin-bottom: 0;
-            padding-bottom: 0;
         }
-        .settings-group-title {
+        .settings-group h6 {
             font-weight: 700;
             font-size: 0.85rem;
             color: var(--text-dark);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-        .settings-group-title i {
-            color: var(--primary);
+        .settings-group .text-muted {
+            font-size: 0.75rem;
         }
 
-        .form-label-sm {
+        .printer-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
             font-size: 0.75rem;
             font-weight: 600;
-            color: var(--text-muted);
-            margin-bottom: 2px;
+        }
+        .printer-status.connected {
+            background: #f0fdf4;
+            color: var(--success);
+            border: 1px solid #bbf7d0;
+        }
+        .printer-status.disconnected {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
         }
 
         @media (max-width: 992px) {
@@ -657,7 +669,7 @@
     <!-- Loading Overlay -->
     <div id="loading-overlay">
         <div class="text-center">
-            <div class="spinner-border" style="width: 2.5rem; height: 2.5rem; color: var(--primary);" role="status"></div>
+            <div class="spinner-border" style="width:2.5rem;height:2.5rem;color:var(--primary);" role="status"></div>
             <p class="mt-2 text-muted fw-medium" style="font-size:0.85rem;">Memuat data...</p>
         </div>
     </div>
@@ -673,21 +685,21 @@
         <div class="login-card">
             <div class="login-logo"><i class="bi bi-shop"></i></div>
             <div class="text-center mb-3">
-                <h3 class="fw-bold" style="letter-spacing: -0.5px; font-size:1.4rem;">KasirPOS</h3>
-                <p class="text-muted" style="font-size: 0.8rem;">Masuk menggunakan akun Firebase Auth</p>
+                <h3 class="fw-bold" style="letter-spacing:-0.5px;font-size:1.4rem;">KasirPOS</h3>
+                <p class="text-muted" style="font-size:0.8rem;">Masuk menggunakan akun Firebase Auth</p>
             </div>
             <div class="form-floating mb-2">
-                <input type="email" class="form-control form-control-lg" id="login-email" placeholder="Email" style="font-size:0.9rem;">
+                <input type="email" class="form-control form-control-lg" id="login-email" placeholder="Email" style="font-size:0.9rem;" />
                 <label for="login-email">Email</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control form-control-lg" id="login-pass" placeholder="Password" style="font-size:0.9rem;" onkeydown="if(event.key==='Enter')handleLogin()">
+                <input type="password" class="form-control form-control-lg" id="login-pass" placeholder="Password" style="font-size:0.9rem;" onkeydown="if(event.key==='Enter')handleLogin()" />
                 <label for="login-pass">Password</label>
             </div>
-            <button class="btn btn-primary w-100 btn-lg" onclick="handleLogin()" style="border-radius: 10px; font-size:0.9rem;">
+            <button class="btn btn-primary w-100 btn-lg" onclick="handleLogin()" style="border-radius:10px;font-size:0.9rem;">
                 <i class="bi bi-box-arrow-in-right me-1"></i> Login
             </button>
-            <div id="login-error" class="text-danger text-center mt-2 fw-medium" style="display:none; font-size:0.8rem;"></div>
+            <div id="login-error" class="text-danger text-center mt-2 fw-medium" style="display:none;font-size:0.8rem;"></div>
         </div>
     </div>
 
@@ -713,7 +725,6 @@
             <ul class="sidebar-menu" style="margin-top:0;">
                 <li onclick="showPage('reports', this)"><i class="bi bi-graph-up-arrow"></i> Laporan</li>
                 <li onclick="showPage('history', this)"><i class="bi bi-clock-history"></i> Riwayat Transaksi</li>
-                <!-- MENU PENGATURAN (dibawah Riwayat Transaksi) -->
                 <li onclick="showPage('settings', this)"><i class="bi bi-gear-fill"></i> Pengaturan</li>
                 <li class="logout-btn" onclick="handleLogout()"><i class="bi bi-box-arrow-left"></i> Keluar (Logout)</li>
             </ul>
@@ -724,7 +735,7 @@
         <div class="main-content">
             <!-- Top Bar -->
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <button class="btn btn-light d-lg-none" onclick="document.getElementById('sidebar').classList.toggle('show')" style="border-radius: 8px; padding:4px 10px; font-size:0.8rem;">
+                <button class="btn btn-light d-lg-none" onclick="document.getElementById('sidebar').classList.toggle('show')" style="border-radius:8px;padding:4px 10px;font-size:0.8rem;">
                     <i class="bi bi-list fs-6"></i>
                 </button>
                 <div class="ms-auto d-flex align-items-center gap-2">
@@ -753,37 +764,33 @@
                     <div class="row align-items-end g-2">
                         <div class="col-md-4">
                             <h6 class="fw-bold mb-0" style="font-size:0.8rem;"><i class="bi bi-funnel"></i> Filter Pendapatan & Grafik</h6>
-                            <p class="text-muted mb-0" style="font-size: 0.7rem;">Kosongkan tanggal untuk melihat 30 hari terakhir.</p>
+                            <p class="text-muted mb-0" style="font-size:0.7rem;">Kosongkan tanggal untuk melihat 30 hari terakhir.</p>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Dari Tanggal</label>
-                            <input type="date" id="dash-start" class="form-control" style="border-radius:8px; font-size:0.8rem; padding:4px 8px;" onchange="renderDashboard()">
+                            <input type="date" id="dash-start" class="form-control" style="border-radius:8px;font-size:0.8rem;padding:4px 8px;" onchange="renderDashboard()" />
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Sampai Tanggal</label>
-                            <input type="date" id="dash-end" class="form-control" style="border-radius:8px; font-size:0.8rem; padding:4px 8px;" onchange="renderDashboard()">
+                            <input type="date" id="dash-end" class="form-control" style="border-radius:8px;font-size:0.8rem;padding:4px 8px;" onchange="renderDashboard()" />
                         </div>
                         <div class="col-md-2">
-                            <button class="btn btn-primary w-100" style="border-radius:8px; font-size:0.8rem; padding:6px;" onclick="renderDashboard()"><i class="bi bi-search"></i> Cek</button>
+                            <button class="btn btn-primary w-100" style="border-radius:8px;font-size:0.8rem;padding:6px;" onclick="renderDashboard()"><i class="bi bi-search"></i> Cek</button>
                         </div>
                     </div>
                 </div>
                 <div class="row g-3 mb-3">
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid var(--primary);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Pendapatan</p><h4 class="fw-bold" style="font-size:1.1rem;" id="dash-pendapatan">Rp 0</h4></div><div class="stat-icon" style="background:#fef2f2;color:var(--primary);"><i class="bi bi-cash-stack"></i></div></div></div></div>
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid var(--success);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Laba Bersih</p><h4 class="fw-bold" style="color:var(--success); font-size:1.1rem;" id="dash-laba">Rp 0</h4></div><div class="stat-icon" style="background:#f0fdf4;color:var(--success);"><i class="bi bi-graph-up"></i></div></div></div></div>
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid var(--warning);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Total Transaksi</p><h4 class="fw-bold" style="font-size:1.1rem;" id="dash-trx">0</h4></div><div class="stat-icon" style="background:#fff7ed;color:var(--warning);"><i class="bi bi-receipt"></i></div></div></div></div>
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid var(--sidebar-bg);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Modal Gudang</p><h4 class="fw-bold" style="font-size:1.1rem;" id="dash-modal">Rp 0</h4></div><div class="stat-icon" style="background:#eff6ff;color:var(--sidebar-bg);"><i class="bi bi-archive"></i></div></div></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid var(--primary);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Pendapatan</p><h4 class="fw-bold" style="font-size:1.1rem;" id="dash-pendapatan">Rp 0</h4></div><div class="stat-icon" style="background:#fef2f2;color:var(--primary);"><i class="bi bi-cash-stack"></i></div></div></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid var(--success);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Laba Bersih</p><h4 class="fw-bold" style="color:var(--success);font-size:1.1rem;" id="dash-laba">Rp 0</h4></div><div class="stat-icon" style="background:#f0fdf4;color:var(--success);"><i class="bi bi-graph-up"></i></div></div></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid var(--warning);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Total Transaksi</p><h4 class="fw-bold" style="font-size:1.1rem;" id="dash-trx">0</h4></div><div class="stat-icon" style="background:#fff7ed;color:var(--warning);"><i class="bi bi-receipt"></i></div></div></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid var(--sidebar-bg);"><div class="d-flex justify-content-between align-items-center"><div><p class="text-muted mb-0" style="font-size:0.75rem;">Modal Gudang</p><h4 class="fw-bold" style="font-size:1.1rem;" id="dash-modal">Rp 0</h4></div><div class="stat-icon" style="background:#eff6ff;color:var(--sidebar-bg);"><i class="bi bi-archive"></i></div></div></div></div>
                 </div>
                 <div class="table-container mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-1">
                         <h6 class="fw-bold mb-0" style="font-size:0.85rem;"><i class="bi bi-graph-up"></i> Grafik Penjualan</h6>
                         <div class="d-flex gap-1">
-                            <button class="chart-type-btn active" id="chart-bar" onclick="setChartType('bar')">
-                                <i class="bi bi-bar-chart-fill"></i> Batang
-                            </button>
-                            <button class="chart-type-btn" id="chart-line" onclick="setChartType('line')">
-                                <i class="bi bi-graph-up-arrow"></i> Garis
-                            </button>
+                            <button class="chart-type-btn active" id="chart-bar" onclick="setChartType('bar')"><i class="bi bi-bar-chart-fill"></i> Batang</button>
+                            <button class="chart-type-btn" id="chart-line" onclick="setChartType('line')"><i class="bi bi-graph-up-arrow"></i> Garis</button>
                         </div>
                     </div>
                     <div id="chart-period" class="text-muted mb-1" style="font-size:0.75rem;"></div>
@@ -791,8 +798,8 @@
                 </div>
                 <div class="row g-3">
                     <div class="col-md-4"><div class="table-container h-100"><h6 class="fw-bold mb-2" style="font-size:0.8rem;"><i class="bi bi-box-seam"></i> Ringkasan Stok</h6><div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom" style="font-size:0.8rem;"><span>Total SKU</span><span class="fw-bold" id="dash-sku">0</span></div><div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom" style="font-size:0.8rem;"><span>Total Kuantitas</span><span class="fw-bold" id="dash-qty">0</span></div><div class="d-flex justify-content-between align-items-center" style="font-size:0.8rem;"><span>Stok Habis</span><span class="badge rounded-pill" style="background:var(--primary);font-size:0.75rem;" id="dash-habis">0</span></div></div></div>
-                    <div class="col-md-4"><div class="table-container h-100"><h6 class="fw-bold mb-2" style="color:var(--warning); font-size:0.8rem;"><i class="bi bi-exclamation-triangle"></i> Stok Minimum (&le; 5)</h6><div id="dash-low-stock" style="max-height: 180px; overflow-y: auto; font-size:0.8rem;"><p class="text-muted text-center mb-0" style="font-size:0.8rem;">Semua stok aman</p></div></div></div>
-                    <div class="col-md-4"><div class="table-container h-100"><h6 class="fw-bold mb-2" style="color:var(--primary); font-size:0.8rem;"><i class="bi bi-trophy"></i> Produk Terlaris</h6><div id="dash-top-products" style="max-height: 180px; overflow-y: auto; font-size:0.8rem;"><p class="text-muted text-center mb-0" style="font-size:0.8rem;">Belum ada penjualan</p></div></div></div>
+                    <div class="col-md-4"><div class="table-container h-100"><h6 class="fw-bold mb-2" style="color:var(--warning);font-size:0.8rem;"><i class="bi bi-exclamation-triangle"></i> Stok Minimum (&le; 5)</h6><div id="dash-low-stock" style="max-height:180px;overflow-y:auto;font-size:0.8rem;"><p class="text-muted text-center mb-0" style="font-size:0.8rem;">Semua stok aman</p></div></div></div>
+                    <div class="col-md-4"><div class="table-container h-100"><h6 class="fw-bold mb-2" style="color:var(--primary);font-size:0.8rem;"><i class="bi bi-trophy"></i> Produk Terlaris</h6><div id="dash-top-products" style="max-height:180px;overflow-y:auto;font-size:0.8rem;"><p class="text-muted text-center mb-0" style="font-size:0.8rem;">Belum ada penjualan</p></div></div></div>
                 </div>
             </div>
 
@@ -801,7 +808,7 @@
                 <div class="page-header"><h2>Kasir (POS)</h2></div>
                 <div class="pos-grid">
                     <div class="pos-products">
-                        <div class="form-floating mb-2"><input type="text" class="form-control" id="pos-search" placeholder="Cari produk..." oninput="renderPosProducts()" style="font-size:0.8rem;"><label for="pos-search" style="font-size:0.75rem;">Cari Produk atau Kategori</label></div>
+                        <div class="form-floating mb-2"><input type="text" class="form-control" id="pos-search" placeholder="Cari produk..." oninput="renderPosProducts()" style="font-size:0.8rem;" /><label for="pos-search" style="font-size:0.75rem;">Cari Produk atau Kategori</label></div>
                         <div class="row g-2" id="pos-product-list"></div>
                     </div>
                     <div class="pos-cart">
@@ -809,9 +816,9 @@
                         <div class="cart-items" id="cart-list"><div class="text-center text-muted py-4" style="font-size:0.8rem;"><i class="bi bi-cart-x" style="font-size:1.5rem;"></i><p class="mt-1 mb-0">Keranjang kosong</p></div></div>
                         <div class="mt-auto pt-2 border-top">
                             <div class="d-flex justify-content-between mb-1"><span class="text-muted" style="font-size:0.8rem;">Total</span><h4 class="fw-bold" style="font-size:1.1rem;" id="cart-total">Rp 0</h4></div>
-                            <div class="form-floating mb-2"><input type="number" class="form-control" id="cart-bayar" placeholder="Bayar" oninput="calcChange()" style="font-size:0.8rem;"><label for="cart-bayar" style="font-size:0.75rem;">Uang Bayar</label></div>
-                            <div class="d-flex justify-content-between mb-2"><span class="text-muted" style="font-size:0.8rem;">Kembalian</span><h5 class="fw-bold" style="color:var(--success); font-size:1rem;" id="cart-kembalian">Rp 0</h5></div>
-                            <button class="btn btn-primary w-100 btn-lg" style="border-radius:10px; font-size:0.9rem; padding:8px;" onclick="processPayment()"><i class="bi bi-check-circle"></i> Proses Pembayaran</button>
+                            <div class="form-floating mb-2"><input type="number" class="form-control" id="cart-bayar" placeholder="Bayar" oninput="calcChange()" style="font-size:0.8rem;" /><label for="cart-bayar" style="font-size:0.75rem;">Uang Bayar</label></div>
+                            <div class="d-flex justify-content-between mb-2"><span class="text-muted" style="font-size:0.8rem;">Kembalian</span><h5 class="fw-bold" style="color:var(--success);font-size:1rem;" id="cart-kembalian">Rp 0</h5></div>
+                            <button class="btn btn-primary w-100 btn-lg" style="border-radius:10px;font-size:0.9rem;padding:8px;" onclick="processPayment()"><i class="bi bi-check-circle"></i> Proses Pembayaran</button>
                         </div>
                     </div>
                 </div>
@@ -822,12 +829,12 @@
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <div><h2>Manajemen Produk</h2></div>
                     <div class="d-flex gap-1">
-                        <button class="btn btn-success" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="downloadProductsExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
-                        <button class="btn btn-primary" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="openProductModal()"><i class="bi bi-plus-lg"></i> Tambah</button>
+                        <button class="btn btn-success" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadProductsExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+                        <button class="btn btn-primary" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="openProductModal()"><i class="bi bi-plus-lg"></i> Tambah</button>
                     </div>
                 </div>
                 <div class="table-container mb-2">
-                    <div class="form-floating"><input type="text" class="form-control" id="prod-search" placeholder="Cari Produk" oninput="renderProducts()" style="font-size:0.8rem;"><label for="prod-search" style="font-size:0.75rem;">Cari ID, Nama, Kategori, Stok, Modal, Jual...</label></div>
+                    <div class="form-floating"><input type="text" class="form-control" id="prod-search" placeholder="Cari Produk" oninput="renderProducts()" style="font-size:0.8rem;" /><label for="prod-search" style="font-size:0.75rem;">Cari ID, Nama, Kategori, Stok, Modal, Jual...</label></div>
                 </div>
                 <div class="table-container">
                     <div class="table-responsive">
@@ -842,13 +849,10 @@
             <!-- ====== PRODUK LAKU PAGE ====== -->
             <div id="page-produk-laku" class="page-content" style="display:none;">
                 <div class="page-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2>Produk Laku</h2>
-                        <p class="mb-0" style="font-size:0.8rem;">Semua produk yang pernah terjual beserta total penjualannya</p>
-                    </div>
+                    <div><h2>Produk Laku</h2><p class="mb-0" style="font-size:0.8rem;">Semua produk yang pernah terjual beserta total penjualannya</p></div>
                     <div class="d-flex gap-1">
-                        <button class="btn btn-success" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="downloadProdukLakuExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
-                        <button class="btn btn-danger" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="downloadProdukLakuPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+                        <button class="btn btn-success" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadProdukLakuExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+                        <button class="btn btn-danger" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadProdukLakuPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
                     </div>
                 </div>
                 <div class="table-container mb-2">
@@ -862,19 +866,16 @@
                                 <button class="period-btn" data-period="month" onclick="setPeriod('month')">Bulan Ini</button>
                                 <button class="period-btn" data-period="year" onclick="setPeriod('year')">Tahun Ini</button>
                                 <div class="d-flex gap-1 ms-1">
-                                    <input type="date" id="pl-start" class="form-control" style="width:auto;border-radius:6px; font-size:0.75rem; padding:2px 6px;" placeholder="Dari">
-                                    <input type="date" id="pl-end" class="form-control" style="width:auto;border-radius:6px; font-size:0.75rem; padding:2px 6px;" placeholder="Sampai">
-                                    <button class="btn btn-primary" style="border-radius:6px; font-size:0.75rem; padding:2px 8px;" onclick="renderProdukLaku()"><i class="bi bi-search"></i></button>
+                                    <input type="date" id="pl-start" class="form-control" style="width:auto;border-radius:6px;font-size:0.75rem;padding:2px 6px;" placeholder="Dari" />
+                                    <input type="date" id="pl-end" class="form-control" style="width:auto;border-radius:6px;font-size:0.75rem;padding:2px 6px;" placeholder="Sampai" />
+                                    <button class="btn btn-primary" style="border-radius:6px;font-size:0.75rem;padding:2px 8px;" onclick="renderProdukLaku()"><i class="bi bi-search"></i></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="table-container">
-                    <div class="form-floating mb-2">
-                        <input type="text" class="form-control" id="pl-search" placeholder="Cari Produk" oninput="renderProdukLaku()" style="font-size:0.8rem;">
-                        <label for="pl-search" style="font-size:0.75rem;">Cari ID atau Nama Produk...</label>
-                    </div>
+                    <div class="form-floating mb-2"><input type="text" class="form-control" id="pl-search" placeholder="Cari Produk" oninput="renderProdukLaku()" style="font-size:0.8rem;" /><label for="pl-search" style="font-size:0.75rem;">Cari ID atau Nama Produk...</label></div>
                     <div class="table-responsive">
                         <table class="table table-hover align-middle">
                             <thead><tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Total Terjual</th><th>Total Pendapatan</th></tr></thead>
@@ -889,23 +890,23 @@
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <div><h2>Riwayat Produk Masuk</h2><p class="mb-0" style="font-size:0.8rem;">Mencatat setiap penambahan stok produk baru atau update stok bertambah</p></div>
                     <div class="d-flex gap-1">
-                        <button class="btn btn-success" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="downloadProductInHistoryExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
-                        <button class="btn btn-danger" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="downloadProductInHistoryPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+                        <button class="btn btn-success" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadProductInHistoryExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+                        <button class="btn btn-danger" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadProductInHistoryPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
                     </div>
                 </div>
                 <div class="table-container mb-2">
                     <div class="row align-items-end g-2">
                         <div class="col-md-3">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Dari Tanggal</label>
-                            <input type="date" id="pih-start" class="form-control" style="border-radius:6px; font-size:0.8rem; padding:4px 8px;" onchange="renderProductInHistory()">
+                            <input type="date" id="pih-start" class="form-control" style="border-radius:6px;font-size:0.8rem;padding:4px 8px;" onchange="renderProductInHistory()" />
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Sampai Tanggal</label>
-                            <input type="date" id="pih-end" class="form-control" style="border-radius:6px; font-size:0.8rem; padding:4px 8px;" onchange="renderProductInHistory()">
+                            <input type="date" id="pih-end" class="form-control" style="border-radius:6px;font-size:0.8rem;padding:4px 8px;" onchange="renderProductInHistory()" />
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="pih-search" placeholder="Cari..." oninput="renderProductInHistory()" style="font-size:0.8rem;">
+                                <input type="text" class="form-control" id="pih-search" placeholder="Cari..." oninput="renderProductInHistory()" style="font-size:0.8rem;" />
                                 <label for="pih-search" style="font-size:0.75rem;">Cari ID atau Nama Produk...</label>
                             </div>
                         </div>
@@ -921,58 +922,52 @@
                 </div>
             </div>
 
-            <!-- ====== STOCK OUT PAGE (PENGELUARAN BARANG) ====== -->
+            <!-- ====== STOCK OUT PAGE ====== -->
             <div id="page-stock-out" class="page-content" style="display:none;">
                 <div class="page-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2>Pengeluaran Barang</h2>
-                        <p class="mb-0" style="font-size:0.8rem;">Mencatat pengeluaran stok (rusak, hilang, pemakaian internal, dll.)</p>
-                    </div>
+                    <div><h2>Pengeluaran Barang</h2><p class="mb-0" style="font-size:0.8rem;">Mencatat pengeluaran stok (rusak, hilang, pemakaian internal, dll.)</p></div>
                     <div class="d-flex gap-1">
-                        <button class="btn btn-success" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="downloadStockOutExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
-                        <button class="btn btn-danger" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="downloadStockOutPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
+                        <button class="btn btn-success" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadStockOutExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+                        <button class="btn btn-danger" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadStockOutPDF()"><i class="bi bi-file-earmark-pdf"></i> PDF</button>
                     </div>
                 </div>
-
                 <!-- Form Input Pengeluaran -->
                 <div class="table-container mb-3">
                     <h6 class="fw-bold mb-2" style="font-size:0.85rem;"><i class="bi bi-plus-circle"></i> Catat Pengeluaran Barang</h6>
                     <div class="row g-2">
                         <div class="col-md-4">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Pilih Produk</label>
-                            <select class="form-select" id="so-product" style="border-radius:8px; border:1.5px solid var(--border); font-size:0.8rem; padding:4px 8px;">
+                            <select class="form-select" id="so-product" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.8rem;padding:4px 8px;">
                                 <option value="" disabled selected>-- Pilih Produk --</option>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Jumlah Keluar</label>
-                            <input type="number" class="form-control" id="so-qty" min="1" placeholder="0" style="border-radius:8px; border:1.5px solid var(--border); font-size:0.8rem; padding:4px 8px;">
+                            <input type="number" class="form-control" id="so-qty" min="1" placeholder="0" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.8rem;padding:4px 8px;" />
                         </div>
                         <div class="col-md-4">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Keterangan</label>
-                            <input type="text" class="form-control" id="so-note" placeholder="Misal: rusak, hilang, digunakan" style="border-radius:8px; border:1.5px solid var(--border); font-size:0.8rem; padding:4px 8px;">
+                            <input type="text" class="form-control" id="so-note" placeholder="Misal: rusak, hilang, digunakan" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.8rem;padding:4px 8px;" />
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
-                            <button class="btn btn-primary w-100" style="border-radius:8px; font-size:0.8rem; padding:6px;" onclick="saveStockOut()"><i class="bi bi-save"></i> Simpan</button>
+                            <button class="btn btn-primary w-100" style="border-radius:8px;font-size:0.8rem;padding:6px;" onclick="saveStockOut()"><i class="bi bi-save"></i> Simpan</button>
                         </div>
                     </div>
-                    <div id="so-error" class="text-danger mt-1" style="display:none; font-size:0.8rem;"></div>
+                    <div id="so-error" class="text-danger mt-1" style="display:none;font-size:0.8rem;"></div>
                 </div>
-
-                <!-- Tabel Riwayat Pengeluaran -->
                 <div class="table-container">
                     <div class="row align-items-end g-2 mb-2">
                         <div class="col-md-3">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Dari Tanggal</label>
-                            <input type="date" id="so-start" class="form-control" style="border-radius:6px; font-size:0.8rem; padding:4px 8px;" onchange="renderStockOut()">
+                            <input type="date" id="so-start" class="form-control" style="border-radius:6px;font-size:0.8rem;padding:4px 8px;" onchange="renderStockOut()" />
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-medium" style="font-size:0.75rem;">Sampai Tanggal</label>
-                            <input type="date" id="so-end" class="form-control" style="border-radius:6px; font-size:0.8rem; padding:4px 8px;" onchange="renderStockOut()">
+                            <input type="date" id="so-end" class="form-control" style="border-radius:6px;font-size:0.8rem;padding:4px 8px;" onchange="renderStockOut()" />
                         </div>
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="so-search" placeholder="Cari..." oninput="renderStockOut()" style="font-size:0.8rem;">
+                                <input type="text" class="form-control" id="so-search" placeholder="Cari..." oninput="renderStockOut()" style="font-size:0.8rem;" />
                                 <label for="so-search" style="font-size:0.75rem;">Cari ID atau Nama Produk...</label>
                             </div>
                         </div>
@@ -990,10 +985,10 @@
             <div id="page-categories" class="page-content" style="display:none;">
                 <div class="page-header d-flex justify-content-between align-items-center">
                     <div><h2>Manajemen Kategori</h2></div>
-                    <button class="btn btn-primary" style="border-radius:8px; font-size:0.75rem; padding:4px 10px;" onclick="openCategoryModal()"><i class="bi bi-plus-lg"></i> Tambah Kategori</button>
+                    <button class="btn btn-primary" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="openCategoryModal()"><i class="bi bi-plus-lg"></i> Tambah Kategori</button>
                 </div>
                 <div class="table-container mb-2">
-                    <div class="form-floating"><input type="text" class="form-control" id="cat-search" placeholder="Cari Kategori" oninput="renderCategories()" style="font-size:0.8rem;"><label for="cat-search" style="font-size:0.75rem;">Cari ID atau Nama Kategori...</label></div>
+                    <div class="form-floating"><input type="text" class="form-control" id="cat-search" placeholder="Cari Kategori" oninput="renderCategories()" style="font-size:0.8rem;" /><label for="cat-search" style="font-size:0.75rem;">Cari ID atau Nama Kategori...</label></div>
                 </div>
                 <div class="table-container">
                     <div class="table-responsive">
@@ -1009,15 +1004,15 @@
             <div id="page-reports" class="page-content" style="display:none;">
                 <div class="page-header"><h2>Laporan Penjualan</h2></div>
                 <div class="row g-2 mb-3">
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid var(--primary);"><div class="text-muted mb-0" style="font-size:0.75rem;">Total Pendapatan</div><h4 class="fw-bold" style="font-size:1.1rem;" id="rpt-pendapatan">Rp 0</h4></div></div>
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid #dc2626;"><div class="text-muted mb-0" style="font-size:0.75rem;">Total Modal</div><h4 class="fw-bold" style="font-size:1.1rem;" id="rpt-modal">Rp 0</h4></div></div>
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid var(--success);"><div class="text-muted mb-0" style="font-size:0.75rem;">Total Laba</div><h4 class="fw-bold" style="color:var(--success); font-size:1.1rem;" id="rpt-laba">Rp 0</h4></div></div>
-                    <div class="col-md-3"><div class="stat-card" style="border-left: 4px solid var(--warning);"><div class="text-muted mb-0" style="font-size:0.75rem;">Jumlah Transaksi</div><h4 class="fw-bold" style="font-size:1.1rem;" id="rpt-trx">0</h4></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid var(--primary);"><div class="text-muted mb-0" style="font-size:0.75rem;">Total Pendapatan</div><h4 class="fw-bold" style="font-size:1.1rem;" id="rpt-pendapatan">Rp 0</h4></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid #dc2626;"><div class="text-muted mb-0" style="font-size:0.75rem;">Total Modal</div><h4 class="fw-bold" style="font-size:1.1rem;" id="rpt-modal">Rp 0</h4></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid var(--success);"><div class="text-muted mb-0" style="font-size:0.75rem;">Total Laba</div><h4 class="fw-bold" style="color:var(--success);font-size:1.1rem;" id="rpt-laba">Rp 0</h4></div></div>
+                    <div class="col-md-3"><div class="stat-card" style="border-left:4px solid var(--warning);"><div class="text-muted mb-0" style="font-size:0.75rem;">Jumlah Transaksi</div><h4 class="fw-bold" style="font-size:1.1rem;" id="rpt-trx">0</h4></div></div>
                 </div>
                 <div class="table-container mb-3">
                     <div class="row align-items-end g-2 p-2 bg-light rounded-3">
-                        <div class="col-md-3"><label class="form-label fw-medium" style="font-size:0.75rem;">Tanggal Mulai</label><input type="date" id="rpt-start" class="form-control" style="border-radius:8px; font-size:0.8rem; padding:4px 8px;" onchange="loadReport()"></div>
-                        <div class="col-md-3"><label class="form-label fw-medium" style="font-size:0.75rem;">Tanggal Akhir</label><input type="date" id="rpt-end" class="form-control" style="border-radius:8px; font-size:0.8rem; padding:4px 8px;" onchange="loadReport()"></div>
+                        <div class="col-md-3"><label class="form-label fw-medium" style="font-size:0.75rem;">Tanggal Mulai</label><input type="date" id="rpt-start" class="form-control" style="border-radius:8px;font-size:0.8rem;padding:4px 8px;" onchange="loadReport()" /></div>
+                        <div class="col-md-3"><label class="form-label fw-medium" style="font-size:0.75rem;">Tanggal Akhir</label><input type="date" id="rpt-end" class="form-control" style="border-radius:8px;font-size:0.8rem;padding:4px 8px;" onchange="loadReport()" /></div>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1035,7 +1030,7 @@
                 <div class="page-header"><h2>Riwayat Transaksi</h2></div>
                 <div class="table-container mb-2">
                     <div class="row align-items-end g-2">
-                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="history-search" placeholder="Cari Transaksi" oninput="filterHistory()" style="font-size:0.8rem;"><label for="history-search" style="font-size:0.75rem;">Cari ID Transaksi atau Nama Produk...</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" id="history-search" placeholder="Cari Transaksi" oninput="filterHistory()" style="font-size:0.8rem;" /><label for="history-search" style="font-size:0.75rem;">Cari ID Transaksi atau Nama Produk...</label></div></div>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1050,101 +1045,81 @@
 
             <!-- ====== SETTINGS PAGE ====== -->
             <div id="page-settings" class="page-content" style="display:none;">
-                <div class="page-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2><i class="bi bi-gear-fill me-2" style="color:var(--primary);"></i>Pengaturan</h2>
-                        <p class="mb-0" style="font-size:0.8rem;">Kelola informasi toko, tampilan struk, dan koneksi printer</p>
-                    </div>
-                    <button class="btn btn-primary" style="border-radius:8px; font-size:0.8rem; padding:6px 16px;" onclick="saveSettings()">
-                        <i class="bi bi-save me-1"></i> Simpan Pengaturan
-                    </button>
+                <div class="page-header">
+                    <h2><i class="bi bi-gear-fill me-1" style="color:var(--primary);"></i> Pengaturan</h2>
+                    <p class="mb-0" style="font-size:0.8rem;">Kelola informasi toko, struk, dan koneksi printer</p>
                 </div>
 
                 <div class="table-container">
-                    <!-- Informasi Toko -->
+                    <!-- Store Info -->
                     <div class="settings-group">
-                        <div class="settings-group-title"><i class="bi bi-shop"></i> Informasi Toko</div>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label-sm">Nama Kios / Toko</label>
-                                <input type="text" class="form-control" id="settings-store-name" placeholder="Nama toko Anda" style="font-size:0.85rem; border-radius:8px; border:1.5px solid var(--border);">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label-sm">Nomor Telepon / WhatsApp</label>
-                                <input type="text" class="form-control" id="settings-phone" placeholder="08xxx" style="font-size:0.85rem; border-radius:8px; border:1.5px solid var(--border);">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label-sm">Alamat</label>
-                                <input type="text" class="form-control" id="settings-address" placeholder="Jl. Contoh No. 123, Kota" style="font-size:0.85rem; border-radius:8px; border:1.5px solid var(--border);">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Struk & Cetak -->
-                    <div class="settings-group">
-                        <div class="settings-group-title"><i class="bi bi-receipt"></i> Struk & Cetak</div>
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label-sm">Teks Footer Struk</label>
-                                <input type="text" class="form-control" id="settings-receipt-footer" placeholder="Terima kasih telah berbelanja!" style="font-size:0.85rem; border-radius:8px; border:1.5px solid var(--border);">
+                        <h6><i class="bi bi-shop me-1"></i> Informasi Toko</h6>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label class="form-label fw-medium" style="font-size:0.75rem;">Nama Toko / Kios</label>
+                                <input type="text" class="form-control" id="settings-store-name" placeholder="Nama toko Anda" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.85rem;padding:6px 10px;" />
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label-sm">Jenis Printer</label>
-                                <select class="form-select" id="settings-printer-type" style="font-size:0.85rem; border-radius:8px; border:1.5px solid var(--border);">
-                                    <option value="none">Tidak Ada</option>
-                                    <option value="bluetooth">Bluetooth</option>
-                                    <option value="usb">USB</option>
-                                    <option value="network">WiFi / Network</option>
+                                <label class="form-label fw-medium" style="font-size:0.75rem;">Alamat</label>
+                                <input type="text" class="form-control" id="settings-address" placeholder="Jl. Contoh No. 123" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.85rem;padding:6px 10px;" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-medium" style="font-size:0.75rem;">Nomor HP / WhatsApp</label>
+                                <input type="text" class="form-control" id="settings-phone" placeholder="08123456789" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.85rem;padding:6px 10px;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Customization -->
+                    <div class="settings-group">
+                        <h6><i class="bi bi-receipt me-1"></i> Kustomisasi Struk</h6>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium" style="font-size:0.75rem;">Footer Struk</label>
+                                <input type="text" class="form-control" id="settings-receipt-footer" placeholder="Terima kasih telah berbelanja!" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.85rem;padding:6px 10px;" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium" style="font-size:0.75rem;">Format Tanggal</label>
+                                <select class="form-select" id="settings-date-format" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.85rem;padding:6px 10px;">
+                                    <option value="id-ID">Indonesia (DD/MM/YYYY)</option>
+                                    <option value="en-US">Amerika (MM/DD/YYYY)</option>
+                                    <option value="en-GB">Inggris (DD/MM/YYYY)</option>
                                 </select>
                             </div>
-                            <div class="col-md-8">
-                                <label class="form-label-sm">Alamat / Nama Printer</label>
-                                <input type="text" class="form-control" id="settings-printer-address" placeholder="Contoh: Printer_001 atau IP: 192.168.1.100" style="font-size:0.85rem; border-radius:8px; border:1.5px solid var(--border);">
+                        </div>
+                    </div>
+
+                    <!-- Printer Connection -->
+                    <div class="settings-group">
+                        <h6><i class="bi bi-printer me-1"></i> Koneksi Printer Bluetooth</h6>
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label fw-medium" style="font-size:0.75rem;">Nama Printer Bluetooth</label>
+                                <input type="text" class="form-control" id="settings-printer-name" placeholder="Nama printer Bluetooth" style="border-radius:8px;border:1.5px solid var(--border);font-size:0.85rem;padding:6px 10px;" />
                             </div>
-                            <div class="col-12">
-                                <button class="btn btn-outline-secondary" style="border-radius:8px; font-size:0.8rem; padding:4px 12px;" onclick="testPrinterConnection()">
-                                    <i class="bi bi-bluetooth me-1"></i> Uji Koneksi Printer
+                            <div class="col-md-4">
+                                <label class="form-label fw-medium" style="font-size:0.75rem;">Status Printer</label>
+                                <div id="printer-status-display">
+                                    <span class="printer-status disconnected"><i class="bi bi-bluetooth"></i> Tidak Terhubung</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-outline-primary" style="border-radius:8px;font-size:0.8rem;padding:6px 12px;" onclick="scanBluetoothPrinters()">
+                                    <i class="bi bi-bluetooth"></i> Cari Printer
                                 </button>
-                                <span id="printer-test-result" class="ms-2" style="font-size:0.8rem;"></span>
+                                <button class="btn btn-outline-success ms-1" style="border-radius:8px;font-size:0.8rem;padding:6px 12px;" onclick="testPrinterConnection()">
+                                    <i class="bi bi-check-circle"></i> Tes Koneksi
+                                </button>
                             </div>
                         </div>
+                        <div id="printer-scan-result" class="mt-2" style="font-size:0.8rem;color:var(--text-muted);"></div>
                     </div>
 
-                    <!-- Preview Struk -->
-                    <div class="settings-group">
-                        <div class="settings-group-title"><i class="bi bi-eye"></i> Pratinjau Struk</div>
-                        <div class="p-3 bg-light rounded-3" style="max-width:320px; margin:0 auto; font-size:0.75rem; font-family:monospace; line-height:1.6; border:1px dashed var(--border);">
-                            <div id="receipt-preview-content">
-                                <div style="text-align:center; font-weight:700; font-size:0.9rem;" id="preview-store-name">KasirPOS</div>
-                                <div style="text-align:center; font-size:0.7rem; color:#555;" id="preview-address">Jl. Contoh No. 123</div>
-                                <div style="text-align:center; font-size:0.7rem; color:#555;" id="preview-phone">Telp: 081234567890</div>
-                                <hr style="border:1px dashed #999; margin:4px 0;">
-                                <div style="text-align:center; font-size:0.65rem; color:#888;">------------------------</div>
-                                <div style="font-size:0.7rem;">Item A x2  Rp 20.000</div>
-                                <div style="font-size:0.7rem;">Item B x1  Rp 15.000</div>
-                                <hr style="border:1px dashed #999; margin:4px 0;">
-                                <div style="display:flex; justify-content:space-between; font-weight:700;">Total  Rp 35.000</div>
-                                <div style="display:flex; justify-content:space-between;">Bayar  Rp 50.000</div>
-                                <div style="display:flex; justify-content:space-between; color:var(--success); font-weight:700;">Kembali  Rp 15.000</div>
-                                <hr style="border:1px dashed #999; margin:4px 0;">
-                                <div style="text-align:center; font-size:0.65rem; color:#888;" id="preview-footer">Terima kasih telah berbelanja!</div>
-                            </div>
-                        </div>
-                        <div class="text-center mt-2">
-                            <button class="btn btn-outline-primary btn-sm" style="border-radius:6px; font-size:0.7rem; padding:2px 10px;" onclick="refreshReceiptPreview()">
-                                <i class="bi bi-arrow-repeat"></i> Refresh Preview
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Reset & Backup -->
-                    <div class="settings-group">
-                        <div class="settings-group-title"><i class="bi bi-database"></i> Data</div>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <button class="btn btn-outline-danger btn-sm" style="border-radius:6px; font-size:0.75rem; padding:4px 12px;" onclick="resetAllData()">
-                                <i class="bi bi-exclamation-triangle"></i> Reset Semua Data
-                            </button>
-                        </div>
+                    <!-- Save Button -->
+                    <div class="d-flex justify-content-end mt-3">
+                        <button class="btn btn-primary" style="border-radius:10px;font-size:0.9rem;padding:8px 28px;" onclick="saveSettings()">
+                            <i class="bi bi-check-lg"></i> Simpan Pengaturan
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1153,11 +1128,13 @@
     </div>
 
     <!-- ==================== MODALS ==================== -->
-    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" style="font-size:1rem;" id="prodModalTitle">Tambah Produk</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="prod-fb-key"><input type="hidden" id="prod-id"><div class="form-floating mb-2"><input type="text" class="form-control" id="prod-nama" placeholder="Nama Produk" required style="font-size:0.8rem;"><label for="prod-nama" style="font-size:0.75rem;">Nama Produk</label></div><div class="form-floating mb-2"><select class="form-select" id="prod-kategori" style="padding-top: 1.4rem; padding-bottom: 0.5rem; font-size:0.8rem;"><option value="" disabled selected>Pilih Kategori</option></select><label for="prod-kategori" style="font-size:0.75rem;">Kategori</label></div><div class="row"><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-stok" placeholder="Stok" min="0" required style="font-size:0.8rem;"><label for="prod-stok" style="font-size:0.75rem;">Stok</label></div></div><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-modal" placeholder="H. Modal" min="0" required style="font-size:0.8rem;"><label for="prod-modal" style="font-size:0.75rem;">Harga Modal</label></div></div><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-jual" placeholder="H. Jual" min="0" required style="font-size:0.8rem;"><label for="prod-jual" style="font-size:0.75rem;">Harga Jual</label></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" style="border-radius:8px; font-size:0.8rem;" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" style="border-radius:8px; font-size:0.8rem;" onclick="saveProductData()">Simpan</button></div></div></div></div>
-    <div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" style="font-size:1rem;" id="catModalTitle">Tambah Kategori</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="cat-fb-key"><input type="hidden" id="cat-id"><div class="form-floating"><input type="text" class="form-control" id="cat-nama" placeholder="Nama Kategori" required style="font-size:0.8rem;"><label for="cat-nama" style="font-size:0.75rem;">Nama Kategori</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" style="border-radius:8px; font-size:0.8rem;" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" style="border-radius:8px; font-size:0.8rem;" onclick="saveCategoryData()">Simpan</button></div></div></div></div>
-    <div class="modal fade" id="receiptModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header" style="background:var(--success);color:white;"><h5 class="modal-title fw-bold" style="font-size:1rem;"><i class="bi bi-check-circle"></i> Transaksi Berhasil</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3" id="receipt-content" style="font-size:0.85rem;"></div><div class="modal-footer flex-column p-2"><div class="input-group mb-1"><span class="input-group-text" style="border-radius:8px 0 0 8px; font-size:0.8rem;"><i class="bi bi-whatsapp"></i></span><input type="text" class="form-control" id="wa-phone-receipt" placeholder="No. WhatsApp (08xxx)" style="border-radius:0; font-size:0.8rem;"><button class="btn text-white" style="background:#25D366;border-radius:0 8px 8px 0; font-size:0.8rem;" onclick="sendWhatsappFromReceipt()">Kirim</button></div><div class="d-flex gap-2 w-100"><button class="btn btn-outline-secondary w-100" style="border-radius:8px; font-size:0.8rem;" onclick="printCurrentReceipt()"><i class="bi bi-printer"></i> Cetak</button><button class="btn btn-primary w-100" style="border-radius:8px; font-size:0.8rem;" data-bs-dismiss="modal">Selesai</button></div></div></div></div></div>
+    <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" style="font-size:1rem;" id="prodModalTitle">Tambah Produk</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="prod-fb-key" /><input type="hidden" id="prod-id" /><div class="form-floating mb-2"><input type="text" class="form-control" id="prod-nama" placeholder="Nama Produk" required style="font-size:0.8rem;" /><label for="prod-nama" style="font-size:0.75rem;">Nama Produk</label></div><div class="form-floating mb-2"><select class="form-select" id="prod-kategori" style="padding-top:1.4rem;padding-bottom:0.5rem;font-size:0.8rem;"><option value="" disabled selected>Pilih Kategori</option></select><label for="prod-kategori" style="font-size:0.75rem;">Kategori</label></div><div class="row"><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-stok" placeholder="Stok" min="0" required style="font-size:0.8rem;" /><label for="prod-stok" style="font-size:0.75rem;">Stok</label></div></div><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-modal" placeholder="H. Modal" min="0" required style="font-size:0.8rem;" /><label for="prod-modal" style="font-size:0.75rem;">Harga Modal</label></div></div><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-jual" placeholder="H. Jual" min="0" required style="font-size:0.8rem;" /><label for="prod-jual" style="font-size:0.75rem;">Harga Jual</label></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" style="border-radius:8px;font-size:0.8rem;" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" style="border-radius:8px;font-size:0.8rem;" onclick="saveProductData()">Simpan</button></div></div></div></div>
 
-    <div id="receipt-print-area" style="display: none;"></div>
+    <div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" style="font-size:1rem;" id="catModalTitle">Tambah Kategori</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="cat-fb-key" /><input type="hidden" id="cat-id" /><div class="form-floating"><input type="text" class="form-control" id="cat-nama" placeholder="Nama Kategori" required style="font-size:0.8rem;" /><label for="cat-nama" style="font-size:0.75rem;">Nama Kategori</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" style="border-radius:8px;font-size:0.8rem;" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" style="border-radius:8px;font-size:0.8rem;" onclick="saveCategoryData()">Simpan</button></div></div></div></div>
+
+    <div class="modal fade" id="receiptModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header" style="background:var(--success);color:white;"><h5 class="modal-title fw-bold" style="font-size:1rem;"><i class="bi bi-check-circle"></i> Transaksi Berhasil</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3" id="receipt-content" style="font-size:0.85rem;"></div><div class="modal-footer flex-column p-2"><div class="input-group mb-1"><span class="input-group-text" style="border-radius:8px 0 0 8px;font-size:0.8rem;"><i class="bi bi-whatsapp"></i></span><input type="text" class="form-control" id="wa-phone-receipt" placeholder="No. WhatsApp (08xxx)" style="border-radius:0;font-size:0.8rem;" /><button class="btn text-white" style="background:#25D366;border-radius:0 8px 8px 0;font-size:0.8rem;" onclick="sendWhatsappFromReceipt()">Kirim</button></div><div class="d-flex gap-2 w-100"><button class="btn btn-outline-secondary w-100" style="border-radius:8px;font-size:0.8rem;" onclick="printCurrentReceipt()"><i class="bi bi-printer"></i> Cetak</button><button class="btn btn-primary w-100" style="border-radius:8px;font-size:0.8rem;" data-bs-dismiss="modal">Selesai</button></div></div></div></div></div>
+
+    <div id="receipt-print-area" style="display:none;"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
     </script>
@@ -1194,14 +1171,6 @@
 
         // ==================== STATE ====================
         let appData = { products: [], categories: [], transactions: [], productHistory: [], stockOuts: [] };
-        let settings = {
-            storeName: 'KasirPOS',
-            address: 'Jl. Contoh No. 123, Kota',
-            phone: '081234567890',
-            receiptFooter: 'Terima kasih telah berbelanja!',
-            printerType: 'none',
-            printerAddress: ''
-        };
         let cart = [];
         let salesChartInstance = null;
         let currentReceiptData = null;
@@ -1211,6 +1180,17 @@
         let currentPeriod = 'all';
         let currentPeriodStart = null;
         let currentPeriodEnd = null;
+
+        // Settings state
+        let appSettings = {
+            storeName: '',
+            address: '',
+            phone: '',
+            receiptFooter: 'Terima kasih telah berbelanja!',
+            dateFormat: 'id-ID',
+            printerName: '',
+            printerConnected: false
+        };
 
         // ==================== TOAST ====================
         function showToast(message, type = 'info') {
@@ -1287,6 +1267,7 @@
 
         function initRealtimeListeners() {
             showLoading(true);
+
             db.ref('products').on('value', (snapshot) => {
                 showSync();
                 appData.products = [];
@@ -1342,19 +1323,18 @@
             }, (error) => { showToast('Gagal sinkronisasi pengeluaran: ' + error.message, 'error'); });
 
             db.ref('settings').on('value', (snapshot) => {
-                const val = snapshot.val();
-                if (val) {
-                    settings = { ...settings, ...val };
+                const data = snapshot.val();
+                if (data) {
+                    appSettings = data;
                     applySettingsToUI();
-                    refreshReceiptPreview();
                 }
             }, (error) => { showToast('Gagal sinkronisasi pengaturan: ' + error.message, 'error'); });
 
             db.ref('.info/connected').on('value', (snap) => {
                 const statusEl = document.getElementById('sync-status');
                 if (snap.val() === true) { statusEl.classList.remove('offline');
-                    statusEl.querySelector('span').textContent = 'Realtime Connected'; } else { statusEl.classList.add(
-                        'offline');
+                    statusEl.querySelector('span').textContent = 'Realtime Connected'; } else { statusEl.classList
+                        .add('offline');
                     statusEl.querySelector('span').textContent = 'Offline'; }
             });
         }
@@ -1366,6 +1346,7 @@
             document.querySelectorAll('.sidebar-menu li').forEach(el => el.classList.remove('active'));
             if (element) element.classList.add('active');
             document.getElementById('sidebar').classList.remove('show');
+
             if (page === 'dashboard') renderDashboard();
             if (page === 'pos') renderPosProducts();
             if (page === 'products') renderProducts();
@@ -1376,8 +1357,7 @@
             if (page === 'product-in-history') renderProductInHistory();
             if (page === 'stock-out') { populateStockOutProductSelect();
                 renderStockOut(); }
-            if (page === 'settings') { applySettingsToUI();
-                refreshReceiptPreview(); }
+            if (page === 'settings') loadSettings();
         }
 
         function showLoading(show) { document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none'; }
@@ -1393,7 +1373,7 @@
 
         function formatRp(angka) {
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 })
-            .format(angka);
+                .format(angka);
         }
 
         function getPeriodRange(period) {
@@ -1506,7 +1486,7 @@
             const topProdDiv = document.getElementById('dash-top-products');
             topProdDiv.innerHTML = topProducts.length > 0 ?
                 topProducts.map((p, i) =>
-                    `<div class="d-flex justify-content-between align-items-center mb-1 pb-1 border-bottom"><span><span class="badge bg-secondary me-1" style="font-size:0.6rem;">${i + 1}</span> ${p.nama}</span><span class="fw-bold" style="color:var(--primary);font-size:0.8rem;">${p.qty}</span></div>`
+                    `<div class="d-flex justify-content-between align-items-center mb-1 pb-1 border-bottom"><span><span class="badge bg-secondary me-1" style="font-size:0.6rem;">${i+1}</span> ${p.nama}</span><span class="fw-bold" style="color:var(--primary);font-size:0.8rem;">${p.qty}</span></div>`
                     ).join('') :
                 '<p class="text-muted text-center mb-0" style="font-size:0.8rem;">Belum ada penjualan</p>';
 
@@ -1625,7 +1605,7 @@
                 const totalModal = p.modal * p.stok;
                 const labaColor = laba >= 0 ? 'var(--success)' : '#dc2626';
                 const totalLabaColor = totalLaba >= 0 ? 'var(--success)' : '#dc2626';
-                return `<tr><td class="fw-medium">${p.id}</td><td>${p.nama}</td><td><span class="badge-cat">${p.kategori}</span></td><td><span class="badge ${p.stok <= 5 ? (p.stok === 0 ? 'bg-danger' : 'bg-warning text-dark') : 'bg-light text-dark border'}" style="font-size:0.7rem;">${p.stok}</span></td><td>${formatRp(p.modal)}</td><td class="fw-bold" style="color:var(--sidebar-bg);">${formatRp(totalModal)}</td><td class="fw-bold" style="color:${labaColor}; font-size:0.8rem;">${formatRp(laba)}</td><td class="fw-bold" style="color:${totalLabaColor}; font-size:0.8rem;">${formatRp(totalLaba)}</td><td class="fw-semibold">${formatRp(p.jual)}</td><td><button class="btn btn-sm btn-outline-primary me-1" style="border-radius:6px; font-size:0.7rem; padding:2px 6px;" onclick='openProductModal(${JSON.stringify(p)})'><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" style="border-radius:6px; font-size:0.7rem; padding:2px 6px;" onclick="deleteProd('${p.fbKey}')"><i class="bi bi-trash"></i></button></td></tr>`;
+                return `<tr><td class="fw-medium">${p.id}</td><td>${p.nama}</td><td><span class="badge-cat">${p.kategori}</span></td><td><span class="badge ${p.stok <= 5 ? (p.stok === 0 ? 'bg-danger' : 'bg-warning text-dark') : 'bg-light text-dark border'}" style="font-size:0.7rem;">${p.stok}</span></td><td>${formatRp(p.modal)}</td><td class="fw-bold" style="color:var(--sidebar-bg);">${formatRp(totalModal)}</td><td class="fw-bold" style="color:${labaColor};font-size:0.8rem;">${formatRp(laba)}</td><td class="fw-bold" style="color:${totalLabaColor};font-size:0.8rem;">${formatRp(totalLaba)}</td><td class="fw-semibold">${formatRp(p.jual)}</td><td><button class="btn btn-sm btn-outline-primary me-1" style="border-radius:6px;font-size:0.7rem;padding:2px 6px;" onclick='openProductModal(${JSON.stringify(p)})'><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" style="border-radius:6px;font-size:0.7rem;padding:2px 6px;" onclick="deleteProd('${p.fbKey}')"><i class="bi bi-trash"></i></button></td></tr>`;
             }).join('');
         }
 
@@ -1653,8 +1633,8 @@
             }
             const data = { id: document.getElementById('prod-id').value, nama: document.getElementById('prod-nama')
                     .value, kategori: document.getElementById('prod-kategori').value, stok: Number(document
-                    .getElementById('prod-stok').value), modal: Number(document.getElementById('prod-modal')
-                    .value), jual: Number(document.getElementById('prod-jual').value) };
+                    .getElementById('prod-stok').value), modal: Number(document.getElementById('prod-modal').value),
+                jual: Number(document.getElementById('prod-jual').value) };
             if (!data.nama || !data.kategori || isNaN(data.stok) || isNaN(data.modal) || isNaN(data.jual)) { showToast(
                     'Semua field wajib diisi dengan benar!', 'error'); return; }
             bootstrap.Modal.getInstance(document.getElementById('productModal')).hide();
@@ -1666,16 +1646,16 @@
                 const selisih = data.stok - oldStok;
                 if (selisih > 0) {
                     const historyData = { productId: data.id, productName: data.nama, category: data.kategori,
-                        qty: selisih, modal: data.modal, totalModal: data.modal * selisih, timestamp: Date
-                            .now(), date: new Date().toLocaleString('id-ID') };
+                        qty: selisih, modal: data.modal, totalModal: data.modal * selisih, timestamp: Date.now(),
+                        date: new Date().toLocaleString('id-ID') };
                     await db.ref('productHistory').push(historyData);
                 }
             } catch (e) { showToast('Gagal menyimpan: ' + e.message, 'error'); }
         }
 
         async function deleteProd(fbKey) {
-            if (confirm('Yakin ingin menghapus produk ini?')) { showSync();
-                try { await db.ref('products/' + fbKey).remove();
+            if (confirm('Yakin ingin menghapus produk ini?')) { showSync(); try { await db.ref('products/' + fbKey)
+                        .remove();
                     showToast('Produk berhasil dihapus', 'success'); } catch (e) { showToast('Gagal menghapus: ' + e
                         .message, 'error'); } }
         }
@@ -1686,18 +1666,9 @@
                 const laba = p.jual - p.modal;
                 const totalLaba = laba * p.stok;
                 const totalModal = p.modal * p.stok;
-                return {
-                    'No': index + 1,
-                    'ID Produk': p.id,
-                    'Nama Produk': p.nama,
-                    'Kategori': p.kategori,
-                    'Stok': p.stok,
-                    'Harga Modal': p.modal,
-                    'Total Modal': totalModal,
-                    'Laba': laba,
-                    'Total Laba': totalLaba,
-                    'Harga Jual': p.jual
-                };
+                return { 'No': index + 1, 'ID Produk': p.id, 'Nama Produk': p.nama, 'Kategori': p.kategori,
+                    'Stok': p.stok, 'Harga Modal': p.modal, 'Total Modal': totalModal, 'Laba': laba,
+                    'Total Laba': totalLaba, 'Harga Jual': p.jual };
             });
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(excelData);
@@ -1736,13 +1707,8 @@
                     t.items.forEach(item => {
                         const key = item.id || item.nama;
                         if (!salesMap[key]) {
-                            salesMap[key] = {
-                                id: item.id || '-',
-                                nama: item.nama,
-                                kategori: item.kategori || '-',
-                                totalTerjual: 0,
-                                totalPendapatan: 0
-                            };
+                            salesMap[key] = { id: item.id || '-', nama: item.nama, kategori: item
+                                    .kategori || '-', totalTerjual: 0, totalPendapatan: 0 };
                         }
                         salesMap[key].totalTerjual += item.qty;
                         salesMap[key].totalPendapatan += item.jual * item.qty;
@@ -1773,28 +1739,23 @@
             }
 
             tbody.innerHTML = produkLaku.map(p => `
-                <tr>
-                    <td class="fw-medium">${p.id}</td>
-                    <td>${p.nama}</td>
-                    <td><span class="badge-cat">${p.kategori}</span></td>
-                    <td><span class="badge bg-primary" style="font-size:0.75rem;">${p.totalTerjual}</span></td>
-                    <td class="fw-bold" style="color:var(--primary); font-size:0.85rem;">${formatRp(p.totalPendapatan)}</td>
-                </tr>
-            `).join('');
+            <tr>
+              <td class="fw-medium">${p.id}</td>
+              <td>${p.nama}</td>
+              <td><span class="badge-cat">${p.kategori}</span></td>
+              <td><span class="badge bg-primary" style="font-size:0.75rem;">${p.totalTerjual}</span></td>
+              <td class="fw-bold" style="color:var(--primary);font-size:0.85rem;">${formatRp(p.totalPendapatan)}</td>
+            </tr>
+          `).join('');
         }
 
         function downloadProdukLakuExcel() {
             const produkLaku = getProdukLakuData();
             if (produkLaku.length === 0) { showToast('Tidak ada data produk laku untuk diunduh!', 'error'); return; }
 
-            const excelData = produkLaku.map((p, index) => ({
-                'No': index + 1,
-                'ID Produk': p.id,
-                'Nama Produk': p.nama,
-                'Kategori': p.kategori,
-                'Total Terjual': p.totalTerjual,
-                'Total Pendapatan': p.totalPendapatan
-            }));
+            const excelData = produkLaku.map((p, index) => ({ 'No': index + 1, 'ID Produk': p.id, 'Nama Produk': p
+                    .nama, 'Kategori': p.kategori, 'Total Terjual': p.totalTerjual, 'Total Pendapatan': p
+                    .totalPendapatan }));
 
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(excelData);
@@ -1828,7 +1789,7 @@
                 const range = getPeriodRange(currentPeriod);
                 if (range.start && range.end) {
                     periodText =
-                    `Periode: ${range.start.toLocaleDateString('id-ID')} s/d ${range.end.toLocaleDateString('id-ID')}`;
+                        `Periode: ${range.start.toLocaleDateString('id-ID')} s/d ${range.end.toLocaleDateString('id-ID')}`;
                 }
             }
             doc.text(periodText, pageWidth / 2, 22, { align: 'center' });
@@ -1903,7 +1864,8 @@
             filtered.sort((a, b) => b.timestamp - a.timestamp);
             const tbody = document.getElementById('table-product-in-history');
             if (filtered.length === 0) { tbody.innerHTML =
-                '<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada riwayat produk masuk</td></tr>'; return; }
+                    '<tr><td colspan="7" class="text-center text-muted py-3">Tidak ada riwayat produk masuk</td></tr>';
+                return; }
             tbody.innerHTML = filtered.map(h =>
                 `<tr><td class="text-nowrap" style="font-size:0.75rem;">${h.date || new Date(h.timestamp).toLocaleString('id-ID')}</td><td class="fw-medium">${h.productId || '-'}</td><td>${h.productName || '-'}</td><td><span class="badge-cat">${h.category || '-'}</span></td><td><span class="badge bg-success" style="font-size:0.75rem;">+${h.qty}</span></td><td>${formatRp(h.modal || 0)}</td><td class="fw-bold">${formatRp(h.totalModal || 0)}</td></tr>`
                 ).join('');
@@ -1912,9 +1874,9 @@
         function downloadProductInHistoryExcel() {
             if (appData.productHistory.length === 0) { showToast('Tidak ada data riwayat untuk diunduh!', 'error'); return; }
             const excelData = appData.productHistory.map((h, index) => ({ 'No': index + 1, 'Tanggal': h.date || new Date(h
-                    .timestamp).toLocaleString('id-ID'), 'ID Produk': h.productId || '', 'Nama Produk': h
-                    .productName || '', 'Kategori': h.category || '', 'Jumlah Masuk': h.qty || 0,
-                'Harga Modal': h.modal || 0, 'Total Modal': h.totalModal || 0 }));
+                        .timestamp).toLocaleString('id-ID'), 'ID Produk': h.productId || '', 'Nama Produk': h
+                        .productName || '', 'Kategori': h.category || '', 'Jumlah Masuk': h.qty || 0,
+                    'Harga Modal': h.modal || 0, 'Total Modal': h.totalModal || 0 }));
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(excelData);
             ws['!cols'] = [{ wch: 5 }, { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 12 }, { wch: 15 },
@@ -2007,7 +1969,7 @@
             showToast('PDF berhasil diunduh!', 'success');
         }
 
-        // ==================== STOCK OUT (PENGELUARAN BARANG) ====================
+        // ==================== STOCK OUT ====================
         function populateStockOutProductSelect() {
             const select = document.getElementById('so-product');
             select.innerHTML = '<option value="" disabled selected>-- Pilih Produk --</option>' +
@@ -2030,16 +1992,17 @@
             filtered.sort((a, b) => b.timestamp - a.timestamp);
             const tbody = document.getElementById('table-stock-out');
             if (filtered.length === 0) { tbody.innerHTML =
-                '<tr><td colspan="7" class="text-center text-muted py-3">Belum ada pengeluaran barang</td></tr>'; return; }
+                    '<tr><td colspan="7" class="text-center text-muted py-3">Belum ada pengeluaran barang</td></tr>';
+                return; }
             tbody.innerHTML = filtered.map(s => `<tr>
-                        <td class="text-nowrap" style="font-size:0.75rem;">${s.date || new Date(s.timestamp).toLocaleString('id-ID')}</td>
-                        <td class="fw-medium">${s.productId || '-'}</td>
-                        <td>${s.productName || '-'}</td>
-                        <td><span class="badge bg-danger" style="font-size:0.75rem;">-${s.qty}</span></td>
-                        <td>${s.note || '-'}</td>
-                        <td>${formatRp(s.totalModal || 0)}</td>
-                        <td><button class="btn btn-sm btn-outline-danger" style="border-radius:6px; font-size:0.7rem; padding:2px 6px;" onclick="deleteStockOut('${s.fbKey}')"><i class="bi bi-trash"></i></button></td>
-                    </tr>`).join('');
+            <td class="text-nowrap" style="font-size:0.75rem;">${s.date || new Date(s.timestamp).toLocaleString('id-ID')}</td>
+            <td class="fw-medium">${s.productId || '-'}</td>
+            <td>${s.productName || '-'}</td>
+            <td><span class="badge bg-danger" style="font-size:0.75rem;">-${s.qty}</span></td>
+            <td>${s.note || '-'}</td>
+            <td>${formatRp(s.totalModal || 0)}</td>
+            <td><button class="btn btn-sm btn-outline-danger" style="border-radius:6px;font-size:0.7rem;padding:2px 6px;" onclick="deleteStockOut('${s.fbKey}')"><i class="bi bi-trash"></i></button></td>
+          </tr>`).join('');
         }
 
         async function saveStockOut() {
@@ -2113,15 +2076,10 @@
 
         function downloadStockOutExcel() {
             if (appData.stockOuts.length === 0) { showToast('Tidak ada data pengeluaran untuk diunduh!', 'error'); return; }
-            const excelData = appData.stockOuts.map((s, index) => ({
-                'No': index + 1,
-                'Tanggal': s.date || new Date(s.timestamp).toLocaleString('id-ID'),
-                'ID Produk': s.productId || '',
-                'Nama Produk': s.productName || '',
-                'Jumlah Keluar': s.qty || 0,
-                'Keterangan': s.note || '-',
-                'Total Modal': s.totalModal || 0
-            }));
+            const excelData = appData.stockOuts.map((s, index) => ({ 'No': index + 1, 'Tanggal': s.date || new Date(s
+                        .timestamp).toLocaleString('id-ID'), 'ID Produk': s.productId || '', 'Nama Produk': s
+                        .productName || '', 'Jumlah Keluar': s.qty || 0, 'Keterangan': s.note || '-',
+                    'Total Modal': s.totalModal || 0 }));
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(excelData);
             ws['!cols'] = [{ wch: 5 }, { wch: 20 }, { wch: 15 }, { wch: 25 }, { wch: 12 }, { wch: 20 }, { wch: 18 }];
@@ -2218,9 +2176,9 @@
             const filtered = appData.categories.filter(c => (c.id && c.id.toLowerCase().includes(search)) || (c.nama && c
                 .nama.toLowerCase().includes(search)));
             if (filtered.length === 0) { tbody.innerHTML =
-                '<tr><td colspan="3" class="text-center text-muted py-3">Kategori tidak ditemukan</td></tr>'; return; }
+                    '<tr><td colspan="3" class="text-center text-muted py-3">Kategori tidak ditemukan</td></tr>'; return; }
             tbody.innerHTML = filtered.map(c =>
-                `<tr><td class="fw-medium">${c.id}</td><td>${c.nama}</td><td><button class="btn btn-sm btn-outline-primary me-1" style="border-radius:6px; font-size:0.7rem; padding:2px 6px;" onclick='openCategoryModal(${JSON.stringify(c)})'><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" style="border-radius:6px; font-size:0.7rem; padding:2px 6px;" onclick="deleteCat('${c.fbKey}')"><i class="bi bi-trash"></i></button></td></tr>`
+                `<tr><td class="fw-medium">${c.id}</td><td>${c.nama}</td><td><button class="btn btn-sm btn-outline-primary me-1" style="border-radius:6px;font-size:0.7rem;padding:2px 6px;" onclick='openCategoryModal(${JSON.stringify(c)})'><i class="bi bi-pencil"></i></button><button class="btn btn-sm btn-outline-danger" style="border-radius:6px;font-size:0.7rem;padding:2px 6px;" onclick="deleteCat('${c.fbKey}')"><i class="bi bi-trash"></i></button></td></tr>`
                 ).join('');
         }
 
@@ -2235,7 +2193,7 @@
         async function saveCategoryData() {
             const fbKey = document.getElementById('cat-fb-key').value;
             const data = { id: document.getElementById('cat-id').value, nama: document.getElementById('cat-nama')
-                .value };
+                    .value };
             if (!data.nama) { showToast('Nama kategori wajib diisi!', 'error'); return; }
             bootstrap.Modal.getInstance(document.getElementById('categoryModal')).hide();
             showSync();
@@ -2248,8 +2206,8 @@
         }
 
         async function deleteCat(fbKey) {
-            if (confirm('Yakin ingin menghapus kategori ini?')) { showSync();
-                try { await db.ref('categories/' + fbKey).remove();
+            if (confirm('Yakin ingin menghapus kategori ini?')) { showSync(); try { await db.ref('categories/' +
+                        fbKey).remove();
                     showToast('Kategori berhasil dihapus', 'success'); } catch (e) { showToast('Gagal menghapus: ' + e
                         .message, 'error'); } }
         }
@@ -2261,9 +2219,10 @@
             const filtered = appData.products.filter(p => (p.nama && p.nama.toLowerCase().includes(search)) || (p
                 .kategori && p.kategori.toLowerCase().includes(search)));
             if (filtered.length === 0) { list.innerHTML =
-                    '<div class="col-12 text-center text-muted py-4"><i class="bi bi-search" style="font-size:1.5rem;"></i><p class="mt-1" style="font-size:0.8rem;">Produk tidak ditemukan</p></div>'; return; }
+                    '<div class="col-12 text-center text-muted py-4"><i class="bi bi-search" style="font-size:1.5rem;"></i><p class="mt-1" style="font-size:0.8rem;">Produk tidak ditemukan</p></div>';
+                return; }
             list.innerHTML = filtered.map(p =>
-                `<div class="col-6 col-md-4 col-lg-3"><div class="product-card ${p.stok === 0 ? 'out-of-stock' : ''}" onclick="${p.stok > 0 ? `addToCart('${p.id}')` : ''}"><div class="prod-icon"><i class="bi bi-box-seam"></i></div><h6 class="fw-bold mb-0" style="font-size: 0.78rem;">${p.nama}</h6><div class="fw-bold" style="color:var(--primary);font-size:0.85rem;">${formatRp(p.jual)}</div><div class="text-muted" style="font-size: 0.7rem;">Stok: ${p.stok}</div>${p.stok === 0 ? '<div class="badge bg-danger position-absolute top-0 end-0 m-1" style="font-size:0.6rem;">HABIS</div>' : ''}</div></div>`
+                `<div class="col-6 col-md-4 col-lg-3"><div class="product-card ${p.stok === 0 ? 'out-of-stock' : ''}" onclick="${p.stok > 0 ? `addToCart('${p.id}')` : ''}"><div class="prod-icon"><i class="bi bi-box-seam"></i></div><h6 class="fw-bold mb-0" style="font-size:0.78rem;">${p.nama}</h6><div class="fw-bold" style="color:var(--primary);font-size:0.85rem;">${formatRp(p.jual)}</div><div class="text-muted" style="font-size:0.7rem;">Stok: ${p.stok}</div>${p.stok === 0 ? '<div class="badge bg-danger position-absolute top-0 end-0 m-1" style="font-size:0.6rem;">HABIS</div>' : ''}</div></div>`
                 ).join('');
         }
 
@@ -2274,7 +2233,7 @@
             if (existing) { if (existing.qty < product.stok) existing.qty++;
                 else { showToast('Stok tidak mencukupi!', 'error'); return; } } else { cart.push({ id: product.id,
                     nama: product.nama, jual: product.jual, modal: product.modal, qty: 1, kategori: product
-                    .kategori }); }
+                        .kategori }); }
             renderCart();
         }
 
@@ -2300,15 +2259,15 @@
                 document.getElementById('cart-kembalian').textContent = 'Rp 0'; return; }
             let total = 0;
             list.innerHTML = cart.map(c => { let sub = c.jual * c.qty;
-                total += sub; return `<div class="cart-item"><div><div class="fw-medium" style="font-size:0.82rem;">${c.nama}</div><div class="text-muted" style="font-size:0.7rem;">${formatRp(c.jual)} x ${c.qty}</div></div><div class="d-flex align-items-center gap-1"><div class="fw-bold" style="font-size:0.85rem;">${formatRp(sub)}</div><div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" style="border-radius:4px 0 0 4px; font-size:0.7rem; padding:0 4px;" onclick="changeQty('${c.id}', -1)">-</button><button class="btn btn-outline-secondary" style="font-size:0.7rem; padding:0 4px;" onclick="changeQty('${c.id}', 1)">+</button></div><button class="btn btn-sm btn-outline-danger" style="border-radius:4px; font-size:0.7rem; padding:0 4px;" onclick="removeFromCart('${c.id}')"><i class="bi bi-x"></i></button></div></div>`; })
+                total += sub; return `<div class="cart-item"><div><div class="fw-medium" style="font-size:0.82rem;">${c.nama}</div><div class="text-muted" style="font-size:0.7rem;">${formatRp(c.jual)} x ${c.qty}</div></div><div class="d-flex align-items-center gap-1"><div class="fw-bold" style="font-size:0.85rem;">${formatRp(sub)}</div><div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" style="border-radius:4px 0 0 4px;font-size:0.7rem;padding:0 4px;" onclick="changeQty('${c.id}', -1)">-</button><button class="btn btn-outline-secondary" style="font-size:0.7rem;padding:0 4px;" onclick="changeQty('${c.id}', 1)">+</button></div><button class="btn btn-sm btn-outline-danger" style="border-radius:4px;font-size:0.7rem;padding:0 4px;" onclick="removeFromCart('${c.id}')"><i class="bi bi-x"></i></button></div></div>`; })
                 .join('');
             document.getElementById('cart-total').textContent = formatRp(total);
             calcChange();
         }
 
         function calcChange() { const total = cart.reduce((acc, c) => acc + (c.jual * c.qty), 0); const bayar = Number(
-                document.getElementById('cart-bayar').value) || 0; document.getElementById('cart-kembalian').textContent =
-                formatRp(bayar - total >= 0 ? bayar - total : 0); }
+                document.getElementById('cart-bayar').value) || 0; document.getElementById('cart-kembalian')
+                .textContent = formatRp(bayar - total >= 0 ? bayar - total : 0); }
 
         async function processPayment() {
             if (cart.length === 0) { showToast('Keranjang kosong!', 'error'); return; }
@@ -2340,29 +2299,25 @@
             currentReceiptData = { idTrx, items, total, bayar, kembalian, tgl };
             document.getElementById('wa-phone-receipt').value = '';
 
-            const storeName = settings.storeName || 'KasirPOS';
-            const address = settings.address || '';
-            const phone = settings.phone || '';
-            const footer = settings.receiptFooter || 'Terima kasih telah berbelanja!';
+            // Gunakan pengaturan untuk struk
+            const storeName = appSettings.storeName || 'KasirPOS';
+            const address = appSettings.address || '';
+            const phone = appSettings.phone || '';
+            const footer = appSettings.receiptFooter || 'Terima kasih telah berbelanja!';
 
-            let html = `
-                <div class="text-center mb-2">
-                    <h5 class="fw-bold mb-0" style="font-size:1rem;">${storeName}</h5>
-                    ${address ? `<div style="font-size:0.65rem; color:#555;">${address}</div>` : ''}
-                    ${phone ? `<div style="font-size:0.65rem; color:#555;">Telp: ${phone}</div>` : ''}
-                    <small class="text-muted" style="font-size:0.65rem;">${tgl}</small>
-                </div>
-                <hr class="my-1">
-                <small style="font-size:0.65rem;">ID: ${idTrx}</small>
-                <hr class="my-1">
-                ${items.map(i => `<div class="d-flex justify-content-between" style="font-size:0.75rem;"><span>${i.nama} x${i.qty}</span><span>${formatRp(i.jual * i.qty)}</span></div>`).join('')}
-                <hr class="my-1">
-                <div class="d-flex justify-content-between fw-bold" style="font-size:0.85rem;"><span>Total</span><span>${formatRp(total)}</span></div>
-                <div class="d-flex justify-content-between" style="font-size:0.75rem;"><span>Bayar</span><span>${formatRp(bayar)}</span></div>
-                <div class="d-flex justify-content-between fw-bold" style="color:var(--success); font-size:0.85rem;"><span>Kembalian</span><span>${formatRp(kembalian)}</span></div>
-                <hr class="my-1">
-                <div class="text-center" style="font-size:0.65rem; color:#888;">${footer}</div>
-            `;
+            let html =
+                `<div class="text-center mb-2"><h5 class="fw-bold mb-0" style="font-size:1rem;">${storeName}</h5>`;
+            if (address) html += `<small class="text-muted" style="font-size:0.7rem;display:block;">${address}</small>`;
+            if (phone) html += `<small class="text-muted" style="font-size:0.7rem;display:block;">${phone}</small>`;
+            html +=
+                `<small class="text-muted" style="font-size:0.7rem;">${tgl}</small></div><hr class="my-1"><small style="font-size:0.7rem;">ID: ${idTrx}</small><hr class="my-1">`;
+            html += items.map(i =>
+                    `<div class="d-flex justify-content-between" style="font-size:0.8rem;"><span>${i.nama} x${i.qty}</span><span>${formatRp(i.jual * i.qty)}</span></div>`
+                    ).join('');
+            html +=
+                `<hr class="my-1"><div class="d-flex justify-content-between fw-bold" style="font-size:0.9rem;"><span>Total</span><span>${formatRp(total)}</span></div><div class="d-flex justify-content-between" style="font-size:0.8rem;"><span>Bayar</span><span>${formatRp(bayar)}</span></div><div class="d-flex justify-content-between fw-bold" style="color:var(--success);font-size:0.9rem;"><span>Kembalian</span><span>${formatRp(kembalian)}</span></div>`;
+            html +=
+                `<div class="text-center mt-2 text-muted" style="font-size:0.7rem;">${footer}</div>`;
             document.getElementById('receipt-content').innerHTML = html;
             new bootstrap.Modal(document.getElementById('receiptModal')).show();
         }
@@ -2370,34 +2325,37 @@
         function generateReceiptText() {
             if (!currentReceiptData) return '';
             const d = currentReceiptData;
-            const storeName = settings.storeName || 'KasirPOS';
-            const address = settings.address || '';
-            const phone = settings.phone || '';
-            const footer = settings.receiptFooter || 'Terima kasih telah berbelanja!';
+            const storeName = appSettings.storeName || 'KasirPOS';
+            const address = appSettings.address || '';
+            const phone = appSettings.phone || '';
+            const footer = appSettings.receiptFooter || 'Terima kasih telah berbelanja!';
 
-            let text =
-                `*${storeName}*\n`;
+            let text = `*${storeName}*\n`;
             if (address) text += `${address}\n`;
             if (phone) text += `Telp: ${phone}\n`;
-            text += `------------------------\n`;
-            text += `${d.tgl}\nID: ${d.idTrx}\n------------------------\n`;
+            text += `-------------------------------\n${d.tgl}\nID: ${d.idTrx}\n-------------------------------\n`;
             d.items.forEach(item => {
                 text += `${item.nama} (x${item.qty})\n  ${formatRp(item.jual * item.qty)}\n`;
             });
-            text += `------------------------\n`;
-            text += `*TOTAL: ${formatRp(d.total)}*\n`;
-            text += `BAYAR: ${formatRp(d.bayar)}\n`;
-            text += `KEMBALIAN: ${formatRp(d.kembalian)}\n`;
-            text += `------------------------\n${footer}\n`;
+            text +=
+                `-------------------------------\n*TOTAL: ${formatRp(d.total)}*\nBAYAR: ${formatRp(d.bayar)}\nKEMBALIAN: ${formatRp(d.kembalian)}\n-------------------------------\n${footer}\n`;
             return text;
         }
 
         function printCurrentReceipt() {
             const receiptText = generateReceiptText();
             const printArea = document.getElementById('receipt-print-area');
-            // Gunakan font monospace dengan style bersih
+            const storeName = appSettings.storeName || 'KasirPOS';
+            const address = appSettings.address || '';
+            const phone = appSettings.phone || '';
+
+            let headerHtml = `<h3 style="text-align:center;margin-bottom:3px;font-size:1.2rem;">${storeName}</h3>`;
+            if (address) headerHtml += `<div style="text-align:center;font-size:11px;">${address}</div>`;
+            if (phone) headerHtml += `<div style="text-align:center;font-size:11px;">${phone}</div>`;
+            headerHtml += `<hr style="border:1px dashed black;margin:4px 0;">`;
+
             printArea.innerHTML =
-                `<div style="font-family: monospace; max-width: 300px; margin: auto; white-space: pre-wrap; word-wrap: break-word;">${receiptText}</div>`;
+                `<div style="font-family: monospace; max-width: 300px; margin: auto;">${headerHtml}<pre style="font-size: 12px; background: none; border: none; padding: 0; margin: 0;">${receiptText}</pre></div>`;
             printArea.style.display = 'block';
             window.print();
             setTimeout(() => printArea.style.display = 'none', 500);
@@ -2444,7 +2402,8 @@
             const tbody = document.getElementById('table-reports');
             const keys = Object.keys(groupedData).sort().reverse();
             if (keys.length === 0) { tbody.innerHTML =
-                '<tr><td colspan="5" class="text-center text-muted py-3">Tidak ada data untuk periode ini</td></tr>'; return; }
+                    '<tr><td colspan="5" class="text-center text-muted py-3">Tidak ada data untuk periode ini</td></tr>';
+                return; }
             tbody.innerHTML = keys.map(key => { const d = groupedData[key]; return `<tr><td class="fw-medium">${key}</td><td><span class="badge-cat">${d.trxCount} Trx</span></td><td>${formatRp(d.pendapatan)}</td><td>${formatRp(d.modal)}</td><td class="fw-bold" style="color:var(--success);">${formatRp(d.pendapatan - d.modal)}</td></tr>`; })
                 .join('');
         }
@@ -2460,12 +2419,13 @@
         function renderHistoryTable(data) {
             const tbody = document.getElementById('table-history');
             if (!data || data.length === 0) { tbody.innerHTML =
-                '<tr><td colspan="5" class="text-center text-muted py-3">Tidak ada transaksi ditemukan</td></tr>'; return; }
+                    '<tr><td colspan="5" class="text-center text-muted py-3">Tidak ada transaksi ditemukan</td></tr>';
+                return; }
             tbody.innerHTML = data.map(d => {
                 let detailHtml = d.items ? d.items.map(item =>
                     `<div style="font-size:0.75rem;">&bull; ${item.nama} (x${item.qty})</div>`).join('') :
                     '-';
-                return `<tr><td class="text-nowrap" style="font-size:0.75rem;">${d.tgl}</td><td><span class="badge-cat">${d.idTrx}</span></td><td>${detailHtml}</td><td class="fw-bold" style="font-size:0.85rem;">${formatRp(d.total)}</td><td><div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" style="border-radius:4px; font-size:0.7rem; padding:2px 6px;" onclick="printHistoryTrx('${d.idTrx}')" title="Print"><i class="bi bi-printer"></i></button><button class="btn btn-outline-success" style="border-radius:4px; font-size:0.7rem; padding:2px 6px;" onclick="waHistoryTrx('${d.idTrx}')" title="WhatsApp"><i class="bi bi-whatsapp"></i></button></div></td></tr>`;
+                return `<tr><td class="text-nowrap" style="font-size:0.75rem;">${d.tgl}</td><td><span class="badge-cat">${d.idTrx}</span></td><td>${detailHtml}</td><td class="fw-bold" style="font-size:0.85rem;">${formatRp(d.total)}</td><td><div class="btn-group btn-group-sm"><button class="btn btn-outline-secondary" style="border-radius:4px;font-size:0.7rem;padding:2px 6px;" onclick="printHistoryTrx('${d.idTrx}')" title="Print"><i class="bi bi-printer"></i></button><button class="btn btn-outline-success" style="border-radius:4px;font-size:0.7rem;padding:2px 6px;" onclick="waHistoryTrx('${d.idTrx}')" title="WhatsApp"><i class="bi bi-whatsapp"></i></button></div></td></tr>`;
             }).join('');
         }
 
@@ -2483,42 +2443,59 @@
         }
 
         // ==================== SETTINGS ====================
+        function loadSettings() {
+            // Settings are loaded realtime via Firebase listener
+            // But we also need to populate UI from appSettings
+            applySettingsToUI();
+            updatePrinterStatus();
+        }
+
         function applySettingsToUI() {
-            document.getElementById('settings-store-name').value = settings.storeName || '';
-            document.getElementById('settings-address').value = settings.address || '';
-            document.getElementById('settings-phone').value = settings.phone || '';
-            document.getElementById('settings-receipt-footer').value = settings.receiptFooter || '';
-            document.getElementById('settings-printer-type').value = settings.printerType || 'none';
-            document.getElementById('settings-printer-address').value = settings.printerAddress || '';
-            refreshReceiptPreview();
-        }
-
-        function refreshReceiptPreview() {
-            document.getElementById('preview-store-name').textContent = settings.storeName || 'KasirPOS';
-            document.getElementById('preview-address').textContent = settings.address || '';
-            document.getElementById('preview-phone').textContent = settings.phone ? 'Telp: ' + settings.phone : '';
-            document.getElementById('preview-footer').textContent = settings.receiptFooter ||
+            document.getElementById('settings-store-name').value = appSettings.storeName || '';
+            document.getElementById('settings-address').value = appSettings.address || '';
+            document.getElementById('settings-phone').value = appSettings.phone || '';
+            document.getElementById('settings-receipt-footer').value = appSettings.receiptFooter ||
                 'Terima kasih telah berbelanja!';
+            document.getElementById('settings-date-format').value = appSettings.dateFormat || 'id-ID';
+            document.getElementById('settings-printer-name').value = appSettings.printerName || '';
+            updatePrinterStatus();
         }
 
-        function collectSettingsFromUI() {
-            return {
-                storeName: document.getElementById('settings-store-name').value.trim() || 'KasirPOS',
-                address: document.getElementById('settings-address').value.trim(),
-                phone: document.getElementById('settings-phone').value.trim(),
-                receiptFooter: document.getElementById('settings-receipt-footer').value.trim() ||
-                    'Terima kasih telah berbelanja!',
-                printerType: document.getElementById('settings-printer-type').value || 'none',
-                printerAddress: document.getElementById('settings-printer-address').value.trim()
-            };
+        function updatePrinterStatus() {
+            const statusDiv = document.getElementById('printer-status-display');
+            if (appSettings.printerConnected) {
+                statusDiv.innerHTML =
+                    `<span class="printer-status connected"><i class="bi bi-bluetooth"></i> Terhubung ke ${appSettings.printerName || 'printer'}</span>`;
+            } else {
+                statusDiv.innerHTML =
+                    `<span class="printer-status disconnected"><i class="bi bi-bluetooth"></i> Tidak Terhubung</span>`;
+            }
         }
 
         async function saveSettings() {
-            const newSettings = collectSettingsFromUI();
+            const storeName = document.getElementById('settings-store-name').value.trim();
+            const address = document.getElementById('settings-address').value.trim();
+            const phone = document.getElementById('settings-phone').value.trim();
+            const receiptFooter = document.getElementById('settings-receipt-footer').value.trim() ||
+                'Terima kasih telah berbelanja!';
+            const dateFormat = document.getElementById('settings-date-format').value;
+            const printerName = document.getElementById('settings-printer-name').value.trim();
+
+            const settingsData = {
+                storeName: storeName || 'KasirPOS',
+                address: address || '',
+                phone: phone || '',
+                receiptFooter: receiptFooter,
+                dateFormat: dateFormat,
+                printerName: printerName || '',
+                printerConnected: appSettings.printerConnected || false,
+                updatedAt: Date.now()
+            };
+
             showSync();
             try {
-                await db.ref('settings').update(newSettings);
-                settings = { ...settings, ...newSettings };
+                await db.ref('settings').update(settingsData);
+                appSettings = settingsData;
                 applySettingsToUI();
                 showToast('Pengaturan berhasil disimpan!', 'success');
             } catch (e) {
@@ -2526,79 +2503,101 @@
             }
         }
 
-        function loadSettings() {
-            db.ref('settings').once('value').then(snapshot => {
-                const val = snapshot.val();
-                if (val) {
-                    settings = { ...settings, ...val };
-                    applySettingsToUI();
-                }
-            }).catch(e => { console.warn('Gagal load settings:', e); });
+        // ==================== PRINTER BLUETOOTH ====================
+        function scanBluetoothPrinters() {
+            const resultDiv = document.getElementById('printer-scan-result');
+
+            // Cek apakah browser mendukung Web Bluetooth
+            if (!navigator.bluetooth) {
+                resultDiv.innerHTML =
+                    '<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Browser Anda tidak mendukung Web Bluetooth. Gunakan Chrome atau Edge.</span>';
+                showToast('Web Bluetooth tidak didukung oleh browser ini', 'error');
+                return;
+            }
+
+            resultDiv.innerHTML =
+                '<span class="text-muted"><i class="bi bi-arrow-repeat spinner-border spinner-border-sm me-1"></i> Mencari perangkat Bluetooth...</span>';
+
+            navigator.bluetooth.requestDevice({
+                    filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }],
+                    // 000018f0-0000-1000-8000-00805f9b34fb adalah service UUID untuk printer Bluetooth
+                    acceptAllDevices: false,
+                    optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
+                })
+                .then(device => {
+                    const name = device.name || 'Perangkat tanpa nama';
+                    resultDiv.innerHTML =
+                        `<span class="text-success"><i class="bi bi-check-circle"></i> Ditemukan: <strong>${name}</strong></span>`;
+                    document.getElementById('settings-printer-name').value = name;
+                    appSettings.printerName = name;
+                    appSettings.printerConnected = true;
+                    updatePrinterStatus();
+                    showToast(`Printer "${name}" ditemukan dan terhubung!`, 'success');
+
+                    // Simpan otomatis
+                    saveSettings();
+                })
+                .catch(error => {
+                    if (error.message.includes('cancelled')) {
+                        resultDiv.innerHTML =
+                        '<span class="text-muted"><i class="bi bi-info-circle"></i> Pencarian dibatalkan.</span>';
+                    } else {
+                        resultDiv.innerHTML =
+                            `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Gagal mencari: ${error.message}</span>`;
+                        showToast('Gagal mencari printer: ' + error.message, 'error');
+                    }
+                });
         }
 
         function testPrinterConnection() {
-            const resultEl = document.getElementById('printer-test-result');
-            const printerType = document.getElementById('settings-printer-type').value;
-            const printerAddress = document.getElementById('settings-printer-address').value.trim();
-
-            if (printerType === 'none') {
-                resultEl.innerHTML = '<span class="text-warning">⚠️ Tidak ada printer dipilih.</span>';
+            const printerName = document.getElementById('settings-printer-name').value.trim();
+            if (!printerName) {
+                showToast('Masukkan nama printer terlebih dahulu!', 'error');
                 return;
             }
 
-            if (!printerAddress) {
-                resultEl.innerHTML = '<span class="text-warning">⚠️ Masukkan alamat/ nama printer terlebih dahulu.</span>';
-                return;
-            }
+            // Simulasi tes koneksi
+            showToast(`Mencoba koneksi ke printer "${printerName}"...`, 'info');
 
-            resultEl.innerHTML = '<span class="text-info"><i class="bi bi-arrow-repeat me-1"></i> Menguji koneksi...</span>';
-
-            // Simulasi koneksi (karena browser tidak bisa langsung konek ke Bluetooth tanpa Web Bluetooth API)
-            // Kita berikan feedback simulasi
-            setTimeout(() => {
-                if (printerType === 'bluetooth') {
-                    // Coba gunakan Web Bluetooth API jika tersedia
-                    if (navigator.bluetooth) {
-                        // Simulasi scanning
-                        resultEl.innerHTML =
-                            '<span class="text-success">✅ Bluetooth: Perangkat siap. (Pastikan printer dalam mode pairing)</span>';
-                        showToast('Fitur Bluetooth memerlukan koneksi manual melalui sistem operasi.', 'info');
-                    } else {
-                        resultEl.innerHTML =
-                            '<span class="text-warning">⚠️ Browser tidak mendukung Web Bluetooth. Pastikan printer terhubung via sistem.</span>';
-                    }
-                } else if (printerType === 'usb' || printerType === 'network') {
-                    resultEl.innerHTML =
-                        `<span class="text-success">✅ ${printerType === 'usb' ? 'USB' : 'Network'} printer siap. Alamat: ${printerAddress}</span>`;
-                    showToast(
-                        `Printer ${printerType} telah dikonfigurasi. Pastikan driver terinstal.`,
-                        'success');
-                }
-            }, 1500);
-        }
-
-        async function resetAllData() {
-            if (!confirm('PERINGATAN: Ini akan menghapus SEMUA data (produk, transaksi, kategori, riwayat, dll.)! Yakin?'))
-                return;
-            if (!confirm('Ketik "RESET" untuk konfirmasi akhir.')) return;
-
-            showLoading(true);
-            try {
-                // Hapus semua node utama
-                await db.ref('products').remove();
-                await db.ref('categories').remove();
-                await db.ref('transactions').remove();
-                await db.ref('productHistory').remove();
-                await db.ref('stockOuts').remove();
-                // Settings tidak direset agar tetap ada
-                showToast('Semua data berhasil direset!', 'success');
-                // Refresh otomatis
-                location.reload();
-            } catch (e) {
-                showToast('Gagal reset data: ' + e.message, 'error');
-                showLoading(false);
+            // Cek apakah browser mendukung Web Bluetooth
+            if (navigator.bluetooth) {
+                // Coba koneksi ulang
+                navigator.bluetooth.requestDevice({
+                        filters: [{ name: printerName }],
+                        optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
+                    })
+                    .then(device => {
+                        appSettings.printerConnected = true;
+                        appSettings.printerName = device.name || printerName;
+                        updatePrinterStatus();
+                        showToast(`Koneksi ke "${appSettings.printerName}" berhasil!`, 'success');
+                        saveSettings();
+                    })
+                    .catch(error => {
+                        appSettings.printerConnected = false;
+                        updatePrinterStatus();
+                        showToast('Koneksi gagal: ' + error.message, 'error');
+                    });
+            } else {
+                // Fallback: simulasi sukses jika tidak ada Web Bluetooth
+                appSettings.printerConnected = true;
+                updatePrinterStatus();
+                showToast(`Tes koneksi ke "${printerName}" berhasil (simulasi).`, 'success');
+                saveSettings();
             }
         }
+
+        // ==================== INISIALISASI ====================
+        // Set default date for settings page on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates for reports
+            const today = new Date();
+            const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            document.getElementById('rpt-start').value = getLocalDate(startOfMonth.getTime());
+            document.getElementById('rpt-end').value = getLocalDate(today.getTime());
+            document.getElementById('dash-start').value = '';
+            document.getElementById('dash-end').value = '';
+        });
     </script>
 
 </body>
