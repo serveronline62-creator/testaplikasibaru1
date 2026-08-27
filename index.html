@@ -686,6 +686,21 @@
             color: var(--text-dark);
         }
 
+        /* Sort dropdown */
+        .sort-select {
+            border-radius: 8px;
+            border: 1.5px solid var(--border);
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            background: white;
+            color: var(--text-dark);
+        }
+        .sort-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem var(--primary-glow);
+            outline: none;
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 left: -250px;
@@ -897,7 +912,21 @@
                     </div>
                 </div>
                 <div class="table-container mb-2">
-                    <div class="form-floating"><input type="text" class="form-control" id="prod-search" placeholder="Cari Produk" oninput="renderProducts()" style="font-size:0.8rem;" /><label for="prod-search" style="font-size:0.75rem;">Cari ID, Nama, Kategori, Stok, Modal, Jual...</label></div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="form-floating flex-grow-1">
+                            <input type="text" class="form-control" id="prod-search" placeholder="Cari Produk" oninput="renderProducts()" style="font-size:0.8rem;" />
+                            <label for="prod-search" style="font-size:0.75rem;">Cari ID, Nama, Kategori, Stok, Modal, Jual...</label>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <label class="form-label fw-medium mb-0" style="font-size:0.75rem;white-space:nowrap;">Urutkan:</label>
+                            <select class="sort-select" id="prod-sort" onchange="renderProducts()">
+                                <option value="nama-asc">Nama A-Z</option>
+                                <option value="nama-desc">Nama Z-A</option>
+                                <option value="id-asc">ID A-Z</option>
+                                <option value="id-desc">ID Z-A</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="table-container">
                     <div class="table-responsive">
@@ -1695,11 +1724,40 @@
         // ==================== PRODUK ====================
         function renderProducts() {
             const search = document.getElementById('prod-search')?.value?.toLowerCase() || '';
+            const sortBy = document.getElementById('prod-sort')?.value || 'nama-asc';
+
+            // Filter produk
+            let filtered = appData.products.filter(p =>
+                (p.id && p.id.toLowerCase().includes(search)) ||
+                (p.nama && p.nama.toLowerCase().includes(search)) ||
+                (p.kategori && p.kategori.toLowerCase().includes(search))
+            );
+
+            // Sorting
+            const [field, order] = sortBy.split('-');
+            const isAsc = order === 'asc';
+
+            filtered.sort((a, b) => {
+                let valA = (a[field] || '').toString().toLowerCase();
+                let valB = (b[field] || '').toString().toLowerCase();
+
+                // Jika field berupa angka (stok, modal, jual) bandingkan numerik
+                if (field === 'stok' || field === 'modal' || field === 'jual') {
+                    valA = parseFloat(a[field]) || 0;
+                    valB = parseFloat(b[field]) || 0;
+                    return isAsc ? valA - valB : valB - valA;
+                }
+
+                // Untuk string (nama, id, kategori)
+                return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+
             const tbody = document.getElementById('table-products');
-            const filtered = appData.products.filter(p => (p.id && p.id.toLowerCase().includes(search)) || (p.nama && p
-                .nama.toLowerCase().includes(search)) || (p.kategori && p.kategori.toLowerCase().includes(search)));
-            if (filtered.length === 0) { tbody.innerHTML =
-                '<tr><td colspan="10" class="text-center text-muted py-3">Produk tidak ditemukan</td></tr>'; return; }
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center text-muted py-3">Produk tidak ditemukan</td></tr>';
+                return;
+            }
+
             tbody.innerHTML = filtered.map(p => {
                 const laba = p.jual - p.modal;
                 const totalLaba = laba * p.stok;
@@ -1816,7 +1874,6 @@
                     dropZone.classList.remove('dragover');
                     const file = e.dataTransfer.files[0];
                     if (file) {
-                        // Trigger file input change
                         const fileInput = document.getElementById('file-input');
                         const dt = new DataTransfer();
                         dt.items.add(file);
@@ -1854,7 +1911,6 @@
                         return;
                     }
 
-                    // Map columns - cari kolom yang cocok
                     const headers = Object.keys(jsonData[0]);
                     const colMap = {
                         id: findCol(headers, ['id', 'kode', 'code', 'produk id']),
@@ -1865,7 +1921,6 @@
                         jual: findCol(headers, ['jual', 'harga jual', 'price', 'sell', 'jualan'])
                     };
 
-                    // Cek apakah kolom wajib ada
                     const required = ['nama'];
                     const missing = required.filter(r => colMap[r] === undefined);
                     if (missing.length > 0) {
@@ -1873,7 +1928,6 @@
                         return;
                     }
 
-                    // Parse data
                     uploadedData = jsonData.map(row => {
                         const id = colMap.id ? String(row[colMap.id] || '').trim() : '';
                         const nama = String(row[colMap.nama] || '').trim();
@@ -1893,7 +1947,6 @@
                         };
                     });
 
-                    // Filter data yang valid
                     const validData = uploadedData.filter(d => d._valid);
                     const invalidCount = uploadedData.length - validData.length;
 
@@ -1902,7 +1955,6 @@
                         return;
                     }
 
-                    // Tampilkan preview
                     showUploadPreview(validData, invalidCount);
                     uploadedData = validData;
 
@@ -1960,7 +2012,6 @@
             html += '</tbody></table>';
             tableDiv.innerHTML = html;
 
-            // Status info
             const statusDiv = document.getElementById('upload-status');
             let statusHtml =
                 `<span class="text-success"><i class="bi bi-check-circle"></i> ${data.length} data siap diimport</span>`;
@@ -2000,12 +2051,10 @@
             let failCount = 0;
             const errors = [];
 
-            // Untuk setiap produk, cek apakah ID sudah ada, jika ya update, jika tidak tambah baru
             for (const d of validData) {
                 try {
                     const existing = appData.products.find(p => p.id === d.id);
                     if (existing) {
-                        // Update produk existing
                         await db.ref('products/' + existing.fbKey).update({
                             nama: d.nama,
                             kategori: d.kategori,
@@ -2015,7 +2064,6 @@
                         });
                         successCount++;
                     } else {
-                        // Tambah produk baru
                         await db.ref('products').push({
                             id: d.id,
                             nama: d.nama,
@@ -2033,8 +2081,6 @@
             }
 
             hideSync();
-
-            // Tutup modal setelah selesai
             bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
 
             if (failCount === 0) {
