@@ -882,7 +882,10 @@
 
             <!-- ====== POS PAGE ====== -->
             <div id="page-pos" class="page-content" style="display:none;">
-                <div class="page-header"><h2>Kasir (POS)</h2></div>
+                <div class="page-header">
+                    <h2 id="pos-store-title">Kasir (POS)</h2>
+                    <p id="pos-store-info" class="mb-0" style="font-size:0.8rem;color:var(--text-muted);"></p>
+                </div>
                 <div class="pos-grid">
                     <div class="pos-products">
                         <div class="form-floating mb-2"><input type="text" class="form-control" id="pos-search" placeholder="Cari produk..." oninput="renderPosProducts()" style="font-size:0.8rem;" /><label for="pos-search" style="font-size:0.75rem;">Cari Produk atau Kategori</label></div>
@@ -1457,6 +1460,7 @@
                 if (data) {
                     appSettings = data;
                     applySettingsToUI();
+                    updatePosHeader();
                 }
             }, (error) => { showToast('Gagal sinkronisasi pengaturan: ' + error.message, 'error'); });
 
@@ -1478,7 +1482,8 @@
             document.getElementById('sidebar').classList.remove('show');
 
             if (page === 'dashboard') renderDashboard();
-            if (page === 'pos') renderPosProducts();
+            if (page === 'pos') { renderPosProducts();
+                updatePosHeader(); }
             if (page === 'products') renderProducts();
             if (page === 'produk-laku') renderProdukLaku();
             if (page === 'categories') renderCategories();
@@ -1726,14 +1731,12 @@
             const search = document.getElementById('prod-search')?.value?.toLowerCase() || '';
             const sortBy = document.getElementById('prod-sort')?.value || 'nama-asc';
 
-            // Filter produk
             let filtered = appData.products.filter(p =>
                 (p.id && p.id.toLowerCase().includes(search)) ||
                 (p.nama && p.nama.toLowerCase().includes(search)) ||
                 (p.kategori && p.kategori.toLowerCase().includes(search))
             );
 
-            // Sorting
             const [field, order] = sortBy.split('-');
             const isAsc = order === 'asc';
 
@@ -1741,14 +1744,12 @@
                 let valA = (a[field] || '').toString().toLowerCase();
                 let valB = (b[field] || '').toString().toLowerCase();
 
-                // Jika field berupa angka (stok, modal, jual) bandingkan numerik
                 if (field === 'stok' || field === 'modal' || field === 'jual') {
                     valA = parseFloat(a[field]) || 0;
                     valB = parseFloat(b[field]) || 0;
                     return isAsc ? valA - valB : valB - valA;
                 }
 
-                // Untuk string (nama, id, kategori)
                 return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
             });
 
@@ -1858,7 +1859,6 @@
             processUploadFile(file);
         }
 
-        // Drag and drop support
         document.addEventListener('DOMContentLoaded', function() {
             const dropZone = document.getElementById('drop-zone');
             if (dropZone) {
@@ -2625,6 +2625,20 @@
         }
 
         // ==================== KASIR (POS) ====================
+        function updatePosHeader() {
+            const titleEl = document.getElementById('pos-store-title');
+            const infoEl = document.getElementById('pos-store-info');
+            if (titleEl) {
+                titleEl.textContent = appSettings.storeName ? `${appSettings.storeName} - Kasir` : 'Kasir (POS)';
+            }
+            if (infoEl) {
+                let info = '';
+                if (appSettings.address) info += appSettings.address;
+                if (appSettings.phone) info += (info ? ' | ' : '') + 'Telp: ' + appSettings.phone;
+                infoEl.textContent = info || 'Silakan atur informasi toko di Pengaturan';
+            }
+        }
+
         function renderPosProducts() {
             const search = document.getElementById('pos-search')?.value?.toLowerCase() || '';
             const list = document.getElementById('pos-product-list');
@@ -2689,7 +2703,11 @@
             const kembalian = bayar - total;
             const idTrx = 'TRX-' + Date.now();
             const timestamp = Date.now();
-            const tgl = new Date().toLocaleString('id-ID');
+
+            // Gunakan format tanggal dari pengaturan
+            const dateFormat = appSettings.dateFormat || 'id-ID';
+            const tgl = new Date().toLocaleString(dateFormat);
+
             const transactionData = { idTrx, items: cart, total, bayar, kembalian, timestamp, tgl };
             showSync();
             try {
@@ -2868,6 +2886,7 @@
             document.getElementById('settings-date-format').value = appSettings.dateFormat || 'id-ID';
             document.getElementById('settings-printer-name').value = appSettings.printerName || '';
             updatePrinterStatus();
+            updatePosHeader();
         }
 
         function updatePrinterStatus() {
