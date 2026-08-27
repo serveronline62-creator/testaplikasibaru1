@@ -624,6 +624,68 @@
             border: 1px solid #fecaca;
         }
 
+        /* Upload preview table */
+        .upload-preview-table {
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.75rem;
+        }
+        .upload-preview-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .upload-preview-table th,
+        .upload-preview-table td {
+            padding: 4px 8px;
+            border: 1px solid var(--border);
+            text-align: left;
+            white-space: nowrap;
+        }
+        .upload-preview-table th {
+            background: var(--bg-main);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        .upload-preview-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .upload-preview-table .text-danger {
+            color: #dc2626;
+        }
+        .upload-preview-table .text-success {
+            color: var(--success);
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: var(--bg-main);
+        }
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(230, 57, 70, 0.04);
+        }
+        .drop-zone i {
+            font-size: 2.5rem;
+            color: var(--text-muted);
+        }
+        .drop-zone p {
+            margin: 8px 0 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .drop-zone .file-name {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
         @media (max-width: 992px) {
             .sidebar {
                 left: -250px;
@@ -826,10 +888,11 @@
 
             <!-- ====== PRODUCTS PAGE ====== -->
             <div id="page-products" class="page-content" style="display:none;">
-                <div class="page-header d-flex justify-content-between align-items-center">
+                <div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <div><h2>Manajemen Produk</h2></div>
-                    <div class="d-flex gap-1">
+                    <div class="d-flex gap-1 flex-wrap">
                         <button class="btn btn-success" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="downloadProductsExcel()"><i class="bi bi-file-earmark-spreadsheet"></i> Excel</button>
+                        <button class="btn btn-primary" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="openUploadModal()"><i class="bi bi-upload"></i> Upload Data</button>
                         <button class="btn btn-primary" style="border-radius:8px;font-size:0.75rem;padding:4px 10px;" onclick="openProductModal()"><i class="bi bi-plus-lg"></i> Tambah</button>
                     </div>
                 </div>
@@ -1128,14 +1191,49 @@
     </div>
 
     <!-- ==================== MODALS ==================== -->
+    <!-- Product Modal -->
     <div class="modal fade" id="productModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" style="font-size:1rem;" id="prodModalTitle">Tambah Produk</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="prod-fb-key" /><input type="hidden" id="prod-id" /><div class="form-floating mb-2"><input type="text" class="form-control" id="prod-nama" placeholder="Nama Produk" required style="font-size:0.8rem;" /><label for="prod-nama" style="font-size:0.75rem;">Nama Produk</label></div><div class="form-floating mb-2"><select class="form-select" id="prod-kategori" style="padding-top:1.4rem;padding-bottom:0.5rem;font-size:0.8rem;"><option value="" disabled selected>Pilih Kategori</option></select><label for="prod-kategori" style="font-size:0.75rem;">Kategori</label></div><div class="row"><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-stok" placeholder="Stok" min="0" required style="font-size:0.8rem;" /><label for="prod-stok" style="font-size:0.75rem;">Stok</label></div></div><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-modal" placeholder="H. Modal" min="0" required style="font-size:0.8rem;" /><label for="prod-modal" style="font-size:0.75rem;">Harga Modal</label></div></div><div class="col-md-4 mb-2"><div class="form-floating"><input type="number" class="form-control" id="prod-jual" placeholder="H. Jual" min="0" required style="font-size:0.8rem;" /><label for="prod-jual" style="font-size:0.75rem;">Harga Jual</label></div></div></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" style="border-radius:8px;font-size:0.8rem;" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" style="border-radius:8px;font-size:0.8rem;" onclick="saveProductData()">Simpan</button></div></div></div></div>
 
+    <!-- Category Modal -->
     <div class="modal fade" id="categoryModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" style="font-size:1rem;" id="catModalTitle">Tambah Kategori</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="cat-fb-key" /><input type="hidden" id="cat-id" /><div class="form-floating"><input type="text" class="form-control" id="cat-nama" placeholder="Nama Kategori" required style="font-size:0.8rem;" /><label for="cat-nama" style="font-size:0.75rem;">Nama Kategori</label></div></div><div class="modal-footer"><button type="button" class="btn btn-secondary" style="border-radius:8px;font-size:0.8rem;" data-bs-dismiss="modal">Batal</button><button type="button" class="btn btn-primary" style="border-radius:8px;font-size:0.8rem;" onclick="saveCategoryData()">Simpan</button></div></div></div></div>
 
+    <!-- Receipt Modal -->
     <div class="modal fade" id="receiptModal" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header" style="background:var(--success);color:white;"><h5 class="modal-title fw-bold" style="font-size:1rem;"><i class="bi bi-check-circle"></i> Transaksi Berhasil</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-3" id="receipt-content" style="font-size:0.85rem;"></div><div class="modal-footer flex-column p-2"><div class="input-group mb-1"><span class="input-group-text" style="border-radius:8px 0 0 8px;font-size:0.8rem;"><i class="bi bi-whatsapp"></i></span><input type="text" class="form-control" id="wa-phone-receipt" placeholder="No. WhatsApp (08xxx)" style="border-radius:0;font-size:0.8rem;" /><button class="btn text-white" style="background:#25D366;border-radius:0 8px 8px 0;font-size:0.8rem;" onclick="sendWhatsappFromReceipt()">Kirim</button></div><div class="d-flex gap-2 w-100"><button class="btn btn-outline-secondary w-100" style="border-radius:8px;font-size:0.8rem;" onclick="printCurrentReceipt()"><i class="bi bi-printer"></i> Cetak</button><button class="btn btn-primary w-100" style="border-radius:8px;font-size:0.8rem;" data-bs-dismiss="modal">Selesai</button></div></div></div></div></div>
+
+    <!-- Upload Modal -->
+    <div class="modal fade" id="uploadModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" style="font-size:1rem;"><i class="bi bi-upload"></i> Upload Data Produk</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+        <div class="alert alert-info py-2" style="font-size:0.8rem;">
+            <i class="bi bi-info-circle"></i> Format file: <strong>.xlsx, .xls, .csv</strong> dengan kolom: 
+            <span class="badge-cat">ID</span> <span class="badge-cat">Nama</span> <span class="badge-cat">Kategori</span> 
+            <span class="badge-cat">Stok</span> <span class="badge-cat">Modal</span> <span class="badge-cat">Jual</span>
+            <br><small class="text-muted">* Jika ID kosong akan dibuat otomatis. Stok, Modal, Jual harus berupa angka.</small>
+        </div>
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <i class="bi bi-cloud-upload"></i>
+            <p>Seret & letakkan file di sini, atau <strong>klik untuk memilih</strong></p>
+            <p class="file-name" id="upload-file-name"></p>
+            <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none;" onchange="handleFileSelect(event)" />
+        </div>
+
+        <!-- Preview -->
+        <div id="upload-preview" style="display:none; margin-top:12px;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold mb-0" style="font-size:0.85rem;"><i class="bi bi-table"></i> Preview Data (<span id="upload-row-count">0</span> baris)</h6>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-danger btn-sm" style="border-radius:6px;font-size:0.7rem;padding:2px 8px;" onclick="clearUpload()"><i class="bi bi-x-circle"></i> Hapus</button>
+                    <button class="btn btn-success btn-sm" style="border-radius:6px;font-size:0.7rem;padding:2px 8px;" onclick="importUploadedProducts()"><i class="bi bi-cloud-upload"></i> Import</button>
+                </div>
+            </div>
+            <div class="upload-preview-table" id="upload-preview-table"></div>
+            <div id="upload-status" class="mt-2" style="font-size:0.8rem;"></div>
+        </div>
+    </div></div></div></div>
 
     <div id="receipt-print-area" style="display:none;"></div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js">
@@ -1180,6 +1278,9 @@
         let currentPeriod = 'all';
         let currentPeriodStart = null;
         let currentPeriodEnd = null;
+
+        // Upload state
+        let uploadedData = [];
 
         // Settings state
         let appSettings = {
@@ -1680,6 +1781,271 @@
                 .replace(/\//g, '-');
             XLSX.writeFile(wb, `Data_Produk_KasirPOS_${dateStr}.xlsx`);
             showToast('File Excel berhasil diunduh!', 'success');
+        }
+
+        // ==================== UPLOAD PRODUK ====================
+        function openUploadModal() {
+            uploadedData = [];
+            document.getElementById('upload-preview').style.display = 'none';
+            document.getElementById('upload-file-name').textContent = '';
+            document.getElementById('file-input').value = '';
+            document.getElementById('upload-status').innerHTML = '';
+            document.getElementById('upload-row-count').textContent = '0';
+            new bootstrap.Modal(document.getElementById('uploadModal')).show();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            processUploadFile(file);
+        }
+
+        // Drag and drop support
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('drop-zone');
+            if (dropZone) {
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('dragover');
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file) {
+                        // Trigger file input change
+                        const fileInput = document.getElementById('file-input');
+                        const dt = new DataTransfer();
+                        dt.items.add(file);
+                        fileInput.files = dt.files;
+                        processUploadFile(file);
+                    }
+                });
+            }
+        });
+
+        function processUploadFile(file) {
+            const validTypes = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel',
+                'text/csv'
+            ];
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+                showToast('Format file tidak didukung. Gunakan .xlsx, .xls, atau .csv', 'error');
+                return;
+            }
+
+            document.getElementById('upload-file-name').textContent = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+
+                    if (jsonData.length === 0) {
+                        showToast('File kosong atau tidak ada data yang terbaca', 'error');
+                        return;
+                    }
+
+                    // Map columns - cari kolom yang cocok
+                    const headers = Object.keys(jsonData[0]);
+                    const colMap = {
+                        id: findCol(headers, ['id', 'kode', 'code', 'produk id']),
+                        nama: findCol(headers, ['nama', 'name', 'produk', 'product', 'item']),
+                        kategori: findCol(headers, ['kategori', 'category', 'kat', 'jenis']),
+                        stok: findCol(headers, ['stok', 'stock', 'qty', 'quantity', 'jumlah']),
+                        modal: findCol(headers, ['modal', 'harga modal', 'cost', 'hpp', 'beli']),
+                        jual: findCol(headers, ['jual', 'harga jual', 'price', 'sell', 'jualan'])
+                    };
+
+                    // Cek apakah kolom wajib ada
+                    const required = ['nama'];
+                    const missing = required.filter(r => colMap[r] === undefined);
+                    if (missing.length > 0) {
+                        showToast(`Kolom wajib tidak ditemukan: ${missing.join(', ')}. Periksa header file.`, 'error');
+                        return;
+                    }
+
+                    // Parse data
+                    uploadedData = jsonData.map(row => {
+                        const id = colMap.id ? String(row[colMap.id] || '').trim() : '';
+                        const nama = String(row[colMap.nama] || '').trim();
+                        const kategori = colMap.kategori ? String(row[colMap.kategori] || '').trim() : 'Umum';
+                        const stok = parseFloat(row[colMap.stok]) || 0;
+                        const modal = parseFloat(row[colMap.modal]) || 0;
+                        const jual = parseFloat(row[colMap.jual]) || 0;
+
+                        return {
+                            id: id || ('P' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+                            nama: nama || 'Produk Tanpa Nama',
+                            kategori: kategori || 'Umum',
+                            stok: Math.max(0, Math.floor(stok)),
+                            modal: Math.max(0, modal),
+                            jual: Math.max(0, jual),
+                            _valid: nama !== '' && stok >= 0 && modal >= 0 && jual >= 0
+                        };
+                    });
+
+                    // Filter data yang valid
+                    const validData = uploadedData.filter(d => d._valid);
+                    const invalidCount = uploadedData.length - validData.length;
+
+                    if (validData.length === 0) {
+                        showToast('Tidak ada data valid. Pastikan kolom terisi dengan benar.', 'error');
+                        return;
+                    }
+
+                    // Tampilkan preview
+                    showUploadPreview(validData, invalidCount);
+                    uploadedData = validData;
+
+                } catch (err) {
+                    showToast('Gagal membaca file: ' + err.message, 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function findCol(headers, keywords) {
+            const lowerHeaders = headers.map(h => String(h).toLowerCase().trim());
+            for (const kw of keywords) {
+                const found = lowerHeaders.findIndex(h => h === kw.toLowerCase() || h.includes(kw.toLowerCase()));
+                if (found !== -1) return headers[found];
+            }
+            return undefined;
+        }
+
+        function showUploadPreview(data, invalidCount) {
+            const previewDiv = document.getElementById('upload-preview');
+            const tableDiv = document.getElementById('upload-preview-table');
+            const rowCount = document.getElementById('upload-row-count');
+
+            previewDiv.style.display = 'block';
+            rowCount.textContent = data.length;
+
+            let html = '<table><thead><tr>';
+            const headers = ['No', 'ID', 'Nama', 'Kategori', 'Stok', 'Modal', 'Jual', 'Status'];
+            html += headers.map(h => `<th>${h}</th>`).join('');
+            html += '</tr></thead><tbody>';
+
+            const displayData = data.slice(0, 100);
+            displayData.forEach((d, i) => {
+                const isValid = d._valid !== false;
+                html += `<tr>
+                    <td>${i+1}</td>
+                    <td>${d.id || '-'}</td>
+                    <td>${d.nama || '-'}</td>
+                    <td>${d.kategori || '-'}</td>
+                    <td>${d.stok}</td>
+                    <td>${d.modal}</td>
+                    <td>${d.jual}</td>
+                    <td class="${isValid ? 'text-success' : 'text-danger'}">
+                        ${isValid ? '<i class="bi bi-check-circle"></i> OK' : '<i class="bi bi-x-circle"></i> Invalid'}
+                    </td>
+                </tr>`;
+            });
+
+            if (data.length > 100) {
+                html +=
+                    `<tr><td colspan="8" class="text-muted text-center">... dan ${data.length - 100} baris lainnya</td></tr>`;
+            }
+
+            html += '</tbody></table>';
+            tableDiv.innerHTML = html;
+
+            // Status info
+            const statusDiv = document.getElementById('upload-status');
+            let statusHtml =
+                `<span class="text-success"><i class="bi bi-check-circle"></i> ${data.length} data siap diimport</span>`;
+            if (invalidCount > 0) {
+                statusHtml +=
+                    ` <span class="text-warning"><i class="bi bi-exclamation-triangle"></i> ${invalidCount} baris tidak valid (diabaikan)</span>`;
+            }
+            statusDiv.innerHTML = statusHtml;
+        }
+
+        function clearUpload() {
+            uploadedData = [];
+            document.getElementById('upload-preview').style.display = 'none';
+            document.getElementById('upload-file-name').textContent = '';
+            document.getElementById('file-input').value = '';
+            document.getElementById('upload-status').innerHTML = '';
+            document.getElementById('upload-row-count').textContent = '0';
+            showToast('Data upload dibersihkan', 'info');
+        }
+
+        async function importUploadedProducts() {
+            if (uploadedData.length === 0) {
+                showToast('Tidak ada data untuk diimport!', 'error');
+                return;
+            }
+
+            const validData = uploadedData.filter(d => d._valid !== false);
+            if (validData.length === 0) {
+                showToast('Tidak ada data valid untuk diimport!', 'error');
+                return;
+            }
+
+            if (!confirm(`Import ${validData.length} produk ke database?`)) return;
+
+            showSync();
+            let successCount = 0;
+            let failCount = 0;
+            const errors = [];
+
+            // Untuk setiap produk, cek apakah ID sudah ada, jika ya update, jika tidak tambah baru
+            for (const d of validData) {
+                try {
+                    const existing = appData.products.find(p => p.id === d.id);
+                    if (existing) {
+                        // Update produk existing
+                        await db.ref('products/' + existing.fbKey).update({
+                            nama: d.nama,
+                            kategori: d.kategori,
+                            stok: d.stok,
+                            modal: d.modal,
+                            jual: d.jual
+                        });
+                        successCount++;
+                    } else {
+                        // Tambah produk baru
+                        await db.ref('products').push({
+                            id: d.id,
+                            nama: d.nama,
+                            kategori: d.kategori,
+                            stok: d.stok,
+                            modal: d.modal,
+                            jual: d.jual
+                        });
+                        successCount++;
+                    }
+                } catch (err) {
+                    failCount++;
+                    errors.push(`${d.nama}: ${err.message}`);
+                }
+            }
+
+            hideSync();
+
+            // Tutup modal setelah selesai
+            bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
+
+            if (failCount === 0) {
+                showToast(`Berhasil mengimport ${successCount} produk!`, 'success');
+            } else {
+                showToast(`Import selesai: ${successCount} berhasil, ${failCount} gagal.`, 'error');
+                console.error('Errors:', errors);
+            }
+
+            uploadedData = [];
+            renderProducts();
         }
 
         // ==================== PRODUK LAKU ====================
@@ -2299,7 +2665,6 @@
             currentReceiptData = { idTrx, items, total, bayar, kembalian, tgl };
             document.getElementById('wa-phone-receipt').value = '';
 
-            // Gunakan pengaturan untuk struk
             const storeName = appSettings.storeName || 'KasirPOS';
             const address = appSettings.address || '';
             const phone = appSettings.phone || '';
@@ -2444,8 +2809,6 @@
 
         // ==================== SETTINGS ====================
         function loadSettings() {
-            // Settings are loaded realtime via Firebase listener
-            // But we also need to populate UI from appSettings
             applySettingsToUI();
             updatePrinterStatus();
         }
@@ -2507,7 +2870,6 @@
         function scanBluetoothPrinters() {
             const resultDiv = document.getElementById('printer-scan-result');
 
-            // Cek apakah browser mendukung Web Bluetooth
             if (!navigator.bluetooth) {
                 resultDiv.innerHTML =
                     '<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Browser Anda tidak mendukung Web Bluetooth. Gunakan Chrome atau Edge.</span>';
@@ -2520,7 +2882,6 @@
 
             navigator.bluetooth.requestDevice({
                     filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }],
-                    // 000018f0-0000-1000-8000-00805f9b34fb adalah service UUID untuk printer Bluetooth
                     acceptAllDevices: false,
                     optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
                 })
@@ -2533,8 +2894,6 @@
                     appSettings.printerConnected = true;
                     updatePrinterStatus();
                     showToast(`Printer "${name}" ditemukan dan terhubung!`, 'success');
-
-                    // Simpan otomatis
                     saveSettings();
                 })
                 .catch(error => {
@@ -2556,12 +2915,9 @@
                 return;
             }
 
-            // Simulasi tes koneksi
             showToast(`Mencoba koneksi ke printer "${printerName}"...`, 'info');
 
-            // Cek apakah browser mendukung Web Bluetooth
             if (navigator.bluetooth) {
-                // Coba koneksi ulang
                 navigator.bluetooth.requestDevice({
                         filters: [{ name: printerName }],
                         optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb']
@@ -2579,7 +2935,6 @@
                         showToast('Koneksi gagal: ' + error.message, 'error');
                     });
             } else {
-                // Fallback: simulasi sukses jika tidak ada Web Bluetooth
                 appSettings.printerConnected = true;
                 updatePrinterStatus();
                 showToast(`Tes koneksi ke "${printerName}" berhasil (simulasi).`, 'success');
@@ -2588,9 +2943,7 @@
         }
 
         // ==================== INISIALISASI ====================
-        // Set default date for settings page on load
         document.addEventListener('DOMContentLoaded', function() {
-            // Set default dates for reports
             const today = new Date();
             const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
             document.getElementById('rpt-start').value = getLocalDate(startOfMonth.getTime());
