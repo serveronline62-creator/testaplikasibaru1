@@ -888,7 +888,21 @@
                 </div>
                 <div class="pos-grid">
                     <div class="pos-products">
-                        <div class="form-floating mb-2"><input type="text" class="form-control" id="pos-search" placeholder="Cari produk..." oninput="renderPosProducts()" style="font-size:0.8rem;" /><label for="pos-search" style="font-size:0.75rem;">Cari Produk atau Kategori</label></div>
+                        <div class="d-flex gap-2 align-items-center mb-2">
+                            <div class="form-floating flex-grow-1">
+                                <input type="text" class="form-control" id="pos-search" placeholder="Cari produk..." oninput="renderPosProducts()" style="font-size:0.8rem;" />
+                                <label for="pos-search" style="font-size:0.75rem;">Cari Produk atau Kategori</label>
+                            </div>
+                            <div class="d-flex align-items-center gap-1">
+                                <label class="form-label fw-medium mb-0" style="font-size:0.75rem;white-space:nowrap;">Urutkan:</label>
+                                <select class="sort-select" id="pos-sort" onchange="handlePosSortChange()">
+                                    <option value="nama-asc">Nama A-Z</option>
+                                    <option value="nama-desc">Nama Z-A</option>
+                                    <option value="id-asc">ID A-Z</option>
+                                    <option value="id-desc">ID Z-A</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="row g-2" id="pos-product-list"></div>
                     </div>
                     <div class="pos-cart">
@@ -922,7 +936,7 @@
                         </div>
                         <div class="d-flex align-items-center gap-1">
                             <label class="form-label fw-medium mb-0" style="font-size:0.75rem;white-space:nowrap;">Urutkan:</label>
-                            <select class="sort-select" id="prod-sort" onchange="renderProducts()">
+                            <select class="sort-select" id="prod-sort" onchange="handleProdSortChange()">
                                 <option value="nama-asc">Nama A-Z</option>
                                 <option value="nama-desc">Nama Z-A</option>
                                 <option value="id-asc">ID A-Z</option>
@@ -1565,6 +1579,40 @@
             renderDashboard();
         }
 
+        // ==================== SORTING FUNCTIONS ====================
+        function getSortOrder() {
+            return localStorage.getItem('productSortOrder') || 'nama-asc';
+        }
+
+        function setSortOrder(order) {
+            localStorage.setItem('productSortOrder', order);
+            // Sync both dropdowns
+            const prodSort = document.getElementById('prod-sort');
+            const posSort = document.getElementById('pos-sort');
+            if (prodSort) prodSort.value = order;
+            if (posSort) posSort.value = order;
+        }
+
+        function handleProdSortChange() {
+            const order = document.getElementById('prod-sort').value;
+            setSortOrder(order);
+            renderProducts();
+            // If POS is visible, refresh it too
+            if (document.getElementById('page-pos').style.display !== 'none') {
+                renderPosProducts();
+            }
+        }
+
+        function handlePosSortChange() {
+            const order = document.getElementById('pos-sort').value;
+            setSortOrder(order);
+            renderPosProducts();
+            // If Products page is visible, refresh it too
+            if (document.getElementById('page-products').style.display !== 'none') {
+                renderProducts();
+            }
+        }
+
         // ==================== DASHBOARD ====================
         function renderDashboard() {
             let pendapatan = 0,
@@ -1729,7 +1777,7 @@
         // ==================== PRODUK ====================
         function renderProducts() {
             const search = document.getElementById('prod-search')?.value?.toLowerCase() || '';
-            const sortBy = document.getElementById('prod-sort')?.value || 'nama-asc';
+            const sortBy = getSortOrder();
 
             let filtered = appData.products.filter(p =>
                 (p.id && p.id.toLowerCase().includes(search)) ||
@@ -1752,6 +1800,12 @@
 
                 return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
             });
+
+            // Sync dropdown
+            const prodSort = document.getElementById('prod-sort');
+            if (prodSort && prodSort.value !== sortBy) {
+                prodSort.value = sortBy;
+            }
 
             const tbody = document.getElementById('table-products');
             if (filtered.length === 0) {
@@ -2641,9 +2695,34 @@
 
         function renderPosProducts() {
             const search = document.getElementById('pos-search')?.value?.toLowerCase() || '';
-            const list = document.getElementById('pos-product-list');
-            const filtered = appData.products.filter(p => (p.nama && p.nama.toLowerCase().includes(search)) || (p
+            const sortBy = getSortOrder();
+
+            // Sync dropdown POS
+            const posSort = document.getElementById('pos-sort');
+            if (posSort && posSort.value !== sortBy) {
+                posSort.value = sortBy;
+            }
+
+            let filtered = appData.products.filter(p => (p.nama && p.nama.toLowerCase().includes(search)) || (p
                 .kategori && p.kategori.toLowerCase().includes(search)));
+
+            const [field, order] = sortBy.split('-');
+            const isAsc = order === 'asc';
+
+            filtered.sort((a, b) => {
+                let valA = (a[field] || '').toString().toLowerCase();
+                let valB = (b[field] || '').toString().toLowerCase();
+
+                if (field === 'stok' || field === 'modal' || field === 'jual') {
+                    valA = parseFloat(a[field]) || 0;
+                    valB = parseFloat(b[field]) || 0;
+                    return isAsc ? valA - valB : valB - valA;
+                }
+
+                return isAsc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+            });
+
+            const list = document.getElementById('pos-product-list');
             if (filtered.length === 0) { list.innerHTML =
                     '<div class="col-12 text-center text-muted py-4"><i class="bi bi-search" style="font-size:1.5rem;"></i><p class="mt-1" style="font-size:0.8rem;">Produk tidak ditemukan</p></div>';
                 return; }
@@ -2875,6 +2954,12 @@
         function loadSettings() {
             applySettingsToUI();
             updatePrinterStatus();
+            // Sync sort dropdowns with stored value
+            const sortOrder = getSortOrder();
+            const prodSort = document.getElementById('prod-sort');
+            const posSort = document.getElementById('pos-sort');
+            if (prodSort) prodSort.value = sortOrder;
+            if (posSort) posSort.value = sortOrder;
         }
 
         function applySettingsToUI() {
@@ -3015,6 +3100,11 @@
             document.getElementById('rpt-end').value = getLocalDate(today.getTime());
             document.getElementById('dash-start').value = '';
             document.getElementById('dash-end').value = '';
+
+            // Set default sort order if not exists
+            if (!localStorage.getItem('productSortOrder')) {
+                localStorage.setItem('productSortOrder', 'nama-asc');
+            }
         });
     </script>
 
