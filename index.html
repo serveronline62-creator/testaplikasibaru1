@@ -1,405 +1,583 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teka-Teki Korek Api (Drag & Drop)</title>
-    <!-- Memanggil library interact.js untuk fitur drag & drop -->
-    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
-    <style>
-        body {
-            background-color: #2c3e50;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            color: white;
-            overflow: hidden;
-            user-select: none; /* Mencegah teks terblok saat di-drag */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReelFaith Studio — Buat Reels dalam 1 File</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        h1 { margin-bottom: 10px; text-align: center; }
-        p.instruksi { color: #bdc3c7; margin-bottom: 30px; text-align: center; }
+  body {
+    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
+    background: #0b0b0f;
+    color: #e8e8e8;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
 
-        #game-board {
-            background-color: #7f8c8d;
-            border-radius: 10px;
-            padding: 40px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            position: relative;
-            /* Tekstur meja kayu */
-            background-image: repeating-linear-gradient(45deg, #7f8c8d 25%, transparent 25%, transparent 75%, #7f8c8d 75%, #7f8c8d), repeating-linear-gradient(45deg, #7f8c8d 25%, #7f8c8d 25%, #7f8c8d 75%, #7f8c8d 75%, #7f8c8d);
-            background-size: 20px 20px;
-        }
+  header {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-bottom: 1px solid #2a2a3a;
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
+  header p { opacity: 0.7; font-size: 0.9rem; }
 
-        .digit-container, .operator {
-            position: relative;
-            width: 70px;
-            height: 120px;
-        }
+  main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+  h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #e94560; }
 
-        /* Slot tempat korek api bisa diletakkan */
-        .slot {
-            position: absolute;
-            width: 60px;
-            height: 10px;
-            background-color: rgba(0, 0, 0, 0.1); /* Sedikit terlihat agar tahu letaknya */
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
-        
-        .slot.vertical {
-            width: 10px;
-            height: 60px;
-        }
+  /* Template picker */
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .template-card {
+    background: #16161f;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .template-card:hover { transform: translateY(-2px); }
+  .template-card.active { border-color: #e94560; }
+  .template-card .swatch { height: 60px; border-radius: 6px; margin-bottom: 0.5rem; }
+  .template-card h3 { font-size: 0.85rem; }
+  .template-card p { font-size: 0.7rem; opacity: 0.6; }
 
-        /* Efek saat korek diarahkan ke slot */
-        .slot.drop-target {
-            background-color: rgba(46, 204, 113, 0.4);
-            box-shadow: 0 0 10px #2ecc71;
-        }
+  /* Editor layout */
+  .editor-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  .preview-col {
+    flex: 0 0 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  #previewCanvas {
+    width: 240px;
+    height: 427px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: #000;
+  }
+  .preview-label { font-size: 0.7rem; opacity: 0.5; }
 
-        /* Desain Batang Korek Api */
-        .matchstick {
-            position: absolute;
-            background-color: #f1c40f;
-            border-radius: 4px;
-            cursor: grab;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
-            border: 1px solid #d35400;
-            z-index: 10;
-            /* Transisi untuk efek snap */
-            transition: left 0.2s ease-out, top 0.2s ease-out; 
-            touch-action: none; /* Penting untuk mobile drag */
-        }
-        
-        .matchstick:active {
-            cursor: grabbing;
-        }
+  .controls-col {
+    flex: 1 1 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .controls-col label {
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-top: 0.4rem;
+    color: #ccc;
+  }
+  .controls-col textarea,
+  .controls-col input[type="text"],
+  .controls-col input[type="number"],
+  .controls-col select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #2e2e3e;
+    background: #16161f;
+    color: #e8e8e8;
+    font-size: 0.9rem;
+    font-family: inherit;
+  }
+  .controls-col input[type="file"] {
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  .controls-col textarea:focus,
+  .controls-col input:focus {
+    outline: none;
+    border-color: #e94560;
+  }
 
-        .matchstick::after {
-            content: '';
-            position: absolute;
-            background-color: #e74c3c;
-            border-radius: 50%;
-        }
+  button {
+    padding: 0.9rem;
+    background: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 0.8rem;
+  }
+  button:hover:not(:disabled) { background: #c73650; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .matchstick.horizontal {
-            width: 60px;
-            height: 10px;
-        }
-        .matchstick.horizontal::after {
-            width: 12px; height: 12px; right: -6px; top: -2px;
-        }
+  #status { margin-top: 0.5rem; font-size: 0.85rem; min-height: 1.2em; color: #8ab4f8; }
 
-        .matchstick.vertical {
-            width: 10px;
-            height: 60px;
-        }
-        .matchstick.vertical::after {
-            width: 12px; height: 12px; bottom: -6px; left: -2px;
-        }
+  #progress {
+    width: 100%;
+    height: 6px;
+    background: #222;
+    border-radius: 3px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    display: none;
+  }
+  #progressBar {
+    height: 100%;
+    background: #e94560;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
 
-        /* Saat korek sedang di-drag */
-        .matchstick.dragging {
-            cursor: grabbing;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-            transition: none; /* Matikan transisi saat di-drag agar tidak lag */
-            z-index: 100;
-        }
+  .tips {
+    font-size: 0.75rem;
+    opacity: 0.55;
+    margin-top: 0.3rem;
+    line-height: 1.4;
+  }
 
-        /* Posisi Slot pada Angka (7-Segment) */
-        .pos-a { top: 0; left: 5px; }
-        .pos-g { top: 55px; left: 5px; }
-        .pos-d { bottom: 0; left: 5px; }
-        .pos-f { top: 5px; left: 0; }
-        .pos-b { top: 5px; right: 0; }
-        .pos-e { bottom: 5px; left: 0; }
-        .pos-c { bottom: 5px; right: 0; }
-
-        /* Posisi untuk Operator */
-        .op-pos-horizontal { top: 55px; left: 5px; }
-        .op-pos-vertical { top: 5px; left: 30px; }
-        .eq-pos-top { top: 35px; left: 5px; }
-        .eq-pos-bottom { bottom: 35px; left: 5px; }
-
-        #message {
-            margin-top: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #2ecc71;
-            text-shadow: 2px 2px 4px #000;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        #reset-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        #reset-btn:hover { background-color: #c0392b; }
-    </style>
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.75rem;
+    opacity: 0.4;
+    border-top: 1px solid #1e1e2a;
+  }
+</style>
 </head>
 <body>
 
-    <h1>Teka-Teki Korek Api</h1>
-    <p class="instruksi">Geser <b>1 batang korek api</b> agar persamaan menjadi benar!</p>
+<header>
+  <h1>🎬 ReelFaith Studio</h1>
+  <p>Buat video Reels 1080×1920 — semua dalam satu file HTML</p>
+</header>
 
-    <div id="game-board">
-        <!-- Angka 1 (Awalnya 5) -->
-        <div class="digit-container" id="digit-1">
-            <div class="slot horizontal pos-a" data-id="d1-a"></div>
-            <div class="slot vertical pos-f" data-id="d1-f"></div>
-            <div class="slot horizontal pos-g" data-id="d1-g"></div>
-            <div class="slot vertical pos-c" data-id="d1-c"></div>
-            <div class="slot horizontal pos-d" data-id="d1-d"></div>
-            <!-- Korek awal -->
-            <div class="matchstick horizontal" data-slot="d1-a" style="top: 0; left: 5px;"></div>
-            <div class="matchstick vertical" data-slot="d1-f" style="top: 5px; left: 0;"></div>
-            <div class="matchstick horizontal" data-slot="d1-g" style="top: 55px; left: 5px;"></div>
-            <div class="matchstick vertical" data-slot="d1-c" style="bottom: 5px; right: 0;"></div>
-            <div class="matchstick horizontal" data-slot="d1-d" style="bottom: 0; left: 5px;"></div>
-        </div>
+<main>
+  <h2>1. Pilih Template</h2>
+  <div class="template-grid">
+    <div class="template-card active" data-template="ayat">
+      <div class="swatch" style="background: linear-gradient(180deg,#0f0c29,#302b63,#24243e);"></div>
+      <h3>Ayat Suci</h3>
+      <p>Gelap, khidmat</p>
+    </div>
+    <div class="template-card" data-template="kutipan">
+      <div class="swatch" style="background: linear-gradient(180deg,#f5e6d3,#e8d5b7);"></div>
+      <h3>Kutipan Hangat</h3>
+      <p>Krem, reflektif</p>
+    </div>
+    <div class="template-card" data-template="doa">
+      <div class="swatch" style="background: linear-gradient(180deg,#0a0a0a,#1a1a2e);"></div>
+      <h3>Doa Malam</h3>
+      <p>Hitam & emas</p>
+    </div>
+  </div>
 
-        <!-- Operator 1 (Awalnya +) -->
-        <div class="operator" id="op-1">
-            <div class="slot horizontal op-pos-horizontal" data-id="op1-h"></div>
-            <div class="slot vertical op-pos-vertical" data-id="op1-v"></div>
-            <!-- Korek awal -->
-            <div class="matchstick horizontal" data-slot="op1-h" style="top: 55px; left: 5px;"></div>
-            <div class="matchstick vertical" data-slot="op1-v" style="top: 5px; left: 30px;"></div>
-        </div>
-
-        <!-- Angka 2 (7) -->
-        <div class="digit-container" id="digit-2">
-            <div class="slot horizontal pos-a" data-id="d2-a"></div>
-            <div class="slot vertical pos-b" data-id="d2-b"></div>
-            <div class="slot vertical pos-c" data-id="d2-c"></div>
-            <!-- Korek awal -->
-            <div class="matchstick horizontal" data-slot="d2-a" style="top: 0; left: 5px;"></div>
-            <div class="matchstick vertical" data-slot="d2-b" style="top: 5px; right: 0;"></div>
-            <div class="matchstick vertical" data-slot="d2-c" style="bottom: 5px; right: 0;"></div>
-        </div>
-
-        <!-- Operator 2 (=) -->
-        <div class="operator" id="op-2">
-            <div class="slot horizontal eq-pos-top" data-id="op2-top"></div>
-            <div class="slot horizontal eq-pos-bottom" data-id="op2-bot"></div>
-            <!-- Korek awal (Tanda Sama Dengan) -->
-            <div class="matchstick horizontal" data-slot="op2-top" style="top: 35px; left: 5px;"></div>
-            <div class="matchstick horizontal" data-slot="op2-bot" style="bottom: 35px; left: 5px;"></div>
-        </div>
-
-        <!-- Angka 3 (2) -->
-        <div class="digit-container" id="digit-3">
-            <div class="slot horizontal pos-a" data-id="d3-a"></div>
-            <div class="slot vertical pos-b" data-id="d3-b"></div>
-            <div class="slot horizontal pos-g" data-id="d3-g"></div>
-            <div class="slot vertical pos-e" data-id="d3-e"></div>
-            <div class="slot horizontal pos-d" data-id="d3-d"></div>
-            <!-- Korek awal -->
-            <div class="matchstick horizontal" data-slot="d3-a" style="top: 0; left: 5px;"></div>
-            <div class="matchstick vertical" data-slot="d3-b" style="top: 5px; right: 0;"></div>
-            <div class="matchstick horizontal" data-slot="d3-g" style="top: 55px; left: 5px;"></div>
-            <div class="matchstick vertical" data-slot="d3-e" style="bottom: 5px; left: 0;"></div>
-            <div class="matchstick horizontal" data-slot="d3-d" style="bottom: 0; left: 5px;"></div>
-        </div>
+  <h2>2. Edit Konten</h2>
+  <div class="editor-layout">
+    <div class="preview-col">
+      <canvas id="previewCanvas" width="540" height="960"></canvas>
+      <p class="preview-label">Pratinjau 9:16 · Output 1080×1920</p>
     </div>
 
-    <div id="message">🎉 Hebat! Persamaan Benar! 🎉</div>
-    <button id="reset-btn" onclick="location.reload()">Ulangi Permainan</button>
+    <div class="controls-col">
+      <label for="inTeks">Teks Utama:</label>
+      <textarea id="inTeks" rows="3">"Tetapi Allah yang kaya dengan rahmat, oleh karena kasih-Nya yang besar..."</textarea>
 
-    <script>
-        // Inisialisasi interaktif Drag & Drop
-        interact('.matchstick').draggable({
-            inertia: true,
-            modifiers: [
-                interact.modifiers.restrictRect({
-                    restriction: '#game-board',
-                    endOnly: true
-                })
-            ],
-            autoScroll: true,
-            listeners: {
-                start (event) {
-                    const target = event.target;
-                    target.classList.add('dragging');
-                    // Simpan posisi awal untuk reset jika salah taruh
-                    target.dataset.originalLeft = target.style.left;
-                    target.dataset.originalTop = target.style.top;
-                    target.dataset.originalSlot = target.dataset.slot;
-                    
-                    // Lepas korek dari slot lamanya secara visual
-                    target.dataset.slot = "";
-                },
-                move (event) {
-                    const target = event.target;
-                    const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                    const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+      <label for="inRef">Referensi / Sumber:</label>
+      <input type="text" id="inRef" value="Efesus 2:4-5" />
 
-                    target.style.transform = `translate(${x}px, ${y}px)`;
-                    target.setAttribute('data-x', x);
-                    target.setAttribute('data-y', y);
-                },
-                end (event) {
-                    const target = event.target;
-                    target.classList.remove('dragging');
-                    
-                    // Cari slot terdekat tempat korek dijatuhkan
-                    const closestSlot = findClosestSlot(target);
-                    
-                    if (closestSlot && !isSlotOccupied(closestSlot)) {
-                        // Jika slot kosong, tempelkan korek ke slot
-                        attachToSlot(target, closestSlot);
-                    } else {
-                        // Jika tidak ada slot atau slot sudah terisi, kembalikan ke posisi semula
-                        target.style.transform = 'none';
-                        target.setAttribute('data-x', 0);
-                        target.setAttribute('data-y', 0);
-                        target.dataset.slot = target.dataset.originalSlot;
-                        
-                        // Kembalikan ke posisi visual semula
-                        const originalSlotElement = document.querySelector(`[data-id="${target.dataset.originalSlot}"]`);
-                        if(originalSlotElement) {
-                            target.style.left = originalSlotElement.style.left;
-                            target.style.top = originalSlotElement.style.top;
-                        }
-                    }
-                    
-                    checkWin();
-                }
-            }
-        });
+      <label for="inGambar">Gambar Latar (opsional):</label>
+      <input type="file" id="inGambar" accept="image/*" />
 
-        // Fungsi mencari slot terdekat dari posisi korek
-        function findClosestSlot(matchstick) {
-            const matchRect = matchstick.getBoundingClientRect();
-            const slots = document.querySelectorAll('.slot');
-            let closestSlot = null;
-            let minDistance = 60; // Jarak toleransi (pixel) agar korek bisa snap
+      <label for="inAudio">Audio Latar (opsional, MP3/WAV):</label>
+      <input type="file" id="inAudio" accept="audio/*" />
 
-            slots.forEach(slot => {
-                const slotRect = slot.getBoundingClientRect();
-                const distance = Math.hypot(
-                    (matchRect.left + matchRect.width / 2) - (slotRect.left + slotRect.width / 2),
-                    (matchRect.top + matchRect.height / 2) - (slotRect.top + slotRect.height / 2)
-                );
+      <label for="inDurasi">Durasi (detik, 5–30):</label>
+      <input type="number" id="inDurasi" value="10" min="5" max="30" />
 
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestSlot = slot;
-                }
-            });
-            return closestSlot;
+      <button id="btnRender">🎥 Render & Unduh Reel</button>
+
+      <div id="progress"><div id="progressBar"></div></div>
+      <div id="status"></div>
+
+      <p class="tips">
+        💡 Tips: Jangan pindah tab saat render. File disimpan sebagai MP4 jika browser mendukung,
+        atau WebM sebagai fallback — keduanya bisa diunggah ke Instagram Reels, TikTok, atau YouTube Shorts.
+      </p>
+    </div>
+  </div>
+</main>
+
+<footer>ReelFaith Studio — Gratis, tanpa akun. Dibuat dengan ❤️ untuk konten inspiratif.</footer>
+
+<script>
+/* =========================================================
+   State & Template
+========================================================= */
+const TEMPLATE_STYLES = {
+  ayat:    { bg: ['#0f0c29', '#302b63', '#24243e'], color: '#ffffff', font: 'Georgia, serif' },
+  kutipan: { bg: ['#f5e6d3', '#e8d5b7', '#e8d5b7'], color: '#2c1810', font: 'Georgia, serif' },
+  doa:     { bg: ['#0a0a0a', '#1a1a2e', '#0a0a0a'], color: '#d4af37', font: 'Palatino, serif' }
+};
+
+const state = {
+  template: 'ayat',
+  teksUtama: '"Tetapi Allah yang kaya dengan rahmat, oleh karena kasih-Nya yang besar..."',
+  teksReferensi: 'Efesus 2:4-5',
+  durasi: 10,
+  gambarImage: null,
+  audioFile: null
+};
+
+const previewCanvas = document.getElementById('previewCanvas');
+const pctx = previewCanvas.getContext('2d');
+
+/* =========================================================
+   Canvas Rendering
+========================================================= */
+function wrapText(ctx, text, maxWidth) {
+  const paragraphs = String(text || '').split('\n');
+  const allLines = [];
+  for (const para of paragraphs) {
+    if (!para.trim()) { allLines.push(''); continue; }
+    const words = para.split(/\s+/);
+    let current = '';
+    for (const word of words) {
+      const test = current ? current + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && current) {
+        allLines.push(current);
+        current = word;
+      } else {
+        current = test;
+      }
+    }
+    if (current) allLines.push(current);
+  }
+  return allLines;
+}
+
+function drawFrame(ctx, W, H, progress) {
+  const style = TEMPLATE_STYLES[state.template];
+  const t = Math.max(0, Math.min(1, progress));
+
+  /* -------- 1. Background -------- */
+  if (state.gambarImage) {
+    // Slow zoom-in animation
+    const scale = 1 + t * 0.05;
+    ctx.save();
+    ctx.translate(W / 2, H / 2);
+    ctx.scale(scale, scale);
+
+    const img = state.gambarImage;
+    const aspectImg = img.width / img.height;
+    const aspectCanvas = W / H;
+    let dw, dh;
+    if (aspectImg > aspectCanvas) {
+      dh = H; dw = H * aspectImg;
+    } else {
+      dw = W; dh = W / aspectImg;
+    }
+    ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+    ctx.restore();
+
+    // Dark overlay agar teks tetap terbaca
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(0, 0, W, H);
+  } else {
+    // Gradient background per template
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, style.bg[0]);
+    g.addColorStop(0.5, style.bg[1]);
+    g.addColorStop(1, style.bg[2]);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // Glow lembut yang bergerak
+    const glowX = W * (0.3 + 0.4 * Math.sin(t * Math.PI * 2));
+    const glowY = H * 0.4;
+    const rg = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, W * 0.6);
+    rg.addColorStop(0, 'rgba(255,255,255,0.07)');
+    rg.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  /* -------- 2. Text -------- */
+  const fadeIn = Math.min(1, t / 0.25);
+  const textAlpha = fadeIn;
+
+  ctx.save();
+  ctx.globalAlpha = textAlpha;
+  ctx.fillStyle = state.gambarImage ? '#ffffff' : style.color;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // Shadow untuk readability
+  if (state.gambarImage) {
+    ctx.shadowColor = 'rgba(0,0,0,0.9)';
+    ctx.shadowBlur = W * 0.025;
+    ctx.shadowOffsetY = W * 0.006;
+  } else if (state.template === 'kutipan') {
+    ctx.shadowColor = 'rgba(0,0,0,0.15)';
+    ctx.shadowBlur = W * 0.01;
+  } else {
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = W * 0.02;
+    ctx.shadowOffsetY = W * 0.004;
+  }
+
+  const padding = W * 0.1;
+  const maxTextWidth = W - padding * 2;
+
+  // Main text
+  const mainFontSize = W * 0.066;
+  const mainLineHeight = mainFontSize * 1.4;
+  ctx.font = `600 ${mainFontSize}px ${style.font}`;
+  const mainLines = wrapText(ctx, state.teksUtama, maxTextWidth);
+
+  // Reference text
+  const refFontSize = W * 0.038;
+  const refLineHeight = refFontSize * 1.4;
+  const refText = state.teksReferensi ? `— ${state.teksReferensi} —` : '';
+  ctx.font = `italic ${refFontSize}px ${style.font}`;
+  const refLines = refText ? wrapText(ctx, refText, maxTextWidth) : [];
+
+  const gap = refLines.length ? mainFontSize * 0.8 : 0;
+  const totalHeight =
+    mainLines.length * mainLineHeight +
+    gap +
+    (refLines.length ? refLines.length * refLineHeight : 0);
+
+  // Slide-up animation pada awal kemunculan
+  const slideOffset = (1 - fadeIn) * 60;
+  let y = (H - totalHeight) / 2 + mainLineHeight / 2 + slideOffset;
+
+  ctx.font = `600 ${mainFontSize}px ${style.font}`;
+  for (const line of mainLines) {
+    ctx.fillText(line, W / 2, y);
+    y += mainLineHeight;
+  }
+
+  if (refLines.length) {
+    y += gap - mainLineHeight + refLineHeight / 2;
+    ctx.font = `italic ${refFontSize}px ${style.font}`;
+    ctx.globalAlpha = textAlpha * 0.85;
+    for (const line of refLines) {
+      ctx.fillText(line, W / 2, y);
+      y += refLineHeight;
+    }
+  }
+
+  ctx.restore();
+}
+
+/* =========================================================
+   Live Preview
+========================================================= */
+function updatePreview() {
+  drawFrame(pctx, previewCanvas.width, previewCanvas.height, 1);
+}
+
+/* =========================================================
+   UI Events
+========================================================= */
+document.querySelectorAll('.template-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    state.template = card.dataset.template;
+    updatePreview();
+  });
+});
+
+document.getElementById('inTeks').addEventListener('input', e => {
+  state.teksUtama = e.target.value;
+  updatePreview();
+});
+
+document.getElementById('inRef').addEventListener('input', e => {
+  state.teksReferensi = e.target.value;
+  updatePreview();
+});
+
+document.getElementById('inDurasi').addEventListener('input', e => {
+  state.durasi = Math.min(30, Math.max(5, Number(e.target.value) || 10));
+});
+
+document.getElementById('inGambar').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) { state.gambarImage = null; updatePreview(); return; }
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    state.gambarImage = img;
+    URL.revokeObjectURL(url);
+    updatePreview();
+  };
+  img.onerror = () => {
+    alert('Gagal memuat gambar.');
+    state.gambarImage = null;
+    URL.revokeObjectURL(url);
+    updatePreview();
+  };
+  img.src = url;
+});
+
+document.getElementById('inAudio').addEventListener('change', e => {
+  state.audioFile = e.target.files[0] || null;
+});
+
+/* =========================================================
+   Render & Download
+========================================================= */
+document.getElementById('btnRender').addEventListener('click', async () => {
+  const btn = document.getElementById('btnRender');
+  const status = document.getElementById('status');
+  const progressWrap = document.getElementById('progress');
+  const progressBar = document.getElementById('progressBar');
+
+  btn.disabled = true;
+  status.textContent = 'Menyiapkan render...';
+  progressWrap.style.display = 'block';
+  progressBar.style.width = '0%';
+
+  try {
+    /* --- 1. Siapkan canvas output 1080×1920 --- */
+    const W = 1080, H = 1920;
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+
+    // Frame awal agar stream punya konten sejak awal
+    drawFrame(ctx, W, H, 0);
+
+    /* --- 2. Buat MediaStream dari canvas --- */
+    const fps = 30;
+    const stream = canvas.captureStream(fps);
+
+    /* --- 3. Audio (opsional) --- */
+    let audioCtx = null;
+    let audioSource = null;
+    if (state.audioFile) {
+      status.textContent = 'Memuat audio...';
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const arrayBuf = await state.audioFile.arrayBuffer();
+      const audioBuffer = await audioCtx.decodeAudioData(arrayBuf);
+
+      audioSource = audioCtx.createBufferSource();
+      audioSource.buffer = audioBuffer;
+      audioSource.loop = true;
+
+      const dest = audioCtx.createMediaStreamDestination();
+      audioSource.connect(dest);
+      // Tidak terhubung ke speaker agar tidak berbunyi saat render
+      dest.stream.getAudioTracks().forEach(track => stream.addTrack(track));
+    }
+
+    /* --- 4. Pilih MIME type terbaik --- */
+    let mimeType = 'video/webm';
+    const candidates = [
+      'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+      'video/mp4',
+      'video/webm;codecs=vp9,opus',
+      'video/webm;codecs=vp8,opus',
+      'video/webm'
+    ];
+    for (const mt of candidates) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported(mt)) {
+        mimeType = mt;
+        break;
+      }
+    }
+    const isMp4 = mimeType.startsWith('video/mp4');
+
+    if (!window.MediaRecorder) {
+      throw new Error('Browser tidak mendukung MediaRecorder. Gunakan Chrome/Edge terbaru.');
+    }
+
+    const recorder = new MediaRecorder(stream, {
+      mimeType,
+      videoBitsPerSecond: 5_000_000
+    });
+    const chunks = [];
+    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+
+    const stopped = new Promise(res => { recorder.onstop = res; });
+
+    /* --- 5. Mulai rekam --- */
+    recorder.start(100);
+    if (audioSource) audioSource.start();
+
+    const startTime = performance.now();
+    const durationMs = state.durasi * 1000;
+
+    status.textContent = 'Merender...';
+
+    await new Promise(resolve => {
+      function animate(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / durationMs);
+        drawFrame(ctx, W, H, progress);
+        progressBar.style.width = `${Math.round(progress * 100)}%`;
+        status.textContent = `Merender... ${Math.round(progress * 100)}%`;
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          resolve();
         }
+      }
+      requestAnimationFrame(animate);
+    });
 
-        // Cek apakah slot sudah ada koreknya
-        function isSlotOccupied(slot) {
-            const slotId = slot.dataset.id;
-            const matched = document.querySelector(`.matchstick[data-slot="${slotId}"]`);
-            return matched !== null;
-        }
+    // Beri jeda singkat untuk frame terakhir
+    await new Promise(r => setTimeout(r, 200));
 
-        // Tempelkan korek ke slot
-        function attachToSlot(matchstick, slot) {
-            const slotRect = slot.getBoundingClientRect();
-            const boardRect = document.getElementById('game-board').getBoundingClientRect();
+    recorder.stop();
+    if (audioSource) { try { audioSource.stop(); } catch (_) {} }
+    if (audioCtx) { try { await audioCtx.close(); } catch (_) {} }
 
-            // Hitung posisi absolut relatif terhadap board
-            const left = slotRect.left - boardRect.left;
-            const top = slotRect.top - boardRect.top;
+    await stopped;
 
-            // Reset transform, set posisi baru
-            matchstick.style.transform = 'none';
-            matchstick.setAttribute('data-x', 0);
-            matchstick.setAttribute('data-y', 0);
-            matchstick.style.left = `${left}px`;
-            matchstick.style.top = `${top}px`;
-            
-            // Simpan ID slot
-            matchstick.dataset.slot = slot.dataset.id;
-        }
+    /* --- 6. Buat blob & unduh --- */
+    const blob = new Blob(chunks, { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const ext = isMp4 ? 'mp4' : 'webm';
+    const filename = `reel-${Date.now()}.${ext}`;
 
-        // --- LOGIKA PENGECEKAN MATEMATIKA ---
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
 
-        function getSegments(digitId) {
-            const sticks = document.querySelectorAll(`#${digitId} .matchstick`);
-            let segments = [];
-            sticks.forEach(stick => {
-                const slotId = stick.dataset.slot;
-                if (slotId && slotId.includes('-')) {
-                    segments.push(slotId.split('-')[1]); // Mengambil huruf (a, b, c...)
-                }
-            });
-            return segments.sort().join(','); // urutkan agar konsisten
-        }
+    const sizeMB = (blob.size / 1024 / 1024).toFixed(1);
+    status.textContent = `✅ Selesai! ${filename} (${sizeMB} MB) telah diunduh.`;
 
-        function getNumberFromSegments(segments) {
-            // Pemetaan segmen ke angka (berdasarkan susunan 7-segment)
-            const mapping = {
-                'a,b,c,d,e,f': 0,
-                'b,c': 1,
-                'a,b,d,e,g': 2,
-                'a,b,c,d,g': 3,
-                'b,c,f,g': 4,
-                'a,c,d,f,g': 5,
-                'a,c,d,e,f,g': 6,
-                'a,b,c': 7,
-                'a,b,c,d,e,f,g': 8,
-                'a,b,c,d,f,g': 9
-            };
-            return mapping[segments] !== undefined ? mapping[segments] : null;
-        }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  } catch (err) {
+    console.error(err);
+    status.textContent = `❌ Error: ${err.message}`;
+  } finally {
+    btn.disabled = false;
+    setTimeout(() => { progressWrap.style.display = 'none'; }, 2000);
+  }
+});
 
-        function getOperator(opId) {
-            const sticks = document.querySelectorAll(`#${opId} .matchstick`);
-            let hasH = false, hasV = false;
-            sticks.forEach(stick => {
-                if(stick.dataset.slot === `${opId}-h` || stick.dataset.slot === `${opId}-top` || stick.dataset.slot === `${opId}-bot`) hasH = true;
-                if(stick.dataset.slot === `${opId}-v`) hasV = true;
-            });
-            if (hasH && hasV) return '+';
-            if (hasH && !hasV) return '-';
-            return null;
-        }
-
-        function checkWin() {
-            const num1 = getNumberFromSegments(getSegments('digit-1'));
-            const num2 = getNumberFromSegments(getSegments('digit-2'));
-            const num3 = getNumberFromSegments(getSegments('digit-3'));
-            const op1 = getOperator('op-1');
-
-            // Pastikan semua angka valid
-            if (num1 !== null && num2 !== null && num3 !== null && op1 !== null) {
-                let result;
-                if (op1 === '+') result = num1 + num2;
-                if (op1 === '-') result = num1 - num2;
-
-                if (result === num3) {
-                    document.getElementById('message').style.opacity = 1;
-                    // Nonaktifkan interaksi jika sudah menang
-                    document.querySelectorAll('.matchstick').forEach(el => {
-                        interact(el).draggable(false);
-                    });
-                } else {
-                    document.getElementById('message').style.opacity = 0;
-                }
-            }
-        }
-    </script>
+/* =========================================================
+   Init
+========================================================= */
+updatePreview();
+</script>
 </body>
 </html>
