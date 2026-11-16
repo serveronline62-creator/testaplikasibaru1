@@ -1,583 +1,157 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReelFaith Studio — Buat Reels dalam 1 File</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: -apple-system, 'Segoe UI', system-ui, sans-serif;
-    background: #0b0b0f;
-    color: #e8e8e8;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-
-  header {
-    text-align: center;
-    padding: 2rem 1rem;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    border-bottom: 1px solid #2a2a3a;
-  }
-  header h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
-  header p { opacity: 0.7; font-size: 0.9rem; }
-
-  main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
-  h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #e94560; }
-
-  /* Template picker */
-  .template-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.8rem;
-    margin-bottom: 1.5rem;
-  }
-  .template-card {
-    background: #16161f;
-    border: 2px solid transparent;
-    border-radius: 10px;
-    padding: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-  }
-  .template-card:hover { transform: translateY(-2px); }
-  .template-card.active { border-color: #e94560; }
-  .template-card .swatch { height: 60px; border-radius: 6px; margin-bottom: 0.5rem; }
-  .template-card h3 { font-size: 0.85rem; }
-  .template-card p { font-size: 0.7rem; opacity: 0.6; }
-
-  /* Editor layout */
-  .editor-layout {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    align-items: flex-start;
-  }
-  .preview-col {
-    flex: 0 0 240px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  #previewCanvas {
-    width: 240px;
-    height: 427px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    background: #000;
-  }
-  .preview-label { font-size: 0.7rem; opacity: 0.5; }
-
-  .controls-col {
-    flex: 1 1 320px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .controls-col label {
-    font-weight: 600;
-    font-size: 0.8rem;
-    margin-top: 0.4rem;
-    color: #ccc;
-  }
-  .controls-col textarea,
-  .controls-col input[type="text"],
-  .controls-col input[type="number"],
-  .controls-col select {
-    width: 100%;
-    padding: 0.6rem 0.8rem;
-    border-radius: 8px;
-    border: 1px solid #2e2e3e;
-    background: #16161f;
-    color: #e8e8e8;
-    font-size: 0.9rem;
-    font-family: inherit;
-  }
-  .controls-col input[type="file"] {
-    font-size: 0.8rem;
-    color: #aaa;
-  }
-  .controls-col textarea:focus,
-  .controls-col input:focus {
-    outline: none;
-    border-color: #e94560;
-  }
-
-  button {
-    padding: 0.9rem;
-    background: #e94560;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-top: 0.8rem;
-  }
-  button:hover:not(:disabled) { background: #c73650; }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  #status { margin-top: 0.5rem; font-size: 0.85rem; min-height: 1.2em; color: #8ab4f8; }
-
-  #progress {
-    width: 100%;
-    height: 6px;
-    background: #222;
-    border-radius: 3px;
-    margin-top: 0.5rem;
-    overflow: hidden;
-    display: none;
-  }
-  #progressBar {
-    height: 100%;
-    background: #e94560;
-    width: 0%;
-    transition: width 0.1s linear;
-  }
-
-  .tips {
-    font-size: 0.75rem;
-    opacity: 0.55;
-    margin-top: 0.3rem;
-    line-height: 1.4;
-  }
-
-  footer {
-    text-align: center;
-    padding: 1.5rem;
-    font-size: 0.75rem;
-    opacity: 0.4;
-    border-top: 1px solid #1e1e2a;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemotong Video Otomatis</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .container { background: #f9f9f9; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        input[type="file"], input[type="number"] { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007bff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        #status { margin-top: 1rem; font-weight: bold; color: #555; }
+        #results { margin-top: 2rem; }
+        .clip-item { background: white; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .clip-item a { color: #007bff; text-decoration: none; }
+        .clip-item a:hover { text-decoration: underline; }
+        video { max-width: 100%; margin-top: 1rem; border-radius: 4px; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>✂️ Pemotong Video Otomatis</h1>
+        <p>Unggah video panjang dan potong menjadi klip-klip pendek. Semua proses terjadi di browser Anda.</p>
 
-<header>
-  <h1>🎬 ReelFaith Studio</h1>
-  <p>Buat video Reels 1080×1920 — semua dalam satu file HTML</p>
-</header>
+        <div class="input-group">
+            <label for="videoInput">Pilih File Video:</label>
+            <input type="file" id="videoInput" accept="video/*">
+        </div>
 
-<main>
-  <h2>1. Pilih Template</h2>
-  <div class="template-grid">
-    <div class="template-card active" data-template="ayat">
-      <div class="swatch" style="background: linear-gradient(180deg,#0f0c29,#302b63,#24243e);"></div>
-      <h3>Ayat Suci</h3>
-      <p>Gelap, khidmat</p>
-    </div>
-    <div class="template-card" data-template="kutipan">
-      <div class="swatch" style="background: linear-gradient(180deg,#f5e6d3,#e8d5b7);"></div>
-      <h3>Kutipan Hangat</h3>
-      <p>Krem, reflektif</p>
-    </div>
-    <div class="template-card" data-template="doa">
-      <div class="swatch" style="background: linear-gradient(180deg,#0a0a0a,#1a1a2e);"></div>
-      <h3>Doa Malam</h3>
-      <p>Hitam & emas</p>
-    </div>
-  </div>
+        <div class="input-group">
+            <label for="durationInput">Durasi per Klip (detik):</label>
+            <input type="number" id="durationInput" value="60" min="1">
+        </div>
 
-  <h2>2. Edit Konten</h2>
-  <div class="editor-layout">
-    <div class="preview-col">
-      <canvas id="previewCanvas" width="540" height="960"></canvas>
-      <p class="preview-label">Pratinjau 9:16 · Output 1080×1920</p>
+        <button id="processBtn" disabled>Potong Video</button>
+        <div id="status"></div>
+
+        <div id="results">
+            <h2>Hasil Klip:</h2>
+            <div id="clipsContainer"></div>
+        </div>
     </div>
 
-    <div class="controls-col">
-      <label for="inTeks">Teks Utama:</label>
-      <textarea id="inTeks" rows="3">"Tetapi Allah yang kaya dengan rahmat, oleh karena kasih-Nya yang besar..."</textarea>
+    <!-- Muat pustaka FFmpeg.wasm dari CDN -->
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+    <script>
+        const { createFFmpeg, fetchFile } = FFmpeg;
+        const ffmpeg = createFFmpeg({ log: true });
 
-      <label for="inRef">Referensi / Sumber:</label>
-      <input type="text" id="inRef" value="Efesus 2:4-5" />
+        const videoInput = document.getElementById('videoInput');
+        const durationInput = document.getElementById('durationInput');
+        const processBtn = document.getElementById('processBtn');
+        const statusDiv = document.getElementById('status');
+        const clipsContainer = document.getElementById('clipsContainer');
 
-      <label for="inGambar">Gambar Latar (opsional):</label>
-      <input type="file" id="inGambar" accept="image/*" />
+        let videoFile = null;
 
-      <label for="inAudio">Audio Latar (opsional, MP3/WAV):</label>
-      <input type="file" id="inAudio" accept="audio/*" />
+        videoInput.addEventListener('change', (e) => {
+            videoFile = e.target.files[0];
+            if (videoFile) {
+                statusDiv.textContent = `File dipilih: ${videoFile.name}`;
+                processBtn.disabled = false;
+            }
+        });
 
-      <label for="inDurasi">Durasi (detik, 5–30):</label>
-      <input type="number" id="inDurasi" value="10" min="5" max="30" />
+        processBtn.addEventListener('click', async () => {
+            if (!videoFile) return;
 
-      <button id="btnRender">🎥 Render & Unduh Reel</button>
+            processBtn.disabled = true;
+            clipsContainer.innerHTML = '';
+            statusDiv.textContent = 'Memuat FFmpeg...';
 
-      <div id="progress"><div id="progressBar"></div></div>
-      <div id="status"></div>
+            try {
+                // 1. Muat FFmpeg
+                if (!ffmpeg.isLoaded()) {
+                    await ffmpeg.load();
+                }
 
-      <p class="tips">
-        💡 Tips: Jangan pindah tab saat render. File disimpan sebagai MP4 jika browser mendukung,
-        atau WebM sebagai fallback — keduanya bisa diunggah ke Instagram Reels, TikTok, atau YouTube Shorts.
-      </p>
-    </div>
-  </div>
-</main>
+                statusDiv.textContent = 'Memproses video...';
+                
+                // 2. Tulis file input ke sistem file virtual FFmpeg
+                const inputFileName = 'input.mp4';
+                ffmpeg.FS('writeFile', inputFileName, await fetchFile(videoFile));
 
-<footer>ReelFaith Studio — Gratis, tanpa akun. Dibuat dengan ❤️ untuk konten inspiratif.</footer>
+                // 3. Dapatkan durasi total video
+                // (Dalam implementasi nyata, Anda mungkin perlu menjalankan perintah ffprobe untuk ini.
+                // Untuk contoh sederhana, kita asumsikan pengguna tahu durasi atau kita potong berdasarkan interval tetap
+                // hingga proses selesai. Namun, cara yang lebih baik adalah dengan menggunakan ffprobe.)
 
-<script>
-/* =========================================================
-   State & Template
-========================================================= */
-const TEMPLATE_STYLES = {
-  ayat:    { bg: ['#0f0c29', '#302b63', '#24243e'], color: '#ffffff', font: 'Georgia, serif' },
-  kutipan: { bg: ['#f5e6d3', '#e8d5b7', '#e8d5b7'], color: '#2c1810', font: 'Georgia, serif' },
-  doa:     { bg: ['#0a0a0a', '#1a1a2e', '#0a0a0a'], color: '#d4af37', font: 'Palatino, serif' }
-};
+                // Contoh: Dapatkan durasi dari elemen video (perkiraan)
+                const videoElement = document.createElement('video');
+                videoElement.src = URL.createObjectURL(videoFile);
+                await new Promise(resolve => { videoElement.onloadedmetadata = resolve; });
+                const totalDuration = videoElement.duration;
+                URL.revokeObjectURL(videoElement.src);
 
-const state = {
-  template: 'ayat',
-  teksUtama: '"Tetapi Allah yang kaya dengan rahmat, oleh karena kasih-Nya yang besar..."',
-  teksReferensi: 'Efesus 2:4-5',
-  durasi: 10,
-  gambarImage: null,
-  audioFile: null
-};
+                const segmentDuration = parseInt(durationInput.value, 10);
+                if (segmentDuration <= 0) {
+                    throw new Error('Durasi harus lebih dari 0 detik.');
+                }
 
-const previewCanvas = document.getElementById('previewCanvas');
-const pctx = previewCanvas.getContext('2d');
+                const numSegments = Math.ceil(totalDuration / segmentDuration);
+                statusDiv.textContent = `Memotong menjadi ${numSegments} bagian...`;
 
-/* =========================================================
-   Canvas Rendering
-========================================================= */
-function wrapText(ctx, text, maxWidth) {
-  const paragraphs = String(text || '').split('\n');
-  const allLines = [];
-  for (const para of paragraphs) {
-    if (!para.trim()) { allLines.push(''); continue; }
-    const words = para.split(/\s+/);
-    let current = '';
-    for (const word of words) {
-      const test = current ? current + ' ' + word : word;
-      if (ctx.measureText(test).width > maxWidth && current) {
-        allLines.push(current);
-        current = word;
-      } else {
-        current = test;
-      }
-    }
-    if (current) allLines.push(current);
-  }
-  return allLines;
-}
+                // 4. Loop untuk memotong video
+                for (let i = 0; i < numSegments; i++) {
+                    const startTime = i * segmentDuration;
+                    // Pastikan durasi segmen terakhir tidak melebihi total durasi
+                    const remainingDuration = Math.min(segmentDuration, totalDuration - startTime);
+                    
+                    if (remainingDuration <= 0) continue;
 
-function drawFrame(ctx, W, H, progress) {
-  const style = TEMPLATE_STYLES[state.template];
-  const t = Math.max(0, Math.min(1, progress));
+                    const outputFileName = `output_${i + 1}.mp4`;
 
-  /* -------- 1. Background -------- */
-  if (state.gambarImage) {
-    // Slow zoom-in animation
-    const scale = 1 + t * 0.05;
-    ctx.save();
-    ctx.translate(W / 2, H / 2);
-    ctx.scale(scale, scale);
+                    // Perintah FFmpeg: -ss (start time) -i (input) -t (duration) -c copy (copy codec tanpa re-encode)
+                    await ffmpeg.run(
+                        '-ss', `${startTime}`,
+                        '-i', inputFileName,
+                        '-t', `${remainingDuration}`,
+                        '-c', 'copy',
+                        outputFileName
+                    );
 
-    const img = state.gambarImage;
-    const aspectImg = img.width / img.height;
-    const aspectCanvas = W / H;
-    let dw, dh;
-    if (aspectImg > aspectCanvas) {
-      dh = H; dw = H * aspectImg;
-    } else {
-      dw = W; dh = W / aspectImg;
-    }
-    ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
-    ctx.restore();
+                    // 5. Baca hasil dan buat URL untuk diunduh
+                    const data = ffmpeg.FS('readFile', outputFileName);
+                    const blob = new Blob([data.buffer], { type: 'video/mp4' });
+                    const url = URL.createObjectURL(blob);
 
-    // Dark overlay agar teks tetap terbaca
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx.fillRect(0, 0, W, H);
-  } else {
-    // Gradient background per template
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, style.bg[0]);
-    g.addColorStop(0.5, style.bg[1]);
-    g.addColorStop(1, style.bg[2]);
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+                    // 6. Tampilkan di halaman
+                    const clipItem = document.createElement('div');
+                    clipItem.className = 'clip-item';
+                    clipItem.innerHTML = `
+                        <p><strong>Klip ${i + 1}</strong> (Mulai: ${startTime.toFixed(1)}s, Durasi: ${remainingDuration.toFixed(1)}s)</p>
+                        <a href="${url}" download="${outputFileName}">Unduh ${outputFileName}</a>
+                    `;
+                    clipsContainer.appendChild(clipItem);
 
-    // Glow lembut yang bergerak
-    const glowX = W * (0.3 + 0.4 * Math.sin(t * Math.PI * 2));
-    const glowY = H * 0.4;
-    const rg = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, W * 0.6);
-    rg.addColorStop(0, 'rgba(255,255,255,0.07)');
-    rg.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = rg;
-    ctx.fillRect(0, 0, W, H);
-  }
+                    // Bersihkan file dari sistem file virtual
+                    ffmpeg.FS('unlink', outputFileName);
+                }
 
-  /* -------- 2. Text -------- */
-  const fadeIn = Math.min(1, t / 0.25);
-  const textAlpha = fadeIn;
-
-  ctx.save();
-  ctx.globalAlpha = textAlpha;
-  ctx.fillStyle = state.gambarImage ? '#ffffff' : style.color;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-
-  // Shadow untuk readability
-  if (state.gambarImage) {
-    ctx.shadowColor = 'rgba(0,0,0,0.9)';
-    ctx.shadowBlur = W * 0.025;
-    ctx.shadowOffsetY = W * 0.006;
-  } else if (state.template === 'kutipan') {
-    ctx.shadowColor = 'rgba(0,0,0,0.15)';
-    ctx.shadowBlur = W * 0.01;
-  } else {
-    ctx.shadowColor = 'rgba(0,0,0,0.5)';
-    ctx.shadowBlur = W * 0.02;
-    ctx.shadowOffsetY = W * 0.004;
-  }
-
-  const padding = W * 0.1;
-  const maxTextWidth = W - padding * 2;
-
-  // Main text
-  const mainFontSize = W * 0.066;
-  const mainLineHeight = mainFontSize * 1.4;
-  ctx.font = `600 ${mainFontSize}px ${style.font}`;
-  const mainLines = wrapText(ctx, state.teksUtama, maxTextWidth);
-
-  // Reference text
-  const refFontSize = W * 0.038;
-  const refLineHeight = refFontSize * 1.4;
-  const refText = state.teksReferensi ? `— ${state.teksReferensi} —` : '';
-  ctx.font = `italic ${refFontSize}px ${style.font}`;
-  const refLines = refText ? wrapText(ctx, refText, maxTextWidth) : [];
-
-  const gap = refLines.length ? mainFontSize * 0.8 : 0;
-  const totalHeight =
-    mainLines.length * mainLineHeight +
-    gap +
-    (refLines.length ? refLines.length * refLineHeight : 0);
-
-  // Slide-up animation pada awal kemunculan
-  const slideOffset = (1 - fadeIn) * 60;
-  let y = (H - totalHeight) / 2 + mainLineHeight / 2 + slideOffset;
-
-  ctx.font = `600 ${mainFontSize}px ${style.font}`;
-  for (const line of mainLines) {
-    ctx.fillText(line, W / 2, y);
-    y += mainLineHeight;
-  }
-
-  if (refLines.length) {
-    y += gap - mainLineHeight + refLineHeight / 2;
-    ctx.font = `italic ${refFontSize}px ${style.font}`;
-    ctx.globalAlpha = textAlpha * 0.85;
-    for (const line of refLines) {
-      ctx.fillText(line, W / 2, y);
-      y += refLineHeight;
-    }
-  }
-
-  ctx.restore();
-}
-
-/* =========================================================
-   Live Preview
-========================================================= */
-function updatePreview() {
-  drawFrame(pctx, previewCanvas.width, previewCanvas.height, 1);
-}
-
-/* =========================================================
-   UI Events
-========================================================= */
-document.querySelectorAll('.template-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
-    state.template = card.dataset.template;
-    updatePreview();
-  });
-});
-
-document.getElementById('inTeks').addEventListener('input', e => {
-  state.teksUtama = e.target.value;
-  updatePreview();
-});
-
-document.getElementById('inRef').addEventListener('input', e => {
-  state.teksReferensi = e.target.value;
-  updatePreview();
-});
-
-document.getElementById('inDurasi').addEventListener('input', e => {
-  state.durasi = Math.min(30, Math.max(5, Number(e.target.value) || 10));
-});
-
-document.getElementById('inGambar').addEventListener('change', e => {
-  const file = e.target.files[0];
-  if (!file) { state.gambarImage = null; updatePreview(); return; }
-  const img = new Image();
-  const url = URL.createObjectURL(file);
-  img.onload = () => {
-    state.gambarImage = img;
-    URL.revokeObjectURL(url);
-    updatePreview();
-  };
-  img.onerror = () => {
-    alert('Gagal memuat gambar.');
-    state.gambarImage = null;
-    URL.revokeObjectURL(url);
-    updatePreview();
-  };
-  img.src = url;
-});
-
-document.getElementById('inAudio').addEventListener('change', e => {
-  state.audioFile = e.target.files[0] || null;
-});
-
-/* =========================================================
-   Render & Download
-========================================================= */
-document.getElementById('btnRender').addEventListener('click', async () => {
-  const btn = document.getElementById('btnRender');
-  const status = document.getElementById('status');
-  const progressWrap = document.getElementById('progress');
-  const progressBar = document.getElementById('progressBar');
-
-  btn.disabled = true;
-  status.textContent = 'Menyiapkan render...';
-  progressWrap.style.display = 'block';
-  progressBar.style.width = '0%';
-
-  try {
-    /* --- 1. Siapkan canvas output 1080×1920 --- */
-    const W = 1080, H = 1920;
-    const canvas = document.createElement('canvas');
-    canvas.width = W;
-    canvas.height = H;
-    const ctx = canvas.getContext('2d');
-
-    // Frame awal agar stream punya konten sejak awal
-    drawFrame(ctx, W, H, 0);
-
-    /* --- 2. Buat MediaStream dari canvas --- */
-    const fps = 30;
-    const stream = canvas.captureStream(fps);
-
-    /* --- 3. Audio (opsional) --- */
-    let audioCtx = null;
-    let audioSource = null;
-    if (state.audioFile) {
-      status.textContent = 'Memuat audio...';
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const arrayBuf = await state.audioFile.arrayBuffer();
-      const audioBuffer = await audioCtx.decodeAudioData(arrayBuf);
-
-      audioSource = audioCtx.createBufferSource();
-      audioSource.buffer = audioBuffer;
-      audioSource.loop = true;
-
-      const dest = audioCtx.createMediaStreamDestination();
-      audioSource.connect(dest);
-      // Tidak terhubung ke speaker agar tidak berbunyi saat render
-      dest.stream.getAudioTracks().forEach(track => stream.addTrack(track));
-    }
-
-    /* --- 4. Pilih MIME type terbaik --- */
-    let mimeType = 'video/webm';
-    const candidates = [
-      'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
-      'video/mp4',
-      'video/webm;codecs=vp9,opus',
-      'video/webm;codecs=vp8,opus',
-      'video/webm'
-    ];
-    for (const mt of candidates) {
-      if (window.MediaRecorder && MediaRecorder.isTypeSupported(mt)) {
-        mimeType = mt;
-        break;
-      }
-    }
-    const isMp4 = mimeType.startsWith('video/mp4');
-
-    if (!window.MediaRecorder) {
-      throw new Error('Browser tidak mendukung MediaRecorder. Gunakan Chrome/Edge terbaru.');
-    }
-
-    const recorder = new MediaRecorder(stream, {
-      mimeType,
-      videoBitsPerSecond: 5_000_000
-    });
-    const chunks = [];
-    recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-
-    const stopped = new Promise(res => { recorder.onstop = res; });
-
-    /* --- 5. Mulai rekam --- */
-    recorder.start(100);
-    if (audioSource) audioSource.start();
-
-    const startTime = performance.now();
-    const durationMs = state.durasi * 1000;
-
-    status.textContent = 'Merender...';
-
-    await new Promise(resolve => {
-      function animate(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(1, elapsed / durationMs);
-        drawFrame(ctx, W, H, progress);
-        progressBar.style.width = `${Math.round(progress * 100)}%`;
-        status.textContent = `Merender... ${Math.round(progress * 100)}%`;
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          resolve();
-        }
-      }
-      requestAnimationFrame(animate);
-    });
-
-    // Beri jeda singkat untuk frame terakhir
-    await new Promise(r => setTimeout(r, 200));
-
-    recorder.stop();
-    if (audioSource) { try { audioSource.stop(); } catch (_) {} }
-    if (audioCtx) { try { await audioCtx.close(); } catch (_) {} }
-
-    await stopped;
-
-    /* --- 6. Buat blob & unduh --- */
-    const blob = new Blob(chunks, { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const ext = isMp4 ? 'mp4' : 'webm';
-    const filename = `reel-${Date.now()}.${ext}`;
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-
-    const sizeMB = (blob.size / 1024 / 1024).toFixed(1);
-    status.textContent = `✅ Selesai! ${filename} (${sizeMB} MB) telah diunduh.`;
-
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-  } catch (err) {
-    console.error(err);
-    status.textContent = `❌ Error: ${err.message}`;
-  } finally {
-    btn.disabled = false;
-    setTimeout(() => { progressWrap.style.display = 'none'; }, 2000);
-  }
-});
-
-/* =========================================================
-   Init
-========================================================= */
-updatePreview();
-</script>
+                ffmpeg.FS('unlink', inputFileName);
+                statusDiv.textContent = 'Selesai! Semua klip telah dibuat.';
+            } catch (error) {
+                console.error(error);
+                statusDiv.textContent = `Terjadi kesalahan: ${error.message}`;
+            } finally {
+                processBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
 </html>
