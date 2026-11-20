@@ -87,20 +87,16 @@
     .overlay-logos .logo-draggable.dragging { cursor: grabbing; filter: drop-shadow(0 4px 12px rgba(0,0,0,.85)); }
     .overlay-logos .logo-draggable img { display: block; width: 100%; height: auto; pointer-events: none; }
     .overlay-logos.locked .logo-draggable { pointer-events: none; cursor: default; }
-
-    /* ===== TICKER — FIX SEAMLESS ===== */
     .ticker-wrapper { position: absolute; bottom: 0; left: 0; right: 0; height: 46px; display: flex; align-items: stretch; background: linear-gradient(90deg, #0b1220 0%, #15233d 35%, #15233d 65%, #0b1220 100%); border-top: 2px solid #e11d2f; box-shadow: 0 -6px 24px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06); z-index: 20; pointer-events: none; overflow: hidden; font-family: 'Arial Narrow', 'Segoe UI', Tahoma, sans-serif; }
     .ticker-label { background: linear-gradient(180deg, #ff2d3f 0%, #c00d1f 100%); color: #fff; padding: 0 24px 0 14px; font-weight: 900; font-size: 12.5px; letter-spacing: 1.6px; display: flex; align-items: center; gap: 8px; white-space: nowrap; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%); box-shadow: 6px 0 16px rgba(0,0,0,.55); z-index: 2; position: relative; text-shadow: 0 1px 2px rgba(0,0,0,.4); flex-shrink: 0; }
     .ticker-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 8px #fff; animation: tickerPulse 1.1s ease-in-out infinite; }
     @keyframes tickerPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.65); } }
     .ticker-track { flex: 1; overflow: hidden; position: relative; display: flex; align-items: center; }
-    /* FIX: container flex, 2 span identik, animasi -50% = seamless */
     .ticker-content { display: flex; white-space: nowrap; will-change: transform; animation: marquee 22s linear infinite; font-size: 15px; font-weight: 600; color: #fff; letter-spacing: .35px; text-shadow: 0 1px 3px rgba(0,0,0,.85); }
     .ticker-content span { padding-right: 80px; }
     @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     .ticker-live { display: flex; align-items: center; gap: 6px; padding: 0 14px; background: rgba(225,29,47,.15); border-left: 1px solid rgba(225,29,47,.5); color: #ff4d5e; font-weight: 900; font-size: 11px; letter-spacing: 1.5px; z-index: 2; text-shadow: 0 0 8px rgba(255,77,94,.5); flex-shrink: 0; }
     .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #ff4d5e; box-shadow: 0 0 8px #ff4d5e; animation: tickerPulse 1.4s infinite; }
-
     .fs-btn { position: absolute; top: 12px; right: 12px; z-index: 30; width: 38px; height: 38px; border-radius: 4px; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.2); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .2s, background .2s; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); padding: 0; }
     .video-player-container:hover .fs-btn { opacity: 1; }
     .fs-btn:hover { background: rgba(0,0,0,.85); border-color: rgba(255,255,255,.45); }
@@ -183,11 +179,13 @@
                 <div class="video-player-container" id="playerContainer" data-ratio="original">
                     <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop" alt="Lapangan Sepak Bola" class="video-background" id="placeholderImage">
                     <video id="mainVideo" controls controlsList="nofullscreen" style="display: none;"></video>
-                    <div class="scoreboard"><div class="score-team"><span id="teamA">LOMBLEN UNITED</span><span id="scoreDisplay">1 - 0</span><span id="teamB">PLATINA FC</span></div><div class="score-time" id="matchTime">41:56</div></div>
+                    <!-- PAPAN SKOR: SEMBUNYI SAMPAI DIINPUT -->
+                    <div class="scoreboard" id="scoreboard" style="display:none"><div class="score-team"><span id="teamA">TIM A</span><span id="scoreDisplay">0 - 0</span><span id="teamB">TIM B</span></div><div class="score-time" id="matchTime">00:00</div></div>
                     <div class="overlay-logos" id="overlayLogos"></div>
-                    <div class="ticker-wrapper" id="tickerWrapper">
+                    <!-- TICKER: SEMBUNYI SAMPAI DIINPUT -->
+                    <div class="ticker-wrapper" id="tickerWrapper" style="display:none">
                         <div class="ticker-label"><span class="ticker-dot"></span>INFO MATCH</div>
-                        <div class="ticker-track"><div class="ticker-content" id="runningText"><span>Selamat datang di Live Streaming ETMC XXXV 2026 Flores Timur - Match Day 2.</span><span aria-hidden="true">Selamat datang di Live Streaming ETMC XXXV 2026 Flores Timur - Match Day 2.</span></div></div>
+                        <div class="ticker-track"><div class="ticker-content" id="runningText"><span></span><span aria-hidden="true"></span></div></div>
                         <div class="ticker-live"><span class="live-dot"></span>LIVE</div>
                     </div>
                     <button class="fs-btn" id="fsBtn" title="Layar Penuh" aria-label="Layar Penuh"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
@@ -206,8 +204,22 @@
             <section class="dock" style="flex: 0 0 auto;"><header class="dock-head">Controls</header><div class="dock-body pad"><button class="btn primary block">● Mulai Streaming</button><button class="btn block">● Mulai Rekaman</button><button class="btn block">⚙ Pengaturan</button></div></section>
             <section class="dock" style="flex: 1;"><header class="dock-head">Properties — <span id="propsTitle">Video Utama</span></header><div class="dock-body pad" id="propsBody">
                 <div class="props-panel" id="propsVideo"><span class="prop-label">Sumber Video</span><button class="btn block" id="btnUpload">⬆ Unggah Video</button><div class="prop-hint" id="videoInfo">Belum ada video dipilih — menampilkan gambar placeholder.</div><span class="prop-label">Rasio</span><div class="prop-hint">Atur rasio lewat tombol <b>ASLI / 16:9 / 9:16</b> di atas jendela preview.</div><span class="prop-label">Layar Penuh</span><div class="prop-hint">Arahkan kursor ke sudut kanan atas video, lalu klik tombol ⛶. Teks berjalan tetap tampil menyatu dengan video.</div></div>
-                <div class="props-panel hidden" id="propsScoreboard"><span class="prop-label">Nama Tim Kiri</span><input type="text" id="inputTeamA" class="input" placeholder="Nama Tim Kiri"><span class="prop-label">Skor</span><input type="text" id="inputScore" class="input" placeholder="Contoh: 2 - 1"><span class="prop-label">Nama Tim Kanan</span><input type="text" id="inputTeamB" class="input" placeholder="Nama Tim Kanan"><span class="prop-label">Waktu Pertandingan</span><input type="text" id="inputTime" class="input" placeholder="Contoh: 75:30"><button id="btnUpdateScore" class="btn primary block">Perbarui Skor &amp; Waktu</button><div class="timer-controls"><button id="btnStartTimer" class="btn success">Mulai</button><button id="btnStopTimer" class="btn danger" style="display: none;">Jeda</button><button id="btnResetTimer" class="btn">Reset</button></div></div>
-                <div class="props-panel hidden" id="propsTicker"><span class="prop-label">Teks Berjalan</span><input type="text" id="inputText" class="input" placeholder="Ketik informasi pertandingan..."><button id="btnKirim" class="btn primary block">Kirim Teks Berjalan</button><div class="prop-hint">Tekan <b>Enter</b> untuk langsung mengirim. Teks tampil di depan video, termasuk saat layar penuh.</div></div>
+                <div class="props-panel hidden" id="propsScoreboard">
+                    <span class="prop-label">Nama Tim Kiri</span><input type="text" id="inputTeamA" class="input" placeholder="Nama Tim Kiri">
+                    <span class="prop-label">Skor</span><input type="text" id="inputScore" class="input" placeholder="Contoh: 2 - 1">
+                    <span class="prop-label">Nama Tim Kanan</span><input type="text" id="inputTeamB" class="input" placeholder="Nama Tim Kanan">
+                    <span class="prop-label">Waktu Pertandingan</span><input type="text" id="inputTime" class="input" placeholder="Contoh: 75:30">
+                    <button id="btnUpdateScore" class="btn primary block">Perbarui Skor &amp; Waktu</button>
+                    <div class="prop-hint">Papan skor baru muncul di video setelah kamu klik tombol di atas.</div>
+                    <div class="timer-controls"><button id="btnStartTimer" class="btn success">Mulai</button><button id="btnStopTimer" class="btn danger" style="display: none;">Jeda</button><button id="btnResetTimer" class="btn">Reset</button></div>
+                    <button id="btnHideScore" class="btn block">🙈 Sembunyikan Papan Skor</button>
+                </div>
+                <div class="props-panel hidden" id="propsTicker">
+                    <span class="prop-label">Teks Berjalan</span><input type="text" id="inputText" class="input" placeholder="Ketik informasi pertandingan...">
+                    <button id="btnKirim" class="btn primary block">Kirim Teks Berjalan</button>
+                    <div class="prop-hint">Teks berjalan baru muncul di video setelah kamu klik Kirim. Tekan <b>Enter</b> juga bisa.</div>
+                    <button id="btnHideTicker" class="btn block">🙈 Sembunyikan Teks Berjalan</button>
+                </div>
                 <div class="props-panel hidden" id="propsLogo"></div>
             </div></section>
         </aside>
@@ -220,48 +232,69 @@ const $ = id => document.getElementById(id);
 const overlayLogos = $('overlayLogos'); const logoInput = $('logoInput'); const btnAddLogo = $('btnAddLogo'); const logoSources = $('logoSources'); const lockCheckbox = $('lockPositions'); const playerContainer = $('playerContainer'); const mainVideo = $('mainVideo'); const placeholderImage = $('placeholderImage'); const scoreboardEl = document.querySelector('.scoreboard'); const tickerEl = document.querySelector('.ticker-wrapper'); const fsBtn = $('fsBtn');
 const propsVideo = $('propsVideo'); const propsScoreboard = $('propsScoreboard'); const propsTicker = $('propsTicker'); const propsLogo = $('propsLogo'); const propsTitle = $('propsTitle');
 let logos = []; let logoIdCounter = 0; let selectedSource = 'video'; let currentRatio = 'original';
-const sourceVisible = { video: true, scoreboard: true, ticker: true };
+// KEDUANYA SEMBUNYI DI AWAL
+const sourceVisible = { video: true, scoreboard: false, ticker: false };
 const newLogoId = () => 'logo-' + (++logoIdCounter);
 const EYE_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
 
-/* ===== 1. TICKER — FIX SEAMLESS ===== */
+/* ===== 1. TICKER — SEMBUNYI SAMPAI DIINPUT + SEAMLESS ===== */
 const btnKirim = $('btnKirim'); const inputText = $('inputText'); const runningText = $('runningText');
+const btnHideTicker = $('btnHideTicker');
 function restartTicker() {
-    // Ukur 1 span saja (setengah lebar total), durasi = lebar / speed
+    if (!sourceVisible.ticker) return;
     const first = runningText.querySelector('span');
     if (!first) return;
     runningText.style.animation = 'none';
     void runningText.offsetWidth;
     const oneW = first.offsetWidth || 600;
-    const speed = 130; // px/detik, sama seperti sebelumnya
+    const speed = 130;
     const duration = Math.max(8, oneW / speed);
     runningText.style.animation = `marquee ${duration}s linear infinite`;
 }
 function updateRunningText() {
     const newText = inputText.value;
     if (newText.trim() === '') { alert('Teks tidak boleh kosong!'); return; }
-    // Isi kedua span dengan teks yang sama persis -> loop seamless
+    // Baru tampilkan ticker setelah ada input
+    sourceVisible.ticker = true;
+    tickerEl.style.display = '';
     runningText.innerHTML = `<span>${newText.replace(/</g,'&lt;')}</span><span aria-hidden="true">${newText.replace(/</g,'&lt;')}</span>`;
     restartTicker();
     inputText.value = '';
+    refreshUI();
 }
 btnKirim.addEventListener('click', updateRunningText);
 inputText.addEventListener('keypress', e => { if (e.key === 'Enter') { e.preventDefault(); updateRunningText(); } });
+btnHideTicker.addEventListener('click', () => {
+    sourceVisible.ticker = false;
+    tickerEl.style.display = 'none';
+    refreshUI();
+});
 let tickerResizeTimer;
 window.addEventListener('resize', () => { clearTimeout(tickerResizeTimer); tickerResizeTimer = setTimeout(restartTicker, 260); });
 
-/* ===== 2. SKOR ===== */
+/* ===== 2. SKOR — SEMBUNYI SAMPAI DIINPUT ===== */
 const btnUpdateScore = $('btnUpdateScore'); const inputTeamA = $('inputTeamA'); const inputScore = $('inputScore'); const inputTeamB = $('inputTeamB'); const inputTime = $('inputTime'); const teamA = $('teamA'); const scoreDisplay = $('scoreDisplay'); const teamB = $('teamB'); const matchTime = $('matchTime');
+const btnHideScore = $('btnHideScore');
 btnUpdateScore.addEventListener('click', () => {
+    const adaInput = inputTeamA.value.trim() !== '' || inputScore.value.trim() !== '' || inputTeamB.value.trim() !== '' || inputTime.value.trim() !== '';
+    if (!adaInput) { alert('Isi dulu nama tim / skor / waktunya!'); return; }
+    sourceVisible.scoreboard = true;
+    scoreboardEl.style.display = '';
     if (inputTeamA.value.trim() !== '') teamA.textContent = inputTeamA.value.toUpperCase();
     if (inputScore.value.trim() !== '') scoreDisplay.textContent = inputScore.value;
     if (inputTeamB.value.trim() !== '') teamB.textContent = inputTeamB.value.toUpperCase();
     if (inputTime.value.trim() !== '') { const p = inputTime.value.split(':'); if (p.length === 2) { totalSeconds = (parseInt(p[0], 10) || 0) * 60 + (parseInt(p[1], 10) || 0); updateTimerDisplay(); } }
     inputTeamA.value = ''; inputScore.value = ''; inputTeamB.value = ''; inputTime.value = '';
+    refreshUI();
+});
+btnHideScore.addEventListener('click', () => {
+    sourceVisible.scoreboard = false;
+    scoreboardEl.style.display = 'none';
+    refreshUI();
 });
 
 /* ===== 3. TIMER ===== */
-let totalSeconds = 41 * 60 + 56; let timerInterval = null; let isRunning = false;
+let totalSeconds = 0; let timerInterval = null; let isRunning = false;
 const btnStartTimer = $('btnStartTimer'); const btnStopTimer = $('btnStopTimer'); const btnResetTimer = $('btnResetTimer');
 const formatTime = s => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
 const updateTimerDisplay = () => { matchTime.textContent = formatTime(totalSeconds); };
@@ -301,24 +334,21 @@ mainVideo.addEventListener('loadedmetadata', () => { if (currentRatio === 'origi
 if (placeholderImage) { if (placeholderImage.complete && placeholderImage.naturalWidth > 0) applyAspectRatio(currentRatio); placeholderImage.addEventListener('load', () => { if (currentRatio === 'original') applyAspectRatio('original'); }); }
 window.addEventListener('resize', () => { clearTimeout(window._clampT); window._clampT = setTimeout(() => logos.forEach(clampPosition), 150); });
 
-/* ===== 8. FULLSCREEN — FIX: 1 HANDLER SAJA ===== */
+/* ===== 8. FULLSCREEN — 1 HANDLER ===== */
 const FS_ICON_OPEN = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>`;
 const FS_ICON_CLOSE = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>`;
 function getFullscreenElement() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
-let isRedirectingFs = false; // FIX: cegah redirect berulang / loop
+let isRedirectingFs = false;
 function requestContainerFullscreen() { if (isRedirectingFs) return; if (playerContainer.requestFullscreen) { playerContainer.requestFullscreen().catch(() => {}); } else if (playerContainer.webkitRequestFullscreen) { playerContainer.webkitRequestFullscreen(); } }
 function exitFullscreen() { if (document.exitFullscreen) { document.exitFullscreen().catch(() => {}); } else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); } }
 function toggleFullscreen() { if (!getFullscreenElement()) { requestContainerFullscreen(); } else { exitFullscreen(); } }
 fsBtn.addEventListener('click', toggleFullscreen);
 playerContainer.addEventListener('dblclick', e => { if (e.target.closest('.logo-draggable')) return; if (e.target.closest('.fs-btn')) return; toggleFullscreen(); });
-// SATU handler untuk semua perubahan fullscreen — gak ada lagi handler kedua
 function onFullscreenChange() {
     const fsEl = getFullscreenElement();
     const isFs = !!fsEl;
-    // Update ikon
     fsBtn.innerHTML = isFs ? FS_ICON_CLOSE : FS_ICON_OPEN;
     fsBtn.title = isFs ? 'Keluar Layar Penuh' : 'Layar Penuh';
-    // Kalau yang fullscreen adalah <video>-nya saja, pindahkan ke container (sekali saja)
     if (fsEl === mainVideo && !isRedirectingFs) {
         isRedirectingFs = true;
         exitFullscreen();
@@ -339,7 +369,7 @@ let clockSeconds = 0;
 setInterval(() => { clockSeconds++; const h = String(Math.floor(clockSeconds / 3600)).padStart(2, '0'); const m = String(Math.floor((clockSeconds % 3600) / 60)).padStart(2, '0'); const s = String(clockSeconds % 60).padStart(2, '0'); $('statClock').textContent = `${h}:${m}:${s}`; }, 1000);
 
 /* ===== 11. INIT ===== */
-window.addEventListener('load', () => { updateTimerDisplay(); startTimer(); renderLogos(); applyStaticVisibility(); applyAspectRatio('original'); selectSource('video'); setTimeout(restartTicker, 120); setTimeout(restartTicker, 600); });
+window.addEventListener('load', () => { updateTimerDisplay(); renderLogos(); applyStaticVisibility(); applyAspectRatio('original'); selectSource('video'); });
 </script>
 </body>
 </html>
