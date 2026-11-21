@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Form Keterangan Fisik Part</title>
 
-    <!-- HANYA MEMUAT LIBRARY JSPDF (TANPA HTML2CANVAS) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
     <style>
@@ -71,7 +70,9 @@
             padding: 10px 12px;
         }
 
-        /* --- SIMULASI KERTAS A4 (DESKTOP) --- */
+        /* ============================================================
+           KERTAS A4 — PERSIS SEPERTI PDF (210 x 297 mm, margin 8 mm)
+           ============================================================ */
         .page-container {
             background-color: #ffffff;
             width: 210mm;
@@ -82,23 +83,24 @@
             overflow: hidden;
         }
 
-        /* Garis luar tebal */
+        /* Kotak luar halaman TIDAK digambar di PDF → dihilangkan juga di layar */
         .outer-border {
-            border: 1px solid #000;
-            padding: 6px;
-            height: 100%;
+            border: none;
+            padding: 0;
+            height: auto;
+            display: block;
             box-sizing: border-box;
-            display: flex;
         }
 
-        /* Grid untuk 12 form (6 baris x 2 kolom) */
+        /* Grid 12 form: 2 kolom (95 mm + gap 4 mm) x 6 baris (45 mm + gap 2 mm) */
         .table-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: repeat(6, 1fr);
-            gap: 8px 12px;
+            grid-template-columns: 95mm 95mm;
+            grid-template-rows: repeat(6, 45mm);
+            gap: 2mm 4mm;
             width: 100%;
             height: 100%;
+            align-content: start;
         }
 
         /* --- STYLING TABEL --- */
@@ -111,19 +113,22 @@
             table-layout: fixed;
         }
 
-        /* Garis dalam tabel */
         td {
             border: 1px solid #000;
             padding: 2px 5px;
             vertical-align: middle;
         }
 
-        /* Lebar Kolom */
-        .col-label { width: 35%; }
-        .col-input { width: 65%; }
-        .col-sign { width: 35%; }
-        .col-tech { width: 32.5%; text-align: center; }
-        .col-hods { width: 32.5%; text-align: center; }
+        /* ============================================================
+           LEBAR KOLOM — SAMA DENGAN PDF
+           PDF: label 27 mm, Teknisi 37 mm, HoDS 31 mm (total 95 mm)
+           → label 28,42% | teknisi 38,95% | hoDS 32,63%
+           ============================================================ */
+        .col-label { width: 28.42%; }
+        .col-input { width: 71.58%; }
+        .col-sign  { width: 28.42%; }
+        .col-tech  { width: 38.95%; text-align: center; }
+        .col-hods  { width: 32.63%; text-align: center; }
 
         /* Teks Label */
         .label-bold {
@@ -180,15 +185,13 @@
             min-height: 14px;
         }
 
-        /* Input khusus untuk area tanda tangan agar memenuhi kotak */
-        .sign-input {
-            height: 100%;
-            min-height: 45px;
-        }
-
-        /* Pengaturan Tinggi Baris Atas */
-        .row-top { height: 26px; }
-        .row-header { height: 22px; }
+        /* ============================================================
+           TINGGI BARIS — SAMA DENGAN PDF
+           PDF: 8 mm + 8 mm + 7 mm + 22 mm = 45 mm
+           ============================================================ */
+        .row-top    { height: 8mm; }
+        .row-header { height: 7mm; }
+        .table-grid table tr:last-child { height: 22mm; }
 
         /* Styling Khusus Sel Tanda Tangan (Teknisi & HoDS) */
         .sign-cell {
@@ -209,14 +212,18 @@
             justify-content: center;
         }
 
+        /* Kotak nama di bawah TTD = 4 mm (sama dengan jarak y+41 → y+45 di PDF) */
         .sign-name-display {
             text-align: center;
             font-size: 8px;
             font-weight: bold;
-            padding: 2px 0;
+            padding: 0 2px;
             border-top: 1px solid #000;
             background-color: #f9f9f9;
-            min-height: 14px;
+            height: 4mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-transform: uppercase;
         }
 
@@ -232,7 +239,6 @@
                 -webkit-text-size-adjust: 100%;
             }
 
-            /* Tombol aksi jadi bar bawah yang selalu terlihat */
             .button-group {
                 position: fixed;
                 left: 0;
@@ -258,7 +264,6 @@
                 display: block;
             }
 
-            /* "Kertas A4" dilepas menjadi kartu full width */
             .page-container {
                 width: 100%;
                 height: auto;
@@ -276,7 +281,6 @@
                 height: auto;
             }
 
-            /* 1 kolom, tinggi otomatis */
             .table-grid {
                 display: grid;
                 grid-template-columns: 1fr;
@@ -284,9 +288,9 @@
                 grid-auto-rows: auto;
                 gap: 14px;
                 height: auto;
+                align-content: normal;
             }
 
-            /* Tiap form jadi kartu tersendiri */
             .table-grid table {
                 height: auto;
                 font-size: 12px;
@@ -300,8 +304,10 @@
                 font-size: 12px;
             }
 
+            /* Di HP, tinggi baris dikembalikan otomatis */
             .row-top,
-            .row-header {
+            .row-header,
+            .table-grid table tr:last-child {
                 height: auto;
             }
 
@@ -309,13 +315,13 @@
             .label-italic { font-size: 11px; }
             .sub-label { font-size: 11px; }
 
+            /* Di HP, kolom label sedikit lebih lega agar mudah dibaca */
             .col-label { width: 38%; }
             .col-input { width: 62%; }
             .col-sign  { width: 30%; }
             .col-tech,
             .col-hods  { width: auto; }
 
-            /* Input diperbesar: nyaman di HP & mencegah auto-zoom iOS */
             input[type="text"],
             select.tech-select {
                 font-size: 16px;
@@ -342,21 +348,24 @@
                 font-size: 16px;
             }
 
+            /* Kotak nama kembali normal di HP */
             .sign-name-display {
-                font-size: 10px;
-                padding: 5px 2px;
+                height: auto;
                 min-height: 20px;
+                padding: 5px 2px;
+                display: block;
             }
         }
 
-        /* Layar sangat kecil */
         @media screen and (max-width: 360px) {
             .btn { font-size: 12px; padding: 12px 6px; }
             .col-label { width: 42%; }
             .col-input { width: 58%; }
         }
 
-        /* --- PENGATURAN PRINT (CTRL+P) — SELALU A4 --- */
+        /* ============================================================
+           PRINT (CTRL+P) — SELALU A4, SAMA DENGAN PDF
+           ============================================================ */
         @page {
             size: A4 portrait;
             margin: 0;
@@ -383,18 +392,19 @@
             }
 
             .outer-border {
-                border: 1px solid #000;
-                padding: 6px;
-                display: flex;
-                height: 100%;
+                border: none;
+                padding: 0;
+                display: block;
+                height: auto;
             }
 
             .table-grid {
                 display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: repeat(6, 1fr);
-                gap: 8px 12px;
+                grid-template-columns: 95mm 95mm;
+                grid-template-rows: repeat(6, 45mm);
+                gap: 2mm 4mm;
                 height: 100%;
+                align-content: start;
             }
 
             .table-grid table {
@@ -406,8 +416,9 @@
 
             td { padding: 2px 5px; }
 
-            .row-top { height: 26px; }
-            .row-header { height: 22px; }
+            .row-top    { height: 8mm; }
+            .row-header { height: 7mm; }
+            .table-grid table tr:last-child { height: 22mm; }
 
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -432,8 +443,6 @@
 
     <!-- Area Kertas -->
     <div class="page-container" id="pdf-content">
-
-        <!-- Garis Kotak Luar -->
         <div class="outer-border">
             <div class="table-grid">
 
@@ -756,9 +765,6 @@
 
     <!-- Script Sinkronisasi & Download PDF Murni -->
     <script>
-        // ============================================================
-        // 1. Sinkronisasi Nama Teknisi (dropdown Form 1 -> semua form)
-        // ============================================================
         function syncTechName(selectElement) {
             const selectedName = selectElement.value;
             document.querySelectorAll('.sync-tech-name').forEach(function (element) {
@@ -766,9 +772,6 @@
             });
         }
 
-        // ============================================================
-        // 2. Helper: potong teks agar tidak melebihi lebar kolom PDF
-        // ============================================================
         function fitText(pdf, text, maxWidth) {
             let t = (text || '').toString().trim();
             if (!t) return '';
@@ -779,18 +782,6 @@
             return t + '…';
         }
 
-        // ============================================================
-        // 3. Download PDF Murni (Vektor & Teks) — tetap 12 form / A4
-        //    Layout PDF dihitung manual, jadi TIDAK terpengaruh
-        //    tampilan responsif di layar.
-        //
-        //    PERUBAHAN TERBARU:
-        //    - Garis vertikal label <-> Teknisi digeser LEBIH KE KIRI
-        //      dari x + 30 menjadi x + 27 (kolom label makin ramping,
-        //      kolom Teknisi makin lebar).
-        //    - Posisi teks isi, titik tengah, dan maxWidth otomatis
-        //      mengikuti konstanta LABEL_W / MID_X / RIGHT_X.
-        // ============================================================
         async function downloadPurePDF() {
             const btn = document.querySelector('.btn-download');
             const originalText = btn.innerHTML;
@@ -812,13 +803,12 @@
                 const gapY = 2;
 
                 // === KONSTANTA LAYOUT (UBAH DI SINI SAJA) ===
-                const LABEL_W = 27;   // garis label <-> teknisi (DIGESER LEBIH KE KIRI)
-                const MID_X   = 64;   // garis teknisi <-> HoDS (tidak berubah)
-                const RIGHT_X = 95;   // garis kanan luar
+                const LABEL_W = 27;
+                const MID_X   = 64;
+                const RIGHT_X = 95;
                 const TECH_CENTER = (LABEL_W + MID_X) / 2; // = 45.5
                 const HODS_CENTER = (MID_X + RIGHT_X) / 2; // = 79.5
 
-                // Lebar area teks (otomatis menyesuaikan LABEL_W)
                 const TEXT_X        = LABEL_W + 2;              // = 29
                 const TEXT_MAX_W    = RIGHT_X - TEXT_X - 2;     // = 64
                 const SIG_TECH_MAX  = (MID_X - LABEL_W) - 4;    // = 33
@@ -832,7 +822,6 @@
                     const x = startX + (col * (formWidth + gapX));
                     const y = startY + (row * (formHeight + gapY));
 
-                    // --- 1. AMBIL DATA DARI HTML ---
                     let techName = (index === 0)
                         ? table.querySelector('select').value
                         : table.querySelector('.tech-name-top-display').innerText;
@@ -845,75 +834,50 @@
                     const techSignName  = table.querySelector('.sync-tech-name').innerText;
                     const hodsSignName  = 'MUHAMMAD FAUZI';
 
-                    // --- 2. GAMBAR GARIS TABEL ---
-                    // Kotak luar
                     pdf.rect(x, y, formWidth, formHeight);
 
-                    // Baris 1: NAMA TEKNISI
                     pdf.line(x, y + 8, x + formWidth, y + 8);
                     pdf.line(x + LABEL_W, y, x + LABEL_W, y + 8);
 
-                    // Baris 2: Keterangan
                     pdf.line(x, y + 16, x + formWidth, y + 16);
                     pdf.line(x + LABEL_W, y + 8, x + LABEL_W, y + 16);
 
-                    // Baris 3 & 4: Tanda Tangan
-                    // Garis horizontal hanya dari kanan label, agar sel TANDATANGAN (rowspan) tidak terpotong.
                     pdf.line(x + LABEL_W, y + 23, x + formWidth, y + 23);
-
-                    // Garis vertikal kiri & tengah area TTD
                     pdf.line(x + LABEL_W, y + 16, x + LABEL_W, y + 45);
                     pdf.line(x + MID_X,   y + 16, x + MID_X,   y + 45);
-
-                    // Garis pemisah nama di bawah TTD
                     pdf.line(x + LABEL_W, y + 41, x + MID_X,   y + 41);
                     pdf.line(x + MID_X,   y + 41, x + RIGHT_X, y + 41);
 
-                    // --- 3. TULIS TEKS ---
                     pdf.setFontSize(8);
 
-                    // Baris 1
                     pdf.setFont('helvetica', 'bold');
                     pdf.text('NAMA TEKNISI', x + 2, y + 5.5);
                     pdf.setFont('helvetica', 'normal');
                     pdf.text(fitText(pdf, techName, TEXT_MAX_W), x + TEXT_X, y + 5.5);
 
-                    // Baris 2
                     pdf.setFont('helvetica', 'italic');
                     pdf.text('Keterangan', x + 2, y + 13.5);
                     pdf.setFont('helvetica', 'normal');
                     pdf.text(fitText(pdf, keterangan, TEXT_MAX_W), x + TEXT_X, y + 13.5);
 
-                    // Baris 3: header TTD
                     pdf.setFont('helvetica', 'bold');
                     pdf.text('TANDATANGAN', x + 2, y + 30);
                     pdf.text('Teknisi', x + TECH_CENTER, y + 20, { align: 'center' });
                     pdf.text('HoDS',    x + HODS_CENTER, y + 20, { align: 'center' });
 
-                    // Isi TTD
                     pdf.setFont('helvetica', 'normal');
                     pdf.text(fitText(pdf, techSignInput, SIG_TECH_MAX), x + TECH_CENTER, y + 36, { align: 'center' });
                     pdf.text(fitText(pdf, hodsSignInput, SIG_HODS_MAX), x + HODS_CENTER, y + 36, { align: 'center' });
 
-                    // Nama di bawah TTD
                     pdf.setFontSize(7);
                     pdf.setFont('helvetica', 'bold');
                     pdf.text(fitText(pdf, techSignName, SIG_TECH_MAX), x + TECH_CENTER, y + 44, { align: 'center' });
                     pdf.text(fitText(pdf, hodsSignName, SIG_HODS_MAX), x + HODS_CENTER, y + 44, { align: 'center' });
                 });
 
-                // ============================================================
-                // 4. NAMA FILE PDF OTOMATIS + NAMA TEKNISI
-                // ============================================================
                 const firstTechSelect = document.querySelector('.table-grid select.tech-select');
                 let techNameForFile = firstTechSelect ? firstTechSelect.value.trim() : '';
-
-                // Jika masih default "-- Pilih Teknisi --", kosongkan
-                if (techNameForFile === '-- Pilih Teknisi --') {
-                    techNameForFile = '';
-                }
-
-                // Bersihkan karakter yang tidak diizinkan di nama file
+                if (techNameForFile === '-- Pilih Teknisi --') techNameForFile = '';
                 techNameForFile = techNameForFile.replace(/[\\/:*?"<>|]/g, '-').trim();
 
                 const baseFileName = 'Form Keterangan Fisik Part';
