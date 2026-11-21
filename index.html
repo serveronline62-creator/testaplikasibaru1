@@ -1,901 +1,436 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Form Keterangan Fisik Part</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <style>
-        /* --- PENGATURAN DASAR & LAYAR --- */
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #e2e8f0;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-        }
-
-        /* Container Tombol */
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            border: none;
-            transition: all 0.2s ease;
-        }
-
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        .btn-print {
-            background-color: #ffffff;
-            color: #1e293b;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .btn-print:hover { background-color: #f1f5f9; }
-
-        .btn-download {
-            background-color: #2563eb;
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
-        }
-        .btn-download:hover { background-color: #1d4ed8; }
-
-        /* Catatan khusus tampilan HP (default: disembunyikan) */
-        .mobile-note {
-            display: none;
-            margin: 0 0 14px;
-            font-size: 12px;
-            line-height: 1.5;
-            color: #334155;
-            background: #e0f2fe;
-            border: 1px solid #7dd3fc;
-            border-radius: 8px;
-            padding: 10px 12px;
-        }
-
-        /* ============================================================
-           KERTAS A4 — PERSIS SEPERTI PDF (210 x 297 mm, margin 8 mm)
-           ============================================================ */
-        .page-container {
-            background-color: #ffffff;
-            width: 210mm;
-            height: 297mm;
-            padding: 8mm;
-            box-sizing: border-box;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        /* Kotak luar halaman TIDAK digambar di PDF → dihilangkan juga di layar */
-        .outer-border {
-            border: none;
-            padding: 0;
-            height: auto;
-            display: block;
-            box-sizing: border-box;
-        }
-
-        /* Grid 12 form: 2 kolom (95 mm + gap 4 mm) x 6 baris (45 mm + gap 2 mm) */
-        .table-grid {
-            display: grid;
-            grid-template-columns: 95mm 95mm;
-            grid-template-rows: repeat(6, 45mm);
-            gap: 2mm 4mm;
-            width: 100%;
-            height: 100%;
-            align-content: start;
-        }
-
-        /* --- STYLING TABEL --- */
-        table {
-            width: 100%;
-            height: 100%;
-            border-collapse: collapse;
-            border-spacing: 0;
-            font-size: 10px;
-            table-layout: fixed;
-        }
-
-        td {
-            border: 1px solid #000;
-            padding: 2px 5px;
-            vertical-align: middle;
-        }
-
-        /* ============================================================
-           LEBAR KOLOM — SAMA DENGAN PDF
-           PDF: label 27 mm, Teknisi 37 mm, HoDS 31 mm (total 95 mm)
-           → label 28,42% | teknisi 38,95% | hoDS 32,63%
-           ============================================================ */
-        .col-label { width: 28.42%; }
-        .col-input { width: 71.58%; }
-        .col-sign  { width: 28.42%; }
-        .col-tech  { width: 38.95%; text-align: center; }
-        .col-hods  { width: 32.63%; text-align: center; }
-
-        /* Teks Label */
-        .label-bold {
-            font-weight: bold;
-            font-size: 9px;
-            text-transform: uppercase;
-        }
-
-        .label-italic {
-            font-style: italic;
-            font-size: 9px;
-        }
-
-        .sub-label {
-            font-size: 9px;
-        }
-
-        /* Input Area Umum */
-        input[type="text"] {
-            width: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: 10px;
-            padding: 0;
-        }
-
-        /* Styling khusus Dropdown (Hanya di Form 1) */
-        select.tech-select {
-            width: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: 10px;
-            padding: 0;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            color: #000;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0px center;
-            background-size: 10px;
-        }
-
-        /* Tampilan Teks Nama Teknisi (Untuk Form 2-12) */
-        .tech-name-top-display {
-            font-size: 10px;
-            display: block;
-            width: 100%;
-            min-height: 14px;
-        }
-
-        /* ============================================================
-           TINGGI BARIS — SAMA DENGAN PDF
-           PDF: 8 mm + 8 mm + 7 mm + 22 mm = 45 mm
-           ============================================================ */
-        .row-top    { height: 8mm; }
-        .row-header { height: 7mm; }
-        .table-grid table tr:last-child { height: 22mm; }
-
-        /* Styling Khusus Sel Tanda Tangan (Teknisi & HoDS) */
-        .sign-cell {
-            padding: 0;
-            vertical-align: top;
-        }
-
-        .sign-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .sign-input-wrapper {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Kotak nama di bawah TTD = 4 mm (sama dengan jarak y+41 → y+45 di PDF) */
-        .sign-name-display {
-            text-align: center;
-            font-size: 8px;
-            font-weight: bold;
-            padding: 0 2px;
-            border-top: 1px solid #000;
-            background-color: #f9f9f9;
-            height: 4mm;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-transform: uppercase;
-        }
-
-        /* ============================================================
-           MODE HANDPHONE / TABLET KECIL
-           (hanya untuk layar — hasil Print & PDF tetap A4)
-           ============================================================ */
-        @media screen and (max-width: 880px) {
-
-            body {
-                padding: 12px 12px calc(88px + env(safe-area-inset-bottom));
-                align-items: stretch;
-                -webkit-text-size-adjust: 100%;
-            }
-
-            .button-group {
-                position: fixed;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                margin: 0;
-                padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-                gap: 10px;
-                background: rgba(255, 255, 255, 0.97);
-                border-top: 1px solid #cbd5e1;
-                box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
-                z-index: 100;
-            }
-
-            .btn {
-                flex: 1 1 0;
-                padding: 13px 8px;
-                font-size: 13px;
-                white-space: nowrap;
-            }
-
-            .mobile-note {
-                display: block;
-            }
-
-            .page-container {
-                width: 100%;
-                height: auto;
-                min-height: 0;
-                padding: 0;
-                background: transparent;
-                box-shadow: none;
-                overflow: visible;
-            }
-
-            .outer-border {
-                border: none;
-                padding: 0;
-                display: block;
-                height: auto;
-            }
-
-            .table-grid {
-                display: grid;
-                grid-template-columns: 1fr;
-                grid-template-rows: none;
-                grid-auto-rows: auto;
-                gap: 14px;
-                height: auto;
-                align-content: normal;
-            }
-
-            .table-grid table {
-                height: auto;
-                font-size: 12px;
-                background: #ffffff;
-                box-shadow: 0 0 0 1px #94a3b8, 0 3px 10px rgba(15, 23, 42, 0.08);
-                border-radius: 6px;
-            }
-
-            td {
-                padding: 6px 8px;
-                font-size: 12px;
-            }
-
-            /* Di HP, tinggi baris dikembalikan otomatis */
-            .row-top,
-            .row-header,
-            .table-grid table tr:last-child {
-                height: auto;
-            }
-
-            .label-bold { font-size: 11px; }
-            .label-italic { font-size: 11px; }
-            .sub-label { font-size: 11px; }
-
-            /* Di HP, kolom label sedikit lebih lega agar mudah dibaca */
-            .col-label { width: 38%; }
-            .col-input { width: 62%; }
-            .col-sign  { width: 30%; }
-            .col-tech,
-            .col-hods  { width: auto; }
-
-            input[type="text"],
-            select.tech-select {
-                font-size: 16px;
-                padding: 3px 0;
-                line-height: 1.3;
-            }
-
-            select.tech-select {
-                background-size: 12px;
-                background-position: right 2px center;
-            }
-
-            .tech-name-top-display {
-                font-size: 16px;
-                min-height: 24px;
-                padding: 3px 0;
-                line-height: 1.3;
-            }
-
-            .sign-input,
-            .sign-input-tech,
-            .sign-input-hods {
-                min-height: 58px;
-                font-size: 16px;
-            }
-
-            /* Kotak nama kembali normal di HP */
-            .sign-name-display {
-                height: auto;
-                min-height: 20px;
-                padding: 5px 2px;
-                display: block;
-            }
-        }
-
-        @media screen and (max-width: 360px) {
-            .btn { font-size: 12px; padding: 12px 6px; }
-            .col-label { width: 42%; }
-            .col-input { width: 58%; }
-        }
-
-        /* ============================================================
-           PRINT (CTRL+P) — SELALU A4, SAMA DENGAN PDF
-           ============================================================ */
-        @page {
-            size: A4 portrait;
-            margin: 0;
-        }
-
-        @media print {
-            body {
-                background-color: #fff;
-                padding: 0;
-                display: block;
-            }
-
-            .button-group,
-            .mobile-note {
-                display: none !important;
-            }
-
-            .page-container {
-                width: 210mm;
-                height: 297mm;
-                padding: 8mm;
-                box-shadow: none;
-                margin: 0;
-            }
-
-            .outer-border {
-                border: none;
-                padding: 0;
-                display: block;
-                height: auto;
-            }
-
-            .table-grid {
-                display: grid;
-                grid-template-columns: 95mm 95mm;
-                grid-template-rows: repeat(6, 45mm);
-                gap: 2mm 4mm;
-                height: 100%;
-                align-content: start;
-            }
-
-            .table-grid table {
-                height: 100%;
-                box-shadow: none;
-                border-radius: 0;
-                font-size: 10px;
-            }
-
-            td { padding: 2px 5px; }
-
-            .row-top    { height: 8mm; }
-            .row-header { height: 7mm; }
-            .table-grid table tr:last-child { height: 22mm; }
-
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Studio — Rekam Gambar + Suara</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --bg-app: #141414; --bg-panel: #202020; --bg-head: #2a2a2a; --bg-input: #131313; --bg-hover: #2e2e2e; --tx: #cfcfcf; --tx-dim: #8a8a8a; --accent: #3d7eff; --danger: #d9534f; --success: #4caf50; --warn: #e0a13d; }
+    html, body { height: 100%; }
+    body { background: var(--bg-app); color: var(--tx); font-family: 'Segoe UI', Inter, system-ui, sans-serif; font-size: 13px; overflow: hidden; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; } ::-webkit-scrollbar-track { background: #1a1a1a; } ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 5px; border: 2px solid #1a1a1a; }
+    .hidden { display: none !important; }
+    .app { display: flex; flex-direction: column; height: 100dvh; }
+    .menubar { height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; background: #1a1a1a; border-bottom: 1px solid #0d0d0d; }
+    .menubar-left { display: flex; align-items: center; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; letter-spacing: .9px; color: #e8e8e8; }
+    .brand-dot { width: 9px; height: 9px; border-radius: 50%; background: #e03b3b; box-shadow: 0 0 7px rgba(224,59,59,.85); }
+    .brand-dot.rec { animation: pl 1s infinite; }
+    .menus { display: flex; gap: 1px; } .menus button { background: none; border: none; color: #a2a2a2; font-size: 12px; font-family: inherit; padding: 4px 9px; border-radius: 3px; cursor: pointer; } .menus button:hover { background: #2e2e2e; color: #e6e6e6; }
+    .live-badge { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: #ff5b5b; border: 1px solid #5c2020; background: #2a1414; padding: 3px 9px; border-radius: 3px; }
+    .live-badge.rec { background: #5c1414; color: #fff; animation: pl 1s infinite; }
+    .workspace { flex: 1; min-height: 0; display: flex; gap: 1px; background: #0d0d0d; padding: 1px; }
+    .col { display: flex; flex-direction: column; gap: 1px; min-height: 0; } .col.left { width: 258px; flex-shrink: 0; } .col.right { width: 300px; flex-shrink: 0; } .col.center { flex: 1; min-width: 0; }
+    .dock { background: var(--bg-panel); display: flex; flex-direction: column; min-height: 0; overflow: hidden; border: 1px solid #262626; }
+    .dock-head { height: 26px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; background: var(--bg-head); border-bottom: 1px solid #1a1a1a; font-size: 11px; font-weight: 600; color: #b8b8b8; letter-spacing: .4px; text-transform: uppercase; }
+    .dock-body { flex: 1; min-height: 0; overflow-y: auto; padding: 4px; } .dock-body.pad { padding: 10px; display: flex; flex-direction: column; gap: 9px; } .dock-foot { padding: 6px; border-top: 1px solid #1a1a1a; display: flex; flex-direction: column; gap: 6px; }
+    .source-row, .scene-row { display: flex; align-items: center; gap: 7px; padding: 5px 7px; border-radius: 3px; cursor: pointer; font-size: 12.5px; color: var(--tx); user-select: none; }
+    .scene-row:hover, .source-row:hover { background: var(--bg-hover); } .scene-row.active, .source-row.selected { background: rgba(61,126,255,.18); box-shadow: inset 2px 0 0 var(--accent); color: #fff; }
+    .src-ico { font-size: 12px; color: #7d7d7d; width: 13px; text-align: center; } .src-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .vis-btn { background: none; border: none; color: #9a9a9a; cursor: pointer; display: flex; padding: 0; } .vis-btn:hover { color: #fff; }
+    .source-row.off .src-name, .source-row.off .src-ico { opacity: .38; }
+    .empty-note { color: #6a6a6a; font-size: 11.5px; font-style: italic; padding: 8px; text-align: center; }
+    .btn { background: #333; border: 1px solid #454545; color: #dcdcdc; padding: 7px 10px; border-radius: 3px; font-size: 12px; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn:hover { background: #3d3d3d; } .btn.primary { background: #2f66c4; border-color: #3d7eff; color: #fff; } .btn.success { background: #2e7d32; border-color: #43a047; color: #fff; } .btn.danger { background: #8c3330; border-color: #c0392b; color: #fff; } .btn.block { width: 100%; }
+    .btn.recording { background: #c0392b !important; border-color: #ff5b5b !important; color: #fff !important; animation: pl 1.2s infinite; }
+    .btn.active { background: #2e7d32 !important; border-color: #4caf50 !important; color: #fff !important; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .input { width: 100%; background: var(--bg-input); border: 1px solid #3a3a3a; color: var(--tx); padding: 7px 9px; border-radius: 3px; font-size: 12.5px; font-family: inherit; outline: none; }
+    .input:focus { border-color: var(--accent); } .input[type=file] { padding: 5px; font-size: 11px; cursor: pointer; }
+    .prop-label { font-size: 10.5px; color: var(--tx-dim); text-transform: uppercase; letter-spacing: .5px; }
+    .prop-hint { font-size: 11px; color: #767676; line-height: 1.45; background: #191919; border-left: 2px solid #3a3a3a; padding: 6px 8px; border-radius: 2px; }
+    .props-panel { display: flex; flex-direction: column; gap: 7px; } .range { width: 100%; accent-color: var(--accent); }
+    .preview-toolbar { height: 34px; flex-shrink: 0; display: flex; align-items: center; gap: 12px; padding: 0 10px; background: var(--bg-panel); border: 1px solid #262626; }
+    .ratio-group { display: flex; gap: 2px; background: #161616; padding: 2px; border-radius: 4px; } .ratio-btn { background: none; border: none; color: #8f8f8f; font-size: 11px; font-weight: 600; font-family: inherit; padding: 4px 12px; border-radius: 3px; cursor: pointer; } .ratio-btn.active { background: var(--accent); color: #fff; }
+    .lock-toggle { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #9a9a9a; cursor: pointer; user-select: none; margin-left: auto; } .lock-toggle input { accent-color: var(--accent); }
+    .preview-badge { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--warn); border: 1px solid #6b5324; background: #2a2313; padding: 3px 9px; border-radius: 3px; }
+    .rec-badge { font-size: 10px; font-weight: 800; letter-spacing: 1px; color: #fff; background: #c0392b; padding: 3px 9px; border-radius: 3px; display: none; animation: pl 1s infinite; } .rec-badge.show { display: inline-block; }
+    .preview-canvas { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; background: #0a0a0a; padding: 14px; container-type: size; }
+    .video-player-container { position: relative; width: 100%; max-width: 100%; aspect-ratio: var(--ar-num, 1.7778); width: min(100%, calc(100cqh * var(--ar-num, 1.7778))); background: #000; overflow: hidden; border-radius: 2px; box-shadow: 0 0 0 1px #262626, 0 12px 40px rgba(0,0,0,.75); }
+    .video-player-container:fullscreen { position: fixed; inset: 0; width: min(100vw, calc(100vh * var(--ar-num, 1.7778))); height: min(100vh, calc(100vw / var(--ar-num, 1.7778))); max-width: none; max-height: none; margin: auto; aspect-ratio: auto; border-radius: 0; box-shadow: none; background: #000; overflow: hidden; }
+    .video-player-container:fullscreen::backdrop { background: #000; }
+    .video-background, #mainVideo, #camVideo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background-color: #000; }
+    #camVideo { object-fit: cover; z-index: 5; }
+    .scoreboard { position: absolute; top: 15px; left: 15px; display: flex; border-radius: 4px; overflow: hidden; font-size: 14px; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,.6); z-index: 10; pointer-events: none; max-width: calc(100% - 30px); flex-wrap: wrap; }
+    .score-team { background-color: #cc0000; color: #fff; padding: 5px 10px; display: flex; align-items: center; flex-wrap: wrap; } .score-team span { margin: 0 5px; }
+    .score-time { background-color: #1b1b1b; color: #fff; padding: 5px 10px; display: flex; align-items: center; min-width: 62px; justify-content: center; }
+    .overlay-logos { position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+    .overlay-logos .logo-draggable { position: absolute; pointer-events: auto; cursor: grab; user-select: none; touch-action: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,.45)); }
+    .overlay-logos .logo-draggable img { display: block; width: 100%; height: auto; pointer-events: none; } .overlay-logos.locked .logo-draggable { pointer-events: none; }
+    .ticker-wrapper { position: absolute; bottom: 0; left: 0; right: 0; height: 46px; display: flex; align-items: stretch; background: linear-gradient(90deg, #0b1220 0%, #15233d 35%, #15233d 65%, #0b1220 100%); border-top: 2px solid #e11d2f; z-index: 20; pointer-events: none; overflow: hidden; font-family: 'Arial Narrow', 'Segoe UI', Tahoma, sans-serif; }
+    .ticker-label { background: linear-gradient(180deg, #ff2d3f 0%, #c00d1f 100%); color: #fff; padding: 0 24px 0 14px; font-weight: 900; font-size: 12.5px; letter-spacing: 1.6px; display: flex; align-items: center; gap: 8px; white-space: nowrap; text-transform: uppercase; clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%); z-index: 2; flex-shrink: 0; }
+    .ticker-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pl 1.1s infinite; }
+    @keyframes pl { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.65); } }
+    .ticker-track { flex: 1; overflow: hidden; display: flex; align-items: center; }
+    .ticker-content { display: flex; white-space: nowrap; will-change: transform; animation: marquee 22s linear infinite; font-size: 15px; font-weight: 600; color: #fff; letter-spacing: .35px; } .ticker-content span { padding-right: 80px; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .ticker-live { display: flex; align-items: center; gap: 6px; padding: 0 14px; background: rgba(225,29,47,.15); border-left: 1px solid rgba(225,29,47,.5); color: #ff4d5e; font-weight: 900; font-size: 11px; letter-spacing: 1.5px; z-index: 2; flex-shrink: 0; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #ff4d5e; animation: pl 1.4s infinite; }
+    .fs-btn { position: absolute; top: 12px; right: 12px; z-index: 30; width: 38px; height: 38px; border-radius: 4px; background: rgba(0,0,0,.55); border: 1px solid rgba(255,255,255,.2); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; padding: 0; }
+    .video-player-container:hover .fs-btn { opacity: 1; }
+    .player-controls { flex-shrink: 0; background: var(--bg-panel); border: 1px solid #262626; border-top: none; display: flex; align-items: center; gap: 8px; padding: 8px 10px; }
+    .ctrl-btn { width: 44px; height: 36px; border-radius: 6px; background: #2a2a2a; border: 1px solid #3a3a3a; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .ctrl-btn:hover { background: #3d3d3d; } .ctrl-btn:disabled { opacity: .35; cursor: not-allowed; } .ctrl-btn.play { width: 52px; height: 40px; background: var(--accent); border-color: var(--accent); font-size: 18px; }
+    .now-playing { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; } .now-playing b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12.5px; color: #fff; } .now-playing span { font-size: 11px; color: #8a8a8a; }
+    .time-label { font-size: 11px; color: #aaa; white-space: nowrap; } .seek { flex: 2; accent-color: var(--accent); cursor: pointer; min-width: 80px; } .vol { width: 90px; accent-color: var(--accent); cursor: pointer; }
+    .playlist-item { padding: 6px 8px; border-radius: 3px; cursor: pointer; font-size: 12px; display: flex; gap: 6px; align-items: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .playlist-item:hover { background: #2e2e2e; } .playlist-item.active { background: rgba(61,126,255,.22); color: #fff; }
+    .mixer { flex-shrink: 0; height: 130px; background: var(--bg-panel); border: 1px solid #262626; display: flex; flex-direction: column; }
+    .mixer-head { height: 24px; display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 600; color: #b8b8b8; text-transform: uppercase; background: var(--bg-head); border-bottom: 1px solid #1a1a1a; }
+    .mixer-channels { flex: 1; display: flex; gap: 1px; padding: 6px 8px; overflow-x: auto; }
+    .channel { width: 80px; flex-shrink: 0; background: #1a1a1a; border: 1px solid #262626; border-radius: 3px; display: flex; flex-direction: column; align-items: center; padding: 5px 4px; gap: 4px; }
+    .ch-track { display: flex; gap: 6px; align-items: center; justify-content: center; height: 44px; } .fader { width: 16px; height: 44px; writing-mode: vertical-lr; direction: rtl; accent-color: var(--accent); }
+    .ch-meter { width: 6px; height: 44px; background: #0d0d0d; border-radius: 2px; overflow: hidden; display: flex; align-items: flex-end; } .meter-fill { width: 100%; height: 35%; background: linear-gradient(to top, #4caf50, #8bc34a 55%, #e0a13d 82%, #e04a4a); animation: vu 2.6s infinite; }
+    @keyframes vu { 0%,100% { height: 28%; } 54% { height: 66%; } }
+    .ch-name { font-size: 10px; color: #9a9a9a; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+    .ch-mute { background: #2a2a2a; border: 1px solid #3a3a3a; color: #8a8a8a; border-radius: 3px; width: 24px; height: 18px; font-size: 10px; cursor: pointer; } .ch-mute.muted { background: #8c3330; color: #fff; }
+    .timer-controls { display: flex; gap: 6px; } .timer-controls .btn { flex: 1; padding: 7px 6px; font-size: 11.5px; }
+    .statusbar { height: 26px; flex-shrink: 0; display: flex; align-items: center; gap: 20px; padding: 0 12px; background: #1a1a1a; border-top: 1px solid #0d0d0d; font-size: 11px; color: #8a8a8a; } .statusbar .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; } .dot.green { background: #4caf50; } .spacer { flex: 1; }
+    .src-select { display: flex; gap: 4px; } .src-select button { flex: 1; padding: 6px 4px; font-size: 11px; background: #2a2a2a; border: 1px solid #3a3a3a; color: #aaa; border-radius: 3px; cursor: pointer; } .src-select button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    @media (max-width: 1100px) { body { overflow: auto; } .app { height: auto; min-height: 100dvh; } .workspace { flex-direction: column; overflow-y: auto; } .col.left, .col.right { width: 100%; flex: none; } .preview-canvas { height: 58vw; min-height: 220px; flex: none; } .menus { display: none; } .player-controls { flex-wrap: wrap; } .seek { flex-basis: 100%; order: 3; } }
+</style>
 </head>
 <body>
-
-    <!-- Tombol Aksi -->
-    <div class="button-group">
-        <button class="btn btn-print" onclick="window.print()">🖨️ Print Dokumen</button>
-        <button class="btn btn-download" onclick="downloadPurePDF()">📥 Download PDF (Murni)</button>
-    </div>
-
-    <!-- Catatan hanya muncul di HP -->
-    <p class="mobile-note">
-        📱 <strong>Mode Handphone:</strong> form ditampilkan satu kolom agar mudah diisi.
-        Hasil <strong>Print</strong> &amp; <strong>Download PDF</strong> tetap <strong>12 form dalam 1 halaman A4</strong>.
-    </p>
-
-    <!-- Area Kertas -->
-    <div class="page-container" id="pdf-content">
-        <div class="outer-border">
-            <div class="table-grid">
-
-                <!-- ================= FORM 1 (DROPDOWN) ================= -->
-                <table>
-                    <tr class="row-top">
-                        <td class="label-bold col-label">NAMA TEKNISI</td>
-                        <td colspan="2">
-                            <select class="tech-select" onchange="syncTechName(this)">
-                                <option value="" disabled selected>-- Pilih Teknisi --</option>
-                                <option value="YANDRI OTTU">YANDRI OTTU</option>
-                                <option value="HARMINDO LAMMA">HARMINDO LAMMA</option>
-                                <option value="INOSENCIUS FA'OT">INOSENCIUS FA'OT</option>
-                                <option value="RIZALDI ABDULLAH">RIZALDI ABDULLAH</option>
-                                <option value="MUHAMMAD FAUZI">MUHAMMAD FAUZI</option>
-                                <option value="KRISTIAN OPENG">KRISTIAN OPENG</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 2 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 3 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 4 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 5 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 6 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 7 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 8 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 9 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 10 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 11 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- ================= FORM 12 ================= -->
-                <table>
-                    <tr class="row-top"><td class="label-bold col-label">NAMA TEKNISI</td><td colspan="2"><span class="tech-name-top-display sync-tech-name"></span></td></tr>
-                    <tr class="row-top"><td class="label-italic">Keterangan</td><td colspan="2"><input type="text" class="input-keterangan"></td></tr>
-                    <tr class="row-header">
-                        <td rowspan="2" class="label-bold col-sign" style="text-align: center;">TANDATANGAN</td>
-                        <td class="sub-label col-tech">Teknisi</td>
-                        <td class="sub-label col-hods">HoDS</td>
-                    </tr>
-                    <tr>
-                        <td class="col-tech sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-tech" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display sync-tech-name"></div>
-                            </div>
-                        </td>
-                        <td class="col-hods sign-cell">
-                            <div class="sign-container">
-                                <div class="sign-input-wrapper"><input type="text" class="sign-input-hods" style="text-align: center; height: 100%;"></div>
-                                <div class="sign-name-display">MUHAMMAD FAUZI</div>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-
+<div class="app">
+    <div class="menubar"><div class="menubar-left"><div class="brand"><span class="brand-dot" id="brandDot"></span> LIVE STUDIO</div><nav class="menus"><button>File</button><button>Edit</button><button>View</button><button>Docks</button><button>Profile</button><button>Tools</button><button>Help</button></nav></div><div class="menubar-right"><span class="live-badge" id="liveBadge">● LIVE</span></div></div>
+    <div class="workspace">
+        <aside class="col left">
+            <section class="dock" style="flex:0 0 32%"><header class="dock-head">Scenes</header><div class="dock-body"><div class="scene-row active"><span class="src-ico">▣</span> Live Match</div><div class="scene-row"><span class="src-ico">▣</span> Warm Up</div><div class="scene-row"><span class="src-ico">▣</span> Half Time</div></div></section>
+            <section class="dock" style="flex:1"><header class="dock-head">Sources</header><div class="dock-body" id="sourceList">
+                <div class="source-row" data-source-id="video"><button class="vis-btn">👁</button><span class="src-ico">▣</span><span class="src-name">Video Utama</span></div>
+                <div class="source-row" data-source-id="scoreboard"><button class="vis-btn">👁</button><span class="src-ico">⊞</span><span class="src-name">Papan Skor</span></div>
+                <div class="source-row" data-source-id="ticker"><button class="vis-btn">👁</button><span class="src-ico">≡</span><span class="src-name">Teks Berjalan</span></div>
+                <div id="logoSources"></div>
+            </div><div class="dock-foot"><input type="file" id="logoInput" class="input" accept="image/*"><button id="btnAddLogo" class="btn block">+ Tambah Logo</button></div></section>
+        </aside>
+        <main class="col center">
+            <div class="preview-toolbar">
+                <div class="ratio-group"><button type="button" class="ratio-btn active" data-ratio="original">ASLI</button><button type="button" class="ratio-btn" data-ratio="16:9">16:9</button><button type="button" class="ratio-btn" data-ratio="9:16">9:16</button></div>
+                <label class="lock-toggle"><input type="checkbox" id="lockPositions"><span>🔒 Kunci posisi logo</span></label>
+                <span class="rec-badge" id="recBadge">● REC 00:00</span><span class="preview-badge">PROGRAM</span>
             </div>
-        </div>
+            <div class="preview-canvas"><div class="video-player-container" id="playerContainer">
+                <img src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop" class="video-background" id="placeholderImage">
+                <video id="mainVideo" playsinline preload="auto" style="display:none"></video>
+                <video id="camVideo" playsinline autoplay muted style="display:none"></video>
+                <div class="scoreboard" id="scoreboard" style="display:none"><div class="score-team"><span id="teamA">TIM A</span><span id="scoreDisplay">0 - 0</span><span id="teamB">TIM B</span></div><div class="score-time" id="matchTime">00:00</div></div>
+                <div class="overlay-logos" id="overlayLogos"></div>
+                <div class="ticker-wrapper" id="tickerWrapper" style="display:none"><div class="ticker-label"><span class="ticker-dot"></span>INFO</div><div class="ticker-track"><div class="ticker-content" id="runningText"><span></span><span aria-hidden="true"></span></div></div><div class="ticker-live"><span class="live-dot"></span>LIVE</div></div>
+                <button class="fs-btn" id="fsBtn">⛶</button>
+            </div></div>
+            <div class="player-controls">
+                <button class="ctrl-btn" id="btnPrev" disabled>⏮</button>
+                <button class="ctrl-btn play" id="btnPlayPause">▶</button>
+                <button class="ctrl-btn" id="btnNext" disabled>⏭</button>
+                <div class="now-playing"><b id="nowPlaying">Belum ada video — klik Unggah / Kamera</b><span id="nowPlayingSub">Playlist kosong • Kamera OFF • Mic OFF</span></div>
+                <span class="time-label" id="timeLabel">00:00 / 00:00</span>
+                <input type="range" id="seekBar" class="seek" min="0" max="100" value="0">
+                <span>🔊</span><input type="range" id="volBar" class="vol" min="0" max="100" value="100">
+            </div>
+            <div class="mixer"><div class="mixer-head">Audio Mixer — Playlist</div><div class="mixer-channels" id="playlistBox" style="flex-direction:column;overflow-y:auto;gap:4px;align-items:stretch"><div class="empty-note" id="playlistEmpty">Belum ada video. Klik Unggah Video & pilih banyak file sekaligus.</div></div></div>
+        </main>
+        <aside class="col right">
+            <section class="dock" style="flex:0 0 auto"><header class="dock-head">Controls — Rekam Gambar + Suara</header><div class="dock-body pad">
+                <!-- PILIH SUMBER GAMBAR -->
+                <span class="prop-label">Sumber Gambar</span>
+                <div class="src-select">
+                    <button id="srcVideoBtn" class="active">🎬 Video File</button>
+                    <button id="srcCamBtn">📷 Kamera</button>
+                </div>
+                <button class="btn block" id="btnCam">📷 Nyalakan Kamera</button>
+                <div class="prop-hint" id="camInfo">Kamera OFF. Klik untuk pakai kamera HP / webcam sebagai gambar utama.</div>
+                <!-- PILIH SUMBER SUARA -->
+                <span class="prop-label">Sumber Suara</span>
+                <button class="btn block" id="btnMic">🎤 Nyalakan Mic Komentator</button>
+                <div class="prop-hint" id="micInfo">Mic OFF. Suara video saja yang terekam. Nyalakan mic kalau mau komentator ikut terekam.</div>
+                <label class="prop-label">Volume Mic</label>
+                <input type="range" id="micVol" class="range" min="0" max="150" value="100">
+                <button class="btn primary block">● Mulai Streaming</button>
+                <button class="btn block" id="btnRecord">● Mulai Rekaman Gambar + Suara</button>
+                <div class="prop-hint" id="recInfo">Belum merekam. Hasilnya video MP4 lengkap gambar + suara (video + mic).</div>
+                <label class="prop-label">Kualitas Rekaman</label>
+                <select id="recQuality" class="input"><option value="720">720p — 1280x720 (Aman HP)</option><option value="1080" selected>1080p — 1920x1080 (HD)</option><option value="480">480p — 854x480 (Paling Ringan)</option></select>
+            </div></section>
+            <section class="dock" style="flex:1"><header class="dock-head">Properties — <span id="propsTitle">Video Utama</span></header><div class="dock-body pad">
+                <div class="props-panel" id="propsVideo"><span class="prop-label">Sumber Video / Playlist</span><button class="btn block" id="btnUpload">⬆ Unggah Video (Bisa Banyak)</button><div class="prop-hint" id="videoInfo">Belum ada video dipilih.</div><span class="prop-label">Rasio</span><div class="prop-hint">Atur rasio lewat tombol ASLI / 16:9 / 9:16 di atas preview.</div><div class="prop-hint">Tips suara: klik Play sekali untuk buka kunci suara browser.</div></div>
+                <div class="props-panel hidden" id="propsScoreboard">
+                    <span class="prop-label">Nama Tim Kiri</span><input type="text" id="inputTeamA" class="input" placeholder="Nama Tim Kiri">
+                    <span class="prop-label">Skor</span><input type="text" id="inputScore" class="input" placeholder="Contoh: 2 - 1">
+                    <span class="prop-label">Nama Tim Kanan</span><input type="text" id="inputTeamB" class="input" placeholder="Nama Tim Kanan">
+                    <span class="prop-label">Waktu Pertandingan</span><input type="text" id="inputTime" class="input" placeholder="Contoh: 75:30">
+                    <button id="btnUpdateScore" class="btn primary block">Perbarui Skor &amp; Waktu</button>
+                    <div class="timer-controls"><button id="btnStartTimer" class="btn success">Mulai</button><button id="btnStopTimer" class="btn danger" style="display:none">Jeda</button><button id="btnResetTimer" class="btn">Reset</button></div>
+                    <button id="btnHideScore" class="btn block">🙈 Sembunyikan Papan Skor</button>
+                </div>
+                <div class="props-panel hidden" id="propsTicker">
+                    <span class="prop-label">Teks Berjalan</span><input type="text" id="inputText" class="input" placeholder="Ketik informasi pertandingan...">
+                    <button id="btnKirim" class="btn primary block">Kirim Teks Berjalan</button>
+                    <button id="btnHideTicker" class="btn block">🙈 Sembunyikan Teks Berjalan</button>
+                </div>
+                <div class="props-panel hidden" id="propsLogo"></div>
+            </div></section>
+        </aside>
     </div>
+    <div class="statusbar"><span><i class="dot green"></i><span id="statCpu">CPU 3.2%</span></span><span id="statRec">● REC OFF</span><span id="statAudio">🔊 Audio: ON</span><span id="statMic">🎤 Mic: OFF</span><span class="spacer"></span><span id="statClock">00:00:00</span></div>
+</div>
+<input type="file" id="videoInput" accept="video/*" multiple style="display:none">
+<canvas id="recCanvas" style="display:none"></canvas>
+<script>
+const $ = id => document.getElementById(id);
+const overlayLogos=$('overlayLogos'),logoInput=$('logoInput'),btnAddLogo=$('btnAddLogo'),logoSources=$('logoSources'),lockCheckbox=$('lockPositions'),playerContainer=$('playerContainer'),mainVideo=$('mainVideo'),camVideo=$('camVideo'),placeholderImage=$('placeholderImage'),scoreboardEl=$('scoreboard'),tickerEl=$('tickerWrapper'),fsBtn=$('fsBtn');
+const propsVideo=$('propsVideo'),propsScoreboard=$('propsScoreboard'),propsTicker=$('propsTicker'),propsLogo=$('propsLogo'),propsTitle=$('propsTitle');
+let logos=[],logoIdCounter=0,selectedSource='video',currentRatio='original',videoSource='file'; // file | camera
+const sourceVisible={video:true,scoreboard:false,ticker:false};
+const newLogoId=()=>'logo-'+(++logoIdCounter);
+const EYE=`<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>`;
 
-    <!-- Script Sinkronisasi & Download PDF Murni -->
-    <script>
-        function syncTechName(selectElement) {
-            const selectedName = selectElement.value;
-            document.querySelectorAll('.sync-tech-name').forEach(function (element) {
-                element.innerText = selectedName;
-            });
-        }
+/* ===== AUDIO MIXER: Video + Mic -> Speaker + Recorder ===== */
+let audioCtx=null, audioSource=null, audioGain=null, audioDest=null, audioReady=false;
+let micStream=null, micSource=null, micGain=null, micOn=false;
+let camStream=null, camOn=false;
+function ensureAudio(){
+  if(audioReady) return true;
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    audioSource=audioCtx.createMediaElementSource(mainVideo);
+    audioGain=audioCtx.createGain(); audioGain.gain.value=mainVideo.volume;
+    audioDest=audioCtx.createMediaStreamDestination();
+    audioSource.connect(audioGain); audioGain.connect(audioCtx.destination); audioGain.connect(audioDest);
+    // Mic gain — siap, tapi belum disambung sampai mic nyala
+    micGain=audioCtx.createGain(); micGain.gain.value=1.0;
+    micGain.connect(audioCtx.destination); micGain.connect(audioDest);
+    audioReady=true; return true;
+  }catch(e){ console.log(e); return false; }
+}
+async function unlockAudio(){
+  if(!audioReady) ensureAudio();
+  if(audioCtx && audioCtx.state==='suspended'){ try{ await audioCtx.resume(); }catch(e){} }
+  mainVideo.muted=false; mainVideo.volume=($('volBar').value/100);
+  if(audioGain) audioGain.gain.value=mainVideo.volume;
+  $('statAudio').textContent=mainVideo.volume===0?'🔇 Audio: MUTE':'🔊 Audio: ON';
+}
+async function toggleMic(){
+  await unlockAudio();
+  if(!micOn){
+    try{
+      micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false});
+      micSource=audioCtx.createMediaStreamSource(micStream);
+      micSource.connect(micGain);
+      micOn=true;
+      $('btnMic').textContent='🎤 Matikan Mic'; $('btnMic').classList.add('active');
+      $('micInfo').textContent='Mic ON — suara kamu ikut terekam & terdengar. Atur volume mic di bawah.';
+      $('statMic').textContent='🎤 Mic: ON';
+      updateSub();
+    }catch(e){ alert('Mic ditolak / tidak ada mic. Izinkan akses mic di browser.'); }
+  } else {
+    if(micSource) try{ micSource.disconnect(); }catch(e){}
+    if(micStream) micStream.getTracks().forEach(t=>t.stop());
+    micOn=false; $('btnMic').textContent='🎤 Nyalakan Mic Komentator'; $('btnMic').classList.remove('active');
+    $('micInfo').textContent='Mic OFF. Suara video saja yang terekam.';
+    $('statMic').textContent='🎤 Mic: OFF'; updateSub();
+  }
+}
+$('btnMic').addEventListener('click',toggleMic);
+$('micVol').addEventListener('input',e=>{ if(micGain) micGain.gain.value=e.target.value/100; });
 
-        function fitText(pdf, text, maxWidth) {
-            let t = (text || '').toString().trim();
-            if (!t) return '';
-            if (pdf.getTextWidth(t) <= maxWidth) return t;
-            while (t.length > 0 && pdf.getTextWidth(t + '…') > maxWidth) {
-                t = t.slice(0, -1);
-            }
-            return t + '…';
-        }
+/* ===== KAMERA ===== */
+async function toggleCam(){
+  if(!camOn){
+    try{
+      camStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'},audio:false});
+      camVideo.srcObject=camStream; await camVideo.play();
+      camOn=true; videoSource='camera';
+      camVideo.style.display='block'; mainVideo.style.display='none'; placeholderImage.style.display='none';
+      if(!mainVideo.paused) mainVideo.pause();
+      $('btnCam').textContent='📷 Matikan Kamera'; $('btnCam').classList.add('active');
+      $('srcCamBtn').classList.add('active'); $('srcVideoBtn').classList.remove('active');
+      $('camInfo').textContent='Kamera ON — gambar dari kamera yang tampil & terekam.';
+      $('nowPlaying').textContent='📷 Kamera Live'; updateSub();
+    }catch(e){ alert('Kamera ditolak / tidak ada kamera. Izinkan akses kamera di browser.'); }
+  } else { stopCam(); }
+}
+function stopCam(){
+  if(camStream) camStream.getTracks().forEach(t=>t.stop());
+  camStream=null; camOn=false; videoSource='file'; camVideo.srcObject=null; camVideo.style.display='none';
+  $('btnCam').textContent='📷 Nyalakan Kamera'; $('btnCam').classList.remove('active');
+  $('srcVideoBtn').classList.add('active'); $('srcCamBtn').classList.remove('active');
+  $('camInfo').textContent='Kamera OFF.';
+  applyVideoVisibility(); updateSub();
+}
+$('btnCam').addEventListener('click',toggleCam);
+$('srcVideoBtn').addEventListener('click',()=>{ if(camOn) stopCam(); });
+$('srcCamBtn').addEventListener('click',()=>{ if(!camOn) toggleCam(); });
+function updateSub(){
+  $('nowPlayingSub').textContent=`${videoSource==='camera'?'Kamera Live':(playlist.length?`Video ${currentIndex+1} dari ${playlist.length}`:'Playlist kosong')} • Kamera ${camOn?'ON':'OFF'} • Mic ${micOn?'ON':'OFF'}`;
+}
 
-        async function downloadPurePDF() {
-            const btn = document.querySelector('.btn-download');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '⏳ Memproses...';
-            btn.disabled = true;
+/* ===== TICKER ===== */
+const btnKirim=$('btnKirim'),inputText=$('inputText'),runningText=$('runningText'),btnHideTicker=$('btnHideTicker');
+let currentTickerText='';
+function restartTicker(){ if(!sourceVisible.ticker) return; const f=runningText.querySelector('span'); if(!f) return; runningText.style.animation='none'; void runningText.offsetWidth; runningText.style.animation=`marquee ${Math.max(8,(f.offsetWidth||600)/130)}s linear infinite`; }
+function updateRunningText(){ const t=inputText.value; if(!t.trim()){alert('Teks tidak boleh kosong!');return;} currentTickerText=t; sourceVisible.ticker=true; tickerEl.style.display=''; runningText.innerHTML=`<span>${t.replace(/</g,'&lt;')}</span><span aria-hidden="true">${t.replace(/</g,'&lt;')}</span>`; restartTicker(); inputText.value=''; refreshUI(); }
+btnKirim.addEventListener('click',updateRunningText); inputText.addEventListener('keypress',e=>{if(e.key==='Enter'){e.preventDefault();updateRunningText();}});
+btnHideTicker.addEventListener('click',()=>{sourceVisible.ticker=false; tickerEl.style.display='none'; refreshUI();});
 
-            try {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
+/* ===== SKOR ===== */
+const btnUpdateScore=$('btnUpdateScore'),inputTeamA=$('inputTeamA'),inputScore=$('inputScore'),inputTeamB=$('inputTeamB'),inputTime=$('inputTime'),teamA=$('teamA'),scoreDisplay=$('scoreDisplay'),teamB=$('teamB'),matchTime=$('matchTime'),btnHideScore=$('btnHideScore');
+btnUpdateScore.addEventListener('click',()=>{ const ada=inputTeamA.value.trim()||inputScore.value.trim()||inputTeamB.value.trim()||inputTime.value.trim(); if(!ada){alert('Isi dulu!');return;} sourceVisible.scoreboard=true; scoreboardEl.style.display=''; if(inputTeamA.value.trim()) teamA.textContent=inputTeamA.value.toUpperCase(); if(inputScore.value.trim()) scoreDisplay.textContent=inputScore.value; if(inputTeamB.value.trim()) teamB.textContent=inputTeamB.value.toUpperCase(); if(inputTime.value.trim()){const p=inputTime.value.split(':'); if(p.length===2){totalSeconds=(parseInt(p[0])||0)*60+(parseInt(p[1])||0); updateTimerDisplay();}} inputTeamA.value='';inputScore.value='';inputTeamB.value='';inputTime.value=''; refreshUI(); });
+btnHideScore.addEventListener('click',()=>{sourceVisible.scoreboard=false; scoreboardEl.style.display='none'; refreshUI();});
 
-                pdf.setFontSize(8);
-                pdf.setLineWidth(0.2);
+/* ===== TIMER ===== */
+let totalSeconds=0,timerInterval=null,isRunning=false;
+const btnStartTimer=$('btnStartTimer'),btnStopTimer=$('btnStopTimer'),btnResetTimer=$('btnResetTimer');
+const formatTime=s=>`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+const updateTimerDisplay=()=>{matchTime.textContent=formatTime(totalSeconds);};
+function startTimer(){if(isRunning)return; timerInterval=setInterval(()=>{totalSeconds++; updateTimerDisplay();},1000); isRunning=true; btnStartTimer.style.display='none'; btnStopTimer.style.display='block';}
+function stopTimer(){if(!isRunning)return; clearInterval(timerInterval); isRunning=false; btnStartTimer.style.display='block'; btnStopTimer.style.display='none';}
+function resetTimer(){stopTimer(); totalSeconds=0; updateTimerDisplay();}
+btnStartTimer.addEventListener('click',startTimer); btnStopTimer.addEventListener('click',stopTimer); btnResetTimer.addEventListener('click',resetTimer);
 
-                const startX = 8;
-                const startY = 8;
-                const formWidth = 95;
-                const formHeight = 45;
-                const gapX = 4;
-                const gapY = 2;
+/* ===== PLAYLIST + PLAY/PAUSE/NEXT/BACK ===== */
+const btnUpload=$('btnUpload'),videoInput=$('videoInput'),btnPrev=$('btnPrev'),btnNext=$('btnNext'),btnPlayPause=$('btnPlayPause'),nowPlaying=$('nowPlaying'),nowPlayingSub=$('nowPlayingSub'),seekBar=$('seekBar'),timeLabel=$('timeLabel'),volBar=$('volBar'),playlistBox=$('playlistBox'),playlistEmpty=$('playlistEmpty');
+let playlist=[],currentIndex=-1,isSeeking=false;
+function renderPlaylist(){
+  playlistBox.querySelectorAll('.playlist-item').forEach(e=>e.remove());
+  if(!playlist.length){ playlistEmpty.style.display='block'; btnPrev.disabled=true; btnNext.disabled=true; return; }
+  playlistEmpty.style.display='none';
+  playlist.forEach((v,i)=>{
+    const d=document.createElement('div'); d.className='playlist-item'+(i===currentIndex?' active':'');
+    d.innerHTML=`<span>${i===currentIndex?'▶':'🎬'}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${v.name}</span><span style="color:#888">${v.sizeMB}</span>`;
+    d.addEventListener('click',()=>loadVideo(i,true)); playlistBox.appendChild(d);
+  });
+  btnPrev.disabled=currentIndex<=0; btnNext.disabled=currentIndex>=playlist.length-1;
+}
+function loadVideo(idx,autoplay=true){
+  if(idx<0||idx>=playlist.length) return;
+  if(camOn) stopCam();
+  currentIndex=idx; const v=playlist[idx]; mainVideo.src=v.url; mainVideo.muted=false;
+  nowPlaying.textContent=v.name; $('videoInfo').textContent=`${v.name} • ${v.sizeMB}`; btnPlayPause.textContent='⏸';
+  applyVideoVisibility(); renderPlaylist(); updateSub();
+  if(autoplay){ unlockAudio().then(()=>mainVideo.play().catch(()=>{btnPlayPause.textContent='▶';})); }
+}
+async function togglePlayPause(){
+  await unlockAudio();
+  if(videoSource==='camera'){ alert('Kamera lagi live, tidak ada Play/Pause. Matikan kamera untuk pakai video file.'); return; }
+  if(!mainVideo.src){ alert('Upload video dulu atau nyalakan kamera!'); return; }
+  if(mainVideo.paused){ try{ await mainVideo.play(); btnPlayPause.textContent='⏸'; }catch(e){} } else { mainVideo.pause(); btnPlayPause.textContent='▶'; }
+}
+function nextVideo(){ if(currentIndex<playlist.length-1) loadVideo(currentIndex+1,true); }
+function prevVideo(){ if(mainVideo.currentTime>3){ mainVideo.currentTime=0; return; } if(currentIndex>0) loadVideo(currentIndex-1,true); }
+btnPlayPause.addEventListener('click',togglePlayPause);
+btnNext.addEventListener('click',nextVideo); btnPrev.addEventListener('click',prevVideo);
+playerContainer.addEventListener('click',e=>{ if(e.target.closest('.logo-draggable')||e.target.closest('.fs-btn')) return; togglePlayPause(); });
+mainVideo.addEventListener('play',()=>btnPlayPause.textContent='⏸');
+mainVideo.addEventListener('pause',()=>btnPlayPause.textContent='▶');
+mainVideo.addEventListener('ended',()=>{ if(currentIndex<playlist.length-1) nextVideo(); else btnPlayPause.textContent='▶'; });
+mainVideo.addEventListener('timeupdate',()=>{ if(!isSeeking&&mainVideo.duration){ seekBar.value=(mainVideo.currentTime/mainVideo.duration)*100; timeLabel.textContent=`${formatTime(Math.floor(mainVideo.currentTime))} / ${formatTime(Math.floor(mainVideo.duration))}`; } });
+mainVideo.addEventListener('loadedmetadata',()=>{ if(currentRatio==='original') applyAspectRatio('original'); timeLabel.textContent=`00:00 / ${formatTime(Math.floor(mainVideo.duration||0))}`; });
+seekBar.addEventListener('input',()=>{ isSeeking=true; if(mainVideo.duration) timeLabel.textContent=`${formatTime(Math.floor(mainVideo.duration*seekBar.value/100))} / ${formatTime(Math.floor(mainVideo.duration))}`; });
+seekBar.addEventListener('change',()=>{ if(mainVideo.duration) mainVideo.currentTime=mainVideo.duration*seekBar.value/100; isSeeking=false; });
+volBar.addEventListener('input',()=>{ mainVideo.volume=volBar.value/100; mainVideo.muted=false; if(audioGain) audioGain.gain.value=mainVideo.volume; $('statAudio').textContent=mainVideo.volume===0?'🔇 Audio: MUTE':'🔊 Audio: ON'; });
+btnUpload.addEventListener('click',()=>videoInput.click());
+videoInput.addEventListener('change',e=>{ const files=[...e.target.files]; if(!files.length) return; files.forEach(f=>playlist.push({name:f.name,size:f.size,sizeMB:(f.size/1048576).toFixed(1)+' MB',url:URL.createObjectURL(f)})); if(currentIndex===-1) loadVideo(0,true); else renderPlaylist(); updateSub(); videoInput.value=''; });
+function applyVideoVisibility(){ if(videoSource==='camera') return; const has=!!mainVideo.src; if(!sourceVisible.video){mainVideo.style.display='none'; placeholderImage.style.display='none'; return;} if(has){mainVideo.style.display='block'; placeholderImage.style.display='none';} else {mainVideo.style.display='none'; placeholderImage.style.display='block';} }
 
-                // === KONSTANTA LAYOUT (UBAH DI SINI SAJA) ===
-                const LABEL_W = 27;
-                const MID_X   = 64;
-                const RIGHT_X = 95;
-                const TECH_CENTER = (LABEL_W + MID_X) / 2; // = 45.5
-                const HODS_CENTER = (MID_X + RIGHT_X) / 2; // = 79.5
+/* ===== LOGO ===== */
+function renderLogos(){ overlayLogos.innerHTML=''; logos.forEach(logo=>{ const w=document.createElement('div'); w.className='logo-draggable'; w.dataset.logoId=logo.id; w.style.left=logo.x+'%'; w.style.top=logo.y+'%'; w.style.width=logo.width+'px'; if(!logo.visible) w.style.display='none'; const img=document.createElement('img'); img.src=logo.src; img.draggable=false; logo.imgEl=img; w.appendChild(img); setupDrag(w,logo); overlayLogos.appendChild(w); }); renderSourceList(); }
+function renderSourceList(){ logoSources.innerHTML=''; if(!logos.length){const e=document.createElement('div'); e.className='empty-note'; e.textContent='Belum ada logo.'; logoSources.appendChild(e);} logos.forEach((logo,i)=>{const r=document.createElement('div'); r.className='source-row'; r.dataset.sourceId=logo.id; r.innerHTML=`<button class="vis-btn">${EYE}</button><span class="src-ico">◈</span><span class="src-name">Logo ${i+1}</span>`; logoSources.appendChild(r);}); refreshUI(); }
+function renderLogoProps(logo){ propsLogo.innerHTML=''; const l=document.createElement('span'); l.className='prop-label'; l.textContent=`Ukuran: ${logo.width}px`; const s=document.createElement('input'); s.type='range'; s.min='20'; s.max='400'; s.value=logo.width; s.className='range'; s.addEventListener('input',e=>{logo.width=parseInt(e.target.value); l.textContent=`Ukuran: ${logo.width}px`; const w=overlayLogos.querySelector(`[data-logo-id="${logo.id}"]`); if(w) w.style.width=logo.width+'px'; clampPosition(logo);}); const b=document.createElement('button'); b.className='btn danger block'; b.textContent='🗑 Hapus Logo'; b.addEventListener('click',()=>{logos=logos.filter(x=>x.id!==logo.id); selectedSource='video'; renderLogos();}); propsLogo.append(l,s,b); }
+function setupDrag(el,ld){ let d=false,sx=0,sy=0,sl=0,st=0,rect=null; function dn(e){ if(e.button!==undefined&&e.button!==0)return; if(lockCheckbox.checked)return; e.preventDefault(); e.stopPropagation(); const p=e.touches?e.touches[0]:e; sx=p.clientX; sy=p.clientY; rect=overlayLogos.getBoundingClientRect(); sl=(ld.x/100)*rect.width; st=(ld.y/100)*rect.height; d=true; el.classList.add('dragging'); document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up); document.addEventListener('touchmove',mv,{passive:false}); document.addEventListener('touchend',up);} function mv(e){ if(!d)return; e.preventDefault(); const p=e.touches?e.touches[0]:e; const nl=Math.max(0,Math.min(sl+(p.clientX-sx),rect.width-el.offsetWidth)); const nt=Math.max(0,Math.min(st+(p.clientY-sy),rect.height-el.offsetHeight)); ld.x=(nl/rect.width)*100; ld.y=(nt/rect.height)*100; el.style.left=ld.x+'%'; el.style.top=ld.y+'%';} function up(){ if(!d)return; d=false; el.classList.remove('dragging'); document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); document.removeEventListener('touchmove',mv); document.removeEventListener('touchend',up);} el.addEventListener('mousedown',dn); el.addEventListener('touchstart',dn,{passive:false}); }
+function clampPosition(logo){ const el=overlayLogos.querySelector(`[data-logo-id="${logo.id}"]`); if(!el||!el.offsetWidth)return; const r=overlayLogos.getBoundingClientRect(); let lx=(logo.x/100)*r.width, ty=(logo.y/100)*r.height; lx=Math.min(lx,Math.max(0,r.width-el.offsetWidth)); ty=Math.min(ty,Math.max(0,r.height-el.offsetHeight)); logo.x=(lx/r.width)*100; logo.y=(ty/r.height)*100; el.style.left=logo.x+'%'; el.style.top=logo.y+'%'; }
+btnAddLogo.addEventListener('click',()=>{ const f=logoInput.files[0]; if(!f){alert('Pilih file logo dulu!');return;} const rd=new FileReader(); rd.onload=ev=>{const n=logos.length; const img=new Image(); img.onload=()=>{logos.push({id:newLogoId(),src:ev.target.result,x:Math.max(60,92-n*6),y:5+n*4,width:70,visible:true,imgEl:img}); renderLogos();}; img.src=ev.target.result; logoInput.value='';}; rd.readAsDataURL(f); });
+lockCheckbox.addEventListener('change',()=>overlayLogos.classList.toggle('locked',lockCheckbox.checked));
 
-                const TEXT_X        = LABEL_W + 2;              // = 29
-                const TEXT_MAX_W    = RIGHT_X - TEXT_X - 2;     // = 64
-                const SIG_TECH_MAX  = (MID_X - LABEL_W) - 4;    // = 33
-                const SIG_HODS_MAX  = (RIGHT_X - MID_X) - 3;    // = 28
+/* ===== SOURCE ===== */
+function selectSource(id){selectedSource=id; refreshUI();}
+function refreshUI(){ document.querySelectorAll('#sourceList .source-row').forEach(row=>{const id=row.dataset.sourceId; row.classList.toggle('selected',id===selectedSource); let vis; if(id in sourceVisible) vis=sourceVisible[id]; else {const lg=logos.find(l=>l.id===id); vis=lg?lg.visible:true;} row.classList.toggle('off',!vis);}); const isV=selectedSource==='video',isS=selectedSource==='scoreboard',isT=selectedSource==='ticker',lg=logos.find(l=>l.id===selectedSource); propsVideo.classList.toggle('hidden',!isV); propsScoreboard.classList.toggle('hidden',!isS); propsTicker.classList.toggle('hidden',!isT); propsLogo.classList.toggle('hidden',!lg); propsTitle.textContent=isV?'Video Utama':isS?'Papan Skor':isT?'Teks Berjalan':lg?'Logo':'—'; if(lg) renderLogoProps(lg);}
+function toggleVisibility(id){ if(id in sourceVisible){sourceVisible[id]=!sourceVisible[id]; applyStaticVisibility(); refreshUI();} else {const lg=logos.find(l=>l.id===id); if(lg){lg.visible=!lg.visible; renderLogos();}}}
+function applyStaticVisibility(){ scoreboardEl.style.display=sourceVisible.scoreboard?'':'none'; tickerEl.style.display=sourceVisible.ticker?'':'none'; applyVideoVisibility(); }
+document.getElementById('sourceList').addEventListener('click',e=>{const row=e.target.closest('.source-row'); if(!row)return; if(e.target.closest('.vis-btn')){toggleVisibility(row.dataset.sourceId);return;} selectSource(row.dataset.sourceId);});
 
-                const tables = document.querySelectorAll('.table-grid table');
+/* ===== RASIO ===== */
+const ratioButtons=document.querySelectorAll('.ratio-btn');
+function getOriginalAR(){ if(mainVideo.src&&mainVideo.videoWidth>0) return mainVideo.videoWidth/mainVideo.videoHeight; if(placeholderImage.naturalWidth>0) return placeholderImage.naturalWidth/placeholderImage.naturalHeight; return 16/9; }
+function applyAspectRatio(m){ currentRatio=m; let ar=m==='9:16'?9/16:m==='16:9'?16/9:getOriginalAR(); playerContainer.style.setProperty('--ar-num',ar.toFixed(4)); clearTimeout(playerContainer._t); playerContainer._t=setTimeout(()=>{logos.forEach(clampPosition); restartTicker();},320); }
+ratioButtons.forEach(b=>b.addEventListener('click',()=>{ratioButtons.forEach(x=>x.classList.remove('active')); b.classList.add('active'); applyAspectRatio(b.dataset.ratio);}));
 
-                tables.forEach((table, index) => {
-                    const col = index % 2;
-                    const row = Math.floor(index / 2);
-                    const x = startX + (col * (formWidth + gapX));
-                    const y = startY + (row * (formHeight + gapY));
+/* ===== FULLSCREEN ===== */
+function getFs(){return document.fullscreenElement||document.webkitFullscreenElement||null;}
+let isRedirectingFs=false;
+function reqFs(){ if(isRedirectingFs)return; if(playerContainer.requestFullscreen) playerContainer.requestFullscreen().catch(()=>{}); }
+function exitFs(){ if(document.exitFullscreen) document.exitFullscreen().catch(()=>{}); }
+function toggleFs(){ if(!getFs()) reqFs(); else exitFs(); }
+fsBtn.addEventListener('click',toggleFs);
+playerContainer.addEventListener('dblclick',e=>{if(e.target.closest('.logo-draggable'))return; if(e.target.closest('.fs-btn'))return; toggleFs();});
+function onFsChange(){ const el=getFs(); if(el===mainVideo&&!isRedirectingFs){isRedirectingFs=true; exitFs(); setTimeout(()=>{reqFs(); setTimeout(()=>isRedirectingFs=false,300);},80); return;} setTimeout(()=>{logos.forEach(clampPosition); restartTicker();},200); }
+document.addEventListener('fullscreenchange',onFsChange);
 
-                    let techName = (index === 0)
-                        ? table.querySelector('select').value
-                        : table.querySelector('.tech-name-top-display').innerText;
+/* ===== REKAM GAMBAR + SUARA ===== */
+const recCanvas=$('recCanvas'), recCtx=recCanvas.getContext('2d'), btnRecord=$('btnRecord'), recInfo=$('recInfo'), recBadge=$('recBadge'), statRec=$('statRec'), liveBadge=$('liveBadge'), brandDot=$('brandDot');
+let mediaRecorder=null, recordedChunks=[], isRecording=false, recStartTime=0, recTimer=null, drawRaf=null, tickerX=0, lastTickerTime=0;
+function getRecSize(){ const q=$('recQuality').value; if(q==='1080') return {w:1920,h:1080}; if(q==='480') return {w:854,h:480}; return {w:1280,h:720}; }
+function drawRoundRect(x,y,w,h,r){ recCtx.beginPath(); recCtx.moveTo(x+r,y); recCtx.arcTo(x+w,y,x+w,y+h,r); recCtx.arcTo(x+w,y+h,x,y+h,r); recCtx.arcTo(x,y+h,x,y,r); recCtx.arcTo(x,y,x+w,y,r); recCtx.closePath(); }
+function drawFrame(now){
+  drawRaf=requestAnimationFrame(drawFrame);
+  const W=recCanvas.width,H=recCanvas.height;
+  recCtx.fillStyle='#000'; recCtx.fillRect(0,0,W,H);
+  // GAMBAR: prioritas Kamera > Video File > Placeholder
+  let src=null;
+  if(videoSource==='camera' && camOn && camVideo.readyState>=2) src=camVideo;
+  else if(sourceVisible.video){ if(mainVideo.src&&mainVideo.readyState>=2) src=mainVideo; else if(placeholderImage.complete) src=placeholderImage; }
+  if(src){ const sw=src.videoWidth||src.naturalWidth||W, sh=src.videoHeight||src.naturalHeight||H; const sc=Math.max(W/sw,H/sh); const dw=sw*sc,dh=sh*sc; recCtx.drawImage(src,(W-dw)/2,(H-dh)/2,dw,dh); }
+  logos.forEach(l=>{ if(!l.visible||!l.imgEl||!l.imgEl.complete) return; const scaleW=W/playerContainer.clientWidth; const w=l.width*scaleW; const h=w*((l.imgEl.naturalHeight||w)/(l.imgEl.naturalWidth||w)); recCtx.drawImage(l.imgEl,(l.x/100)*W,(l.y/100)*H,w,h); });
+  if(sourceVisible.scoreboard){
+    recCtx.font=`800 ${Math.round(H*0.028)}px Arial`; const txt=`${teamA.textContent}  ${scoreDisplay.textContent}  ${teamB.textContent}`; const tw=recCtx.measureText(txt).width+H*0.04; const th=H*0.055,tx=W*0.012,ty=H*0.028;
+    recCtx.fillStyle='#cc0000'; drawRoundRect(tx,ty,tw,th,8); recCtx.fill(); recCtx.fillStyle='#fff'; recCtx.textBaseline='middle'; recCtx.fillText(txt,tx+H*0.02,ty+th/2+1);
+    const tt=matchTime.textContent; const tw2=recCtx.measureText(tt).width+H*0.03; recCtx.fillStyle='#1b1b1b'; drawRoundRect(tx+tw+4,ty,tw2,th,8); recCtx.fill(); recCtx.fillStyle='#fff'; recCtx.fillText(tt,tx+tw+4+H*0.015,ty+th/2+1);
+  }
+  if(sourceVisible.ticker&&currentTickerText){
+    const th=H*0.064,ty=H-th; recCtx.fillStyle='#15233d'; recCtx.fillRect(0,ty,W,th); recCtx.fillStyle='#e11d2f'; recCtx.fillRect(0,ty,W,3);
+    recCtx.fillStyle='#c00d1f'; recCtx.fillRect(0,ty,W*0.16,th); recCtx.fillStyle='#fff'; recCtx.font=`900 ${Math.round(H*0.022)}px Arial`; recCtx.textBaseline='middle'; recCtx.fillText('INFO',W*0.015,ty+th/2+1);
+    recCtx.fillStyle='#ff4d5e'; recCtx.fillText('LIVE',W*0.92,ty+th/2+1);
+    recCtx.font=`600 ${Math.round(H*0.026)}px Arial`; const gap=W*0.08; const tw=recCtx.measureText(currentTickerText).width+gap;
+    if(!lastTickerTime) lastTickerTime=now; const dt=(now-lastTickerTime)/1000; lastTickerTime=now; tickerX-=dt*(W*0.12); if(tickerX<-tw) tickerX+=tw;
+    recCtx.fillStyle='#fff'; const sx=W*0.18+tickerX; recCtx.fillText(currentTickerText,sx,ty+th/2+1); recCtx.fillText(currentTickerText,sx+tw,ty+th/2+1); recCtx.fillText(currentTickerText,sx+tw*2,ty+th/2+1);
+  }
+}
+function pickMime(){ const list=['video/mp4;codecs=h264,aac','video/mp4','video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','']; for(const m of list){ if(!m) return {mime:'',ext:'webm'}; try{ if(MediaRecorder.isTypeSupported(m)) return {mime:m,ext:m.includes('mp4')?'mp4':'webm'}; }catch(e){} } return {mime:'',ext:'webm'}; }
+async function startRecording(){
+  await unlockAudio();
+  // Kalau pakai mic tapi mic belum nyala, tawarkan nyalakan
+  if(!micOn && confirm('Nyalakan Mic juga biar suara komentator ikut terekam? Klik OK untuk nyalakan mic, Cancel untuk rekam suara video saja.')){ await toggleMic(); }
+  const hasGambar = (videoSource==='camera' && camOn) || !!mainVideo.src || placeholderImage.complete;
+  if(!hasGambar){ alert('Tidak ada gambar! Upload video atau nyalakan kamera dulu.'); return; }
+  if(videoSource==='file' && mainVideo.src && mainVideo.paused){ try{ await mainVideo.play(); }catch(e){} }
+  const size=getRecSize(); recCanvas.width=size.w; recCanvas.height=size.h; tickerX=0; lastTickerTime=0;
+  if(drawRaf) cancelAnimationFrame(drawRaf); drawRaf=requestAnimationFrame(drawFrame);
+  const canvasStream=recCanvas.captureStream(30);
+  let tracks=[...canvasStream.getVideoTracks()];
+  // SUARA: gabungan Video + Mic (dari AudioContext Destination)
+  if(audioDest) tracks.push(...audioDest.stream.getAudioTracks());
+  const finalStream=new MediaStream(tracks);
+  const {mime,ext}=pickMime(); recordedChunks=[];
+  try{ mediaRecorder=mime?new MediaRecorder(finalStream,{mimeType:mime,videoBitsPerSecond:5000000,audioBitsPerSecond:128000}):new MediaRecorder(finalStream); }
+  catch(e){ alert('Browser ini tidak mendukung perekaman. Pakai Chrome terbaru.'); return; }
+  mediaRecorder._ext=ext;
+  mediaRecorder.ondataavailable=e=>{if(e.data.size>0) recordedChunks.push(e.data);};
+  mediaRecorder.onstop=()=>{
+    const type=mediaRecorder._ext==='mp4'?'video/mp4':'video/webm'; const blob=new Blob(recordedChunks,{type}); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-'); a.href=url; a.download=`live-studio-${stamp}.${mediaRecorder._ext}`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),5000);
+    recInfo.textContent=`✅ Selesai & terdownload: live-studio-${stamp}.${mediaRecorder._ext} (${(blob.size/1048576).toFixed(1)} MB) — Gambar + Suara lengkap.`;
+  };
+  mediaRecorder.start(1000); isRecording=true; recStartTime=Date.now();
+  btnRecord.textContent='■ Stop Rekaman'; btnRecord.classList.add('recording'); recBadge.classList.add('show'); liveBadge.classList.add('rec'); brandDot.classList.add('rec'); statRec.textContent='● REC ON'; statRec.style.color='#ff5b5e';
+  recInfo.textContent=`⏺ Merekam ${size.w}x${size.h} • ${ext.toUpperCase()} + SUARA (${videoSource==='camera'?'Kamera':'Video File'}${micOn?' + Mic':''}) • Klik Stop untuk download.`;
+  recTimer=setInterval(()=>{ const s=Math.floor((Date.now()-recStartTime)/1000); recBadge.textContent=`● REC ${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; },1000);
+}
+function stopRecording(){ if(mediaRecorder&&mediaRecorder.state!=='inactive') mediaRecorder.stop(); if(drawRaf) cancelAnimationFrame(drawRaf); drawRaf=null; clearInterval(recTimer); isRecording=false; btnRecord.textContent='● Mulai Rekaman Gambar + Suara'; btnRecord.classList.remove('recording'); recBadge.classList.remove('show'); liveBadge.classList.remove('rec'); brandDot.classList.remove('rec'); statRec.textContent='● REC OFF'; statRec.style.color=''; }
+btnRecord.addEventListener('click',()=>{ if(isRecording) stopRecording(); else startRecording(); });
 
-                    if (techName === '-- Pilih Teknisi --') techName = '';
-
-                    const keterangan    = table.querySelector('.input-keterangan').value;
-                    const techSignInput = table.querySelector('.sign-input-tech').value;
-                    const hodsSignInput = table.querySelector('.sign-input-hods').value;
-                    const techSignName  = table.querySelector('.sync-tech-name').innerText;
-                    const hodsSignName  = 'MUHAMMAD FAUZI';
-
-                    pdf.rect(x, y, formWidth, formHeight);
-
-                    pdf.line(x, y + 8, x + formWidth, y + 8);
-                    pdf.line(x + LABEL_W, y, x + LABEL_W, y + 8);
-
-                    pdf.line(x, y + 16, x + formWidth, y + 16);
-                    pdf.line(x + LABEL_W, y + 8, x + LABEL_W, y + 16);
-
-                    pdf.line(x + LABEL_W, y + 23, x + formWidth, y + 23);
-                    pdf.line(x + LABEL_W, y + 16, x + LABEL_W, y + 45);
-                    pdf.line(x + MID_X,   y + 16, x + MID_X,   y + 45);
-                    pdf.line(x + LABEL_W, y + 41, x + MID_X,   y + 41);
-                    pdf.line(x + MID_X,   y + 41, x + RIGHT_X, y + 41);
-
-                    pdf.setFontSize(8);
-
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.text('NAMA TEKNISI', x + 2, y + 5.5);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.text(fitText(pdf, techName, TEXT_MAX_W), x + TEXT_X, y + 5.5);
-
-                    pdf.setFont('helvetica', 'italic');
-                    pdf.text('Keterangan', x + 2, y + 13.5);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.text(fitText(pdf, keterangan, TEXT_MAX_W), x + TEXT_X, y + 13.5);
-
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.text('TANDATANGAN', x + 2, y + 30);
-                    pdf.text('Teknisi', x + TECH_CENTER, y + 20, { align: 'center' });
-                    pdf.text('HoDS',    x + HODS_CENTER, y + 20, { align: 'center' });
-
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.text(fitText(pdf, techSignInput, SIG_TECH_MAX), x + TECH_CENTER, y + 36, { align: 'center' });
-                    pdf.text(fitText(pdf, hodsSignInput, SIG_HODS_MAX), x + HODS_CENTER, y + 36, { align: 'center' });
-
-                    pdf.setFontSize(7);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.text(fitText(pdf, techSignName, SIG_TECH_MAX), x + TECH_CENTER, y + 44, { align: 'center' });
-                    pdf.text(fitText(pdf, hodsSignName, SIG_HODS_MAX), x + HODS_CENTER, y + 44, { align: 'center' });
-                });
-
-                const firstTechSelect = document.querySelector('.table-grid select.tech-select');
-                let techNameForFile = firstTechSelect ? firstTechSelect.value.trim() : '';
-                if (techNameForFile === '-- Pilih Teknisi --') techNameForFile = '';
-                techNameForFile = techNameForFile.replace(/[\\/:*?"<>|]/g, '-').trim();
-
-                const baseFileName = 'Form Keterangan Fisik Part';
-                const finalFileName = techNameForFile
-                    ? `${baseFileName} ${techNameForFile}.pdf`
-                    : `${baseFileName}.pdf`;
-
-                pdf.save(finalFileName);
-
-            } catch (error) {
-                console.error('Gagal membuat PDF:', error);
-                alert('Gagal mendownload PDF. Silakan coba lagi.');
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-    </script>
-
+/* INIT */
+setInterval(()=>{ $('statCpu').textContent='CPU '+(2+Math.random()*4).toFixed(1)+'%'; },2200);
+let clockSeconds=0; setInterval(()=>{clockSeconds++; $('statClock').textContent=`${String(Math.floor(clockSeconds/3600)).padStart(2,'0')}:${String(Math.floor((clockSeconds%3600)/60)).padStart(2,'0')}:${String(clockSeconds%60).padStart(2,'0')}`;},1000);
+window.addEventListener('load',()=>{ updateTimerDisplay(); renderLogos(); applyStaticVisibility(); applyAspectRatio('original'); selectSource('video'); renderPlaylist(); updateSub(); });
+</script>
 </body>
 </html>
