@@ -1,1 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BelajarKu — SMP Sapta Dwija Artam Kelas 9 [1 FILE]</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0A2A5E;--navy2:#122F6B;--red:#E11D2F;--gold:#FFC107;--bg:#EEF2F7;--card:#fff;--border:#D8E0EC;--text:#0A2A5E;--muted:#5A6A85;--radius:20px;--shadow:0 12px 32px rgba(10,42,94,.10)}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px;position:relative;z-index:1}
+button,input,select{font-family:inherit}.hidden{display:none!important}
+.logo-img{width:52px;height:52px;object-fit:contain;border-radius:50%;background:#fff;border:3px solid var(--gold);padding:2px;flex-shrink:0;box-shadow:0 0 0 3px rgba(255,255,255,.18)}
+.logo-img-lg{width:96px;height:96px;object-fit:contain;border-radius:50%;background:#fff;border:4px solid var(--gold);padding:4px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
+.logo-watermark{position:fixed;right:20px;bottom:20px;width:90px;height:90px;object-fit:contain;opacity:.10;pointer-events:none;z-index:0}
+.topbar{background:var(--navy);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(10,42,94,.35)}
+.topbar-in{max-width:1100px;margin:0 auto;padding:0 20px;height:76px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.school{display:flex;gap:12px;align-items:center}
+.school b{font-family:'Fraunces',serif;font-size:20px;line-height:1.1}.school b span{color:var(--gold)}
+.school small{display:block;font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:#B9C6E8;font-weight:700;margin-top:3px}.school small em{color:#FFE08A;font-style:normal}
+.pill-top{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);color:#fff;padding:8px 12px;border-radius:99px;font-size:12px;font-weight:700}
+.btn-top{background:#fff;color:var(--navy);border:none;padding:9px 16px;border-radius:99px;font-weight:800;font-size:12px;cursor:pointer}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#fff,#FFC107);border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:900;color:var(--navy);cursor:pointer}
+.hero{margin:22px 0 18px;background:linear-gradient(135deg,#0A2A5E 0%,#122F6B 45%,#1A3E85 100%);border-radius:28px;padding:28px;color:#fff;position:relative;overflow:hidden;display:flex;gap:20px;justify-content:space-between;flex-wrap:wrap;align-items:center;box-shadow:0 20px 40px rgba(10,42,94,.25)}
+.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,#E11D2F 0%,#FFC107 50%,#E11D2F 100%)}
+.hero h1{font-family:'Fraunces',serif;font-size:38px;line-height:1.05;margin:14px 0 10px}.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p{color:#CBD5E8;font-size:14px;line-height:1.6;max-width:520px}
+.btn{border:none;cursor:pointer;border-radius:99px;padding:13px 20px;font-weight:800;font-size:13px;display:inline-flex;gap:8px;align-items:center;transition:.2s}
+.btn-white{background:#fff;color:var(--navy)}.btn-red{background:var(--red);color:#fff}.btn-gold{background:var(--gold);color:#1A1200}.btn-ghost{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff}
+.btn-navy{background:var(--navy);color:#fff}.btn-red2{background:var(--red);color:#fff}.btn-ghost2{background:#fff;border:2px solid var(--border);color:var(--navy)}
+.btn-sm{padding:9px 15px;font-size:12px}
+.mascot{background:#fff;border-radius:20px;padding:18px;width:280px;text-align:center;box-shadow:0 12px 24px rgba(0,0,0,.2)}
+.mascot b{color:var(--navy);font-family:'Fraunces',serif;font-size:18px;display:block;margin:8px 0 2px}.mascot p{color:#5A6A85;font-size:12px;line-height:1.5}
+.mascot .motto{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);font-weight:900;margin-top:6px}
+.progress-mini{height:8px;background:#EEF2F7;border-radius:99px;overflow:hidden;margin-top:10px}.progress-mini i{display:block;height:100%;background:linear-gradient(90deg,#0A2A5E,#E11D2F,#FFC107)}
+.tabs{display:flex;gap:4px;background:#fff;border:1px solid var(--border);padding:4px;border-radius:99px;width:fit-content;margin:6px 0 18px}
+.tab{border:none;background:transparent;padding:11px 18px;border-radius:99px;font-weight:800;font-size:13px;color:var(--muted);cursor:pointer}.tab.active{background:var(--navy);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.mapel{background:#fff;border:2px solid var(--border);border-radius:22px;padding:20px;cursor:pointer;transition:.2s}
+.mapel:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(10,42,94,.14);border-color:var(--c)}
+.mapel-ic{width:60px;height:60px;border-radius:18px;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;border:3px solid #fff;outline:2px solid var(--c)}
+.mapel h3{font-size:18px;margin:14px 0 6px;color:var(--navy)}.mapel p{font-size:13px;color:var(--muted);line-height:1.5;min-height:40px}
+.mapel-meta{display:flex;gap:8px;font-size:12px;color:var(--muted);margin:12px 0;flex-wrap:wrap}.mapel-meta span{background:#F6F8FB;border:1px solid var(--border);padding:5px 9px;border-radius:99px}
+.mapel-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:14px;border-top:2px dashed var(--border)}
+.btn-mapel{background:var(--navy);color:#fff;border:none;padding:10px 16px;border-radius:99px;font-weight:800;font-size:12px;cursor:pointer}
+.quiz-head{background:#fff;border:2px solid var(--border);border-radius:20px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.timer{background:#FEF2F2;color:#DC2626;border:2px solid #FECACA;padding:9px 14px;border-radius:99px;font-weight:900;font-size:13px}
+.q-card{background:#fff;border:2px solid var(--border);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.q-num{font-size:12px;font-weight:900;letter-spacing:1px;color:var(--red);text-transform:uppercase}
+.q-dots{display:flex;gap:6px;flex-wrap:wrap}.q-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:#fff;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--navy)}
+.q-dot.done{background:var(--navy);color:#fff}.q-dot.active{border-color:var(--red);color:var(--red);transform:scale(1.1)}
+.q-text{font-size:19px;font-weight:800;line-height:1.5;margin:14px 0 18px;color:var(--navy)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:12px;align-items:center;text-align:left;width:100%;padding:14px 16px;border-radius:16px;border:2px solid var(--border);background:#fff;cursor:pointer;font-size:14px;color:var(--text);font-weight:600}
+.opt:hover{border-color:var(--navy);background:#EEF2F7}.opt.selected{border-color:var(--navy);background:#E8EDF7}
+.opt.correct{border-color:#059669;background:#ECFDF5}.opt.wrong{border-color:#DC2626;background:#FEF2F2}
+.opt-letter{width:34px;height:34px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+.opt.selected .opt-letter{background:var(--red)}
+.explain{margin-top:16px;background:#FFFBEB;border:2px solid #FDE68A;border-radius:14px;padding:14px 16px;font-size:13px;line-height:1.6;color:#92400E}
+.quiz-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+.result{text-align:center;padding:28px 20px}
+.result-circle{width:150px;height:150px;border-radius:50%;margin:0 auto 16px;background:conic-gradient(var(--navy) var(--p,0%),#E5E7EB 0);display:flex;align-items:center;justify-content:center;position:relative;border:4px solid #fff}
+.result-circle::before{content:'';position:absolute;inset:14px;background:#fff;border-radius:50%}.result-circle b{position:relative;font-size:34px;font-family:'Fraunces',serif;color:var(--navy)}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:520px;margin:18px auto}.result-grid div{background:#F6F8FB;border:2px solid var(--border);border-radius:14px;padding:14px}.result-grid b{font-size:20px;display:block;color:var(--navy)}
+.review{margin-top:20px;text-align:left}.review-item{border:2px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;background:#fff}.review-item.correct{border-left:6px solid #059669}.review-item.wrong{border-left:6px solid #DC2626}
+.rank-list{display:flex;flex-direction:column;gap:10px}.rank{display:flex;align-items:center;gap:14px;padding:14px;background:#fff;border:2px solid var(--border);border-radius:14px}.rank-num{width:38px;height:38px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900}
+.modal{position:fixed;inset:0;background:rgba(10,42,94,.55);backdrop-filter:blur(6px);z-index:999;display:none;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}
+.modal-box{background:#fff;border-radius:22px;padding:24px;width:100%;max-width:440px;box-shadow:0 20px 50px rgba(0,0,0,.25);border-top:6px solid var(--red)}
+.field{margin-bottom:12px}.field label{font-size:12px;font-weight:800;color:var(--navy);display:block;margin-bottom:6px}
+.inp{width:100%;padding:12px 14px;border-radius:12px;border:2px solid var(--border);background:#F6F8FB;color:var(--navy);outline:none;font-weight:600}
+.footer{margin-top:30px;background:#fff;border:2px solid var(--border);border-radius:20px;padding:18px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.footer b{color:var(--navy);font-family:'Fraunces',serif;font-size:16px}.footer p{font-size:12px;color:var(--muted);line-height:1.5}
+.logo-setup{background:#FFFBEB;border:2px dashed #F59E0B;border-radius:14px;padding:12px 14px;margin:14px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:#92400E}
+.logo-setup b{color:#92400E}
+@media(max-width:640px){.hero h1{font-size:30px}.pill-top{display:none}.mascot{width:100%}}
+</style>
+</head>
+<body>
+<!-- LOGO AKAN DIISI OTOMATIS DARI BASE64 DI BAWAH / DARI UPLOAD -->
+<img id="watermarkLogo" src="" alt="" class="logo-watermark">
 
+<div class="topbar"><div class="topbar-in">
+  <div class="school">
+    <img id="headerLogo" src="" alt="Logo" class="logo-img">
+    <div><b>BelajarKu <span>SMP</span></b><small>Sapta Dwija Artam • <em>Kelas 9 • 2026</em></small></div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <span class="pill-top">🔴⚪ Putih – Biru Dongker</span>
+    <button class="btn-top" onclick="showHome()">🏠 Beranda</button>
+    <div class="avatar" onclick="openModal('nameModal')" id="avatarLetter">A</div>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div id="homePage">
+    <!-- SETUP LOGO 1 KALI SAJA -->
+    <div class="logo-setup" id="logoSetup">
+      <span style="font-size:22px">🖼️</span>
+      <div style="flex:1;min-width:200px"><b>Logo Sekolah Belum Terpasang?</b><br>Upload foto logo Sapta Dwija Artam sekali saja, langsung nempel permanen di file ini.</div>
+      <label style="background:var(--navy);color:#fff;padding:10px 16px;border-radius:99px;font-weight:800;cursor:pointer;font-size:12px">📤 Pasang Logo Sekolah<input type="file" id="logoInput" accept="image/*" style="display:none"></label>
+      <button onclick="resetLogo()" style="background:#fff;border:2px solid var(--border);padding:10px 14px;border-radius:99px;font-weight:800;cursor:pointer;font-size:12px">Reset Logo</button>
+    </div>
+
+    <div class="hero">
+      <div style="max-width:620px">
+        <span style="display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);padding:6px 12px;border-radius:99px;font-size:12px;font-weight:700">⭐ 60 Soal • 6 Mapel • Pembahasan Lengkap</span>
+        <h1>Pakai Seragam,<br>Siap <em>Juara Kelas!</em> 🏆</h1>
+        <p>Halo anak <b>Sapta Dwija Artam</b>! Belajar soal Kelas 9 jadi seru kayak di sekolah. Pilih mapel, jawab soal, kumpulkan bintang, dan jadi juara kelas.</p>
+        <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+          <button class="btn btn-white" onclick="startRandom()">🎲 Acak Soal — Main Cepat</button>
+          <button class="btn btn-red" onclick="showTab('rank')">🏆 Lihat Juara Kelas</button>
+          <button class="btn btn-ghost" onclick="showTab('tips')">💡 Tips Belajar</button>
+        </div>
+      </div>
+      <div class="mascot">
+        <img id="mascotLogo" src="" alt="Logo" class="logo-img-lg">
+        <b id="mascotName">Halo, Teman!</b>
+        <p id="mascotText">Yuk belajar 10 soal hari ini. Kalau nilai 90+, kamu dapat bintang emas!</p>
+        <div class="motto">Sapta Dwija Artam</div>
+        <div style="color:var(--gold);letter-spacing:2px;margin-top:8px">⭐⭐⭐⭐⭐</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--navy);margin-top:10px"><span id="totalScoreText">0 Poin</span><span id="totalBintang">⭐ 0</span></div>
+        <div class="progress-mini"><i id="progressBar" style="width:0%"></i></div>
+        <p style="font-size:11px;color:var(--muted);margin-top:6px" id="progressText">Belum ada soal dikerjakan.</p>
+        <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-ghost2 btn-sm" style="flex:1;justify-content:center" onclick="resetProgress()">🔄 Reset</button><button class="btn btn-navy btn-sm" style="flex:1;justify-content:center" onclick="openModal('nameModal')">✏️ Ganti Nama</button></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('mapel',this)">📚 Semua Mapel</button>
+      <button class="tab" onclick="showTab('rank',this)">🏆 Juara Kelas</button>
+      <button class="tab" onclick="showTab('tips',this)">💡 Tips Belajar</button>
+    </div>
+    <div id="tab-mapel"><div class="grid" id="mapelGrid"></div></div>
+    <div id="tab-rank" class="hidden">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:22px;padding:20px">
+        <div style="display:flex;gap:12px;align-items:center"><img id="rankLogo" src="" class="logo-img" style="width:44px;height:44px"><div><h3 style="color:var(--navy)">🏆 Papan Juara Kelas 9 — Sapta Dwija Artam</h3><p style="font-size:13px;color:var(--muted)">Siapa yang paling rajin belajar?</p></div></div>
+        <div class="rank-list" id="rankList" style="margin-top:16px"></div>
+      </div>
+    </div>
+    <div id="tab-tips" class="hidden">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">
+        <div style="background:#fff;border:2px solid var(--border);border-radius:20px;padding:20px;border-top:6px solid var(--navy)"><h3>📐 Matematika</h3><p style="font-size:13px;color:var(--muted);line-height:1.6;margin-top:8px">Hafalkan rumus pangkat & akar. Latihan 10 soal tiap hari!</p></div>
+        <div style="background:#fff;border:2px solid var(--border);border-radius:20px;padding:20px;border-top:6px solid #059669"><h3>🔬 IPA</h3><p style="font-size:13px;color:var(--muted);line-height:1.6;margin-top:8px">Fokus ke listrik statis & kemagnetan.</p></div>
+        <div style="background:#fff;border:2px solid var(--border);border-radius:20px;padding:20px;border-top:6px solid var(--red)"><h3>📖 Bahasa Indonesia</h3><p style="font-size:13px;color:var(--muted);line-height:1.6;margin-top:8px">Banyak baca teks laporan & cerpen.</p></div>
+        <div style="background:#fff;border:2px solid var(--border);border-radius:20px;padding:20px;border-top:6px solid var(--gold)"><h3>🌍 IPS & PPKn</h3><p style="font-size:13px;color:var(--muted);line-height:1.6;margin-top:8px">Hubungkan materi dengan berita sehari-hari.</p></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <img id="footerLogo" src="" alt="Logo">
+      <div><b>Sapta Dwija Artam</b><p>SMP — Belajar dengan semangat, berprestasi dengan karakter.<br>Website Soal Kelas 9 • 60 Soal • 6 Mapel</p></div>
+      <span style="margin-left:auto;font-size:12px;color:var(--muted);font-weight:700">© 2026 BelajarKu SMP • 1 File</span>
+    </div>
+  </div>
+
+  <div id="quizPage" class="hidden">
+    <div class="quiz-head">
+      <div style="display:flex;gap:12px;align-items:center"><img id="quizLogo" src="" style="width:38px;height:38px;object-fit:contain;border-radius:50%;background:#fff;border:2px solid var(--gold);padding:2px"><div><h2 id="quizTitle">Matematika</h2><p id="quizSub">Soal 1 dari 10</p></div></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="timer" id="timer">⏱ 15:00</span><button class="btn btn-ghost2 btn-sm" onclick="showHome()">✕ Keluar</button></div>
+    </div>
+    <div class="q-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap"><span class="q-num" id="qNum">Soal 1</span><div class="q-dots" id="qDots"></div></div>
+      <div class="q-text" id="qText"></div>
+      <div class="opts" id="opts"></div>
+      <div class="explain hidden" id="explainBox"></div>
+      <div class="quiz-nav">
+        <button class="btn btn-ghost2" id="prevBtn" onclick="prevQ()">← Sebelumnya</button>
+        <div style="display:flex;gap:8px"><button class="btn btn-gold" id="checkBtn" onclick="checkAnswer()">✓ Cek Jawaban</button><button class="btn btn-navy" id="nextBtn" onclick="nextQ()">Berikutnya →</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="resultPage" class="hidden">
+    <div class="q-card result">
+      <img id="resultLogo" src="" class="logo-img-lg" style="width:72px;height:72px;margin-bottom:12px">
+      <div class="result-circle" id="resultCircle"><b id="resultScore">0</b></div>
+      <div style="font-size:28px" id="resultEmoji">🏆</div>
+      <h2 id="resultTitle">Hebat!</h2>
+      <p id="resultDesc"></p>
+      <div class="result-grid"><div><b id="resCorrect">0</b><span>Benar</span></div><div><b id="resWrong">0</b><span>Salah</span></div><div><b id="resTime">0:00</b><span>Waktu</span></div></div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px"><button class="btn btn-navy" onclick="retryQuiz()">🔄 Ulangi</button><button class="btn btn-ghost2" onclick="showHome()">🏠 Kembali</button><button class="btn btn-red2" onclick="shareResult()">📤 Bagikan Nilai</button></div>
+      <div class="review" id="reviewList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="nameModal"><div class="modal-box">
+  <div style="text-align:center"><img id="modalLogo" src="" class="logo-img-lg" style="width:76px;height:76px"><h3 style="font-family:'Fraunces',serif;font-size:22px;color:var(--navy);margin-top:10px">Halo, Anak Sapta Dwija Artam!</h3><p style="font-size:13px;color:var(--muted);margin:6px 0 16px">Kenalan dulu yuk, siapa nama kamu?</p></div>
+  <div class="field"><label>Nama Lengkap</label><input class="inp" id="inputName" placeholder="Contoh: Andi Pratama"></div>
+  <div class="field"><label>Kelas</label><select class="inp" id="inputClass"><option>9A</option><option>9B</option><option>9C</option><option>9D</option><option>9E</option><option>9F</option></select></div>
+  <button class="btn btn-navy" style="width:100%;justify-content:center;padding:14px" onclick="saveName()">Masuk Kelas →</button>
+</div></div>
+
+<script>
+// ===== LOGO EMBEDDED - 1 FILE =====
+// Logo disimpan sebagai Base64 di localStorage, jadi 1 file HTML ini saja cukup.
+// Cara pasang pertama kali: klik "Pasang Logo Sekolah" -> pilih foto logo yang kamu kirim tadi.
+// Setelah itu logo akan otomatis muncul di header, hero, quiz, hasil, footer, watermark.
+// Logo default (jika belum upload) pakai SVG lambang sekolah:
+const DEFAULT_LOGO = "data:image/svg+xml;base64," + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="#fff" stroke="#FFC107" stroke-width="4"/><text x="50" y="58" font-size="42" text-anchor="middle">🎓</text><text x="50" y="88" font-size="10" text-anchor="middle" font-weight="bold" fill="#0A2A5E">SDA</text></svg>`);
+function getLogo(){ return localStorage.getItem('sda_logo') || DEFAULT_LOGO; }
+function applyLogo(){
+  const src = getLogo();
+  ['headerLogo','mascotLogo','rankLogo','footerLogo','quizLogo','resultLogo','modalLogo','watermarkLogo'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.src=src;
+  });
+  const setup=document.getElementById('logoSetup');
+  if(localStorage.getItem('sda_logo')){ setup.innerHTML='<span style="font-size:22px">✅</span><div style="flex:1"><b>Logo Sekolah Sudah Terpasang!</b><br>Logo Sapta Dwija Artam sudah nempel di semua halaman. Mau ganti? Upload lagi.</div><label style="background:var(--navy);color:#fff;padding:10px 16px;border-radius:99px;font-weight:800;cursor:pointer;font-size:12px">🔄 Ganti Logo<input type="file" id="logoInput2" accept="image/*" style="display:none"></label>'; 
+    const inp=document.getElementById('logoInput2'); if(inp) inp.addEventListener('change', handleLogoUpload);
+  }
+}
+function handleLogoUpload(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=ev=>{ localStorage.setItem('sda_logo', ev.target.result); applyLogo(); alert('✅ Logo berhasil dipasang! Sekarang 1 file ini sudah lengkap dengan logo.'); };
+  r.readAsDataURL(f);
+}
+document.getElementById('logoInput').addEventListener('change', handleLogoUpload);
+function resetLogo(){ localStorage.removeItem('sda_logo'); applyLogo(); location.reload(); }
+applyLogo();
+
+const DATA = {
+  "Matematika": {color:"#2563EB", icon:"fa-solid fa-square-root-variable", desc:"Bilangan berpangkat, bentuk akar, persamaan kuadrat, bangun ruang.", qs:[
+    {q:"Hasil dari 3<sup>4</sup> adalah ...", opts:["12","27","81","243"], a:2, ex:"3⁴ = 81."},
+    {q:"Bentuk sederhana dari √75 adalah ...", opts:["3√5","5√3","5√5","25√3"], a:1, ex:"√75 = 5√3."},
+    {q:"Jika x² - 5x + 6 = 0, maka nilai x adalah ...", opts:["2 dan 3","1 dan 6","-2 dan -3","2 dan -3"], a:0, ex:"(x-2)(x-3)=0."},
+    {q:"Gradien garis y = -2x + 5 adalah ...", opts:["2","-2","5","-5"], a:1, ex:"m = -2."},
+    {q:"Volume tabung r=7 cm, t=10 cm (π=22/7) adalah ...", opts:["1540 cm³","154 cm³","440 cm³","2200 cm³"], a:0, ex:"V = 1540 cm³."},
+    {q:"Hasil dari 2⁻³ adalah ...", opts:["-8","1/8","8","-1/8"], a:1, ex:"1/8."},
+    {q:"Himpunan penyelesaian dari 2x + 3 > 9 adalah ...", opts:["x > 3","x > 6","x < 3","x < 6"], a:0, ex:"x > 3."},
+    {q:"Luas permukaan kubus rusuk 5 cm adalah ...", opts:["125 cm²","150 cm²","100 cm²","75 cm²"], a:1, ex:"150 cm²."},
+    {q:"Persamaan garis melalui (0,2) bergradien 3 adalah ...", opts:["y = 3x + 2","y = 3x - 2","y = 2x + 3","y = -3x + 2"], a:0, ex:"y = 3x + 2."},
+    {q:"Jika f(x) = 2x - 1, maka f(4) = ...", opts:["6","7","8","9"], a:1, ex:"7."},
+  ]},
+  "IPA": {color:"#059669", icon:"fa-solid fa-flask", desc:"Listrik statis, kemagnetan, sistem reproduksi, bioteknologi.", qs:[
+    {q:"Alat untuk mengukur arus listrik adalah ...", opts:["Voltmeter","Amperemeter","Ohmmeter","Termometer"], a:1, ex:"Amperemeter."},
+    {q:"Benda yang ditarik magnet dengan kuat disebut ...", opts:["Diamagnetik","Paramagnetik","Feromagnetik","Non-magnetik"], a:2, ex:"Feromagnetik."},
+    {q:"Bagian sel sebagai pengatur kegiatan sel adalah ...", opts:["Mitokondria","Nukleus","Ribosom","Vakuola"], a:1, ex:"Nukleus."},
+    {q:"Contoh bioteknologi konvensional adalah ...", opts:["Bayi tabung","Kloning","Pembuatan tempe","Terapi gen"], a:2, ex:"Tempe."},
+    {q:"Muatan sejenis jika didekatkan akan ...", opts:["Tarik-menarik","Tolak-menolak","Netral","Meleleh"], a:1, ex:"Tolak-menolak."},
+    {q:"Satelit komunikasi Indonesia adalah ...", opts:["Satelit cuaca","Satelit Palapa","Satelit militer","Satelit navigasi"], a:1, ex:"Palapa."},
+    {q:"Hewan berkembang biak dengan bertelur disebut ...", opts:["Vivipar","Ovipar","Ovovivipar","Mamalia"], a:1, ex:"Ovipar."},
+    {q:"Energi karena kedudukan disebut energi ...", opts:["Kinetik","Potensial","Kalor","Listrik"], a:1, ex:"Potensial."},
+    {q:"Kutub magnet yang sama jika didekatkan akan ...", opts:["Menarik","Menolak","Netral","Menyatu"], a:1, ex:"Menolak."},
+    {q:"Proses tumbuhan membuat makanan dengan cahaya disebut ...", opts:["Respirasi","Fotosintesis","Fermentasi","Transpirasi"], a:1, ex:"Fotosintesis."},
+  ]},
+  "IPS": {color:"#EA580C", icon:"fa-solid fa-earth-asia", desc:"Interaksi sosial, ekonomi, geografi, sejarah Indonesia.", qs:[
+    {q:"Benua terbesar di dunia adalah ...", opts:["Afrika","Amerika","Asia","Eropa"], a:2, ex:"Asia."},
+    {q:"Kegiatan ekonomi yang menghasilkan barang disebut ...", opts:["Distribusi","Konsumsi","Produksi","Investasi"], a:2, ex:"Produksi."},
+    {q:"Negara ASEAN yang tidak memiliki laut adalah ...", opts:["Laos","Kamboja","Vietnam","Filipina"], a:0, ex:"Laos."},
+    {q:"Mata uang Jepang adalah ...", opts:["Won","Yuan","Yen","Ringgit"], a:2, ex:"Yen."},
+    {q:"Interaksi sosial yang mengarah pada perpecahan disebut ...", opts:["Asosiatif","Disosiatif","Akulturasi","Asimilasi"], a:1, ex:"Disosiatif."},
+    {q:"Sungai terpanjang di dunia adalah ...", opts:["Sungai Nil","Sungai Amazon","Sungai Yangtze","Sungai Mississippi"], a:0, ex:"Sungai Nil."},
+    {q:"Contoh kebutuhan primer adalah ...", opts:["Mobil","Makanan","Handphone","Perhiasan"], a:1, ex:"Makanan."},
+    {q:"Perdagangan antar negara disebut ...", opts:["Perdagangan dalam negeri","Ekspor-impor","Perdagangan internasional","Barter"], a:2, ex:"Perdagangan internasional."},
+    {q:"Ibu kota Jawa Timur adalah ...", opts:["Semarang","Surabaya","Bandung","Medan"], a:1, ex:"Surabaya."},
+    {q:"Tujuan utama koperasi adalah ...", opts:["Keuntungan pribadi","Kesejahteraan anggota","Monopoli","Spekulasi"], a:1, ex:"Kesejahteraan anggota."},
+  ]},
+  "Bahasa Indonesia": {color:"#7C3AED", icon:"fa-solid fa-book-open", desc:"Teks laporan, pidato, cerpen, dan unsur kebahasaan.", qs:[
+    {q:"Teks yang berisi laporan hasil pengamatan disebut ...", opts:["Teks eksposisi","Teks laporan hasil observasi","Teks narasi","Teks deskripsi"], a:1, ex:"Teks LHO."},
+    {q:"Kalimat utama pada paragraf deduktif terletak di ...", opts:["Akhir paragraf","Awal paragraf","Tengah paragraf","Di luar paragraf"], a:1, ex:"Awal."},
+    {q:"Sinonim kata 'bahagia' adalah ...", opts:["Sedih","Gembira","Marah","Takut"], a:1, ex:"Gembira."},
+    {q:"Pidato yang bertujuan mengajak disebut pidato ...", opts:["Informatif","Persuasif","Rekreatif","Naratif"], a:1, ex:"Persuasif."},
+    {q:"Unsur intrinsik cerpen berupa latar tempat, waktu, suasana adalah ...", opts:["Tema","Alur","Latar","Amanat"], a:2, ex:"Latar."},
+    {q:"Antonim kata 'rajin' adalah ...", opts:["Tekun","Malas","Pintar","Cepat"], a:1, ex:"Malas."},
+    {q:"Penulisan 'di mana' yang benar adalah ...", opts:["Dimana","Di mana","Di-mana","DImana"], a:1, ex:"Di mana."},
+    {q:"Kalimat ajakan ditandai kata ...", opts:["Jangan","Marilah","Apakah","Janganlah"], a:1, ex:"Marilah."},
+    {q:"Struktur cerpen yang berisi puncak masalah disebut ...", opts:["Orientasi","Komplikasi","Resolusi","Koda"], a:1, ex:"Komplikasi."},
+    {q:"Makna kata 'hemat' adalah ...", opts:["Boros","Irit","Pelit","Kikir"], a:1, ex:"Irit."},
+  ]},
+  "Bahasa Inggris": {color:"#DB2777", icon:"fa-solid fa-language", desc:"Grammar, vocabulary, dan reading untuk kelas 9.", qs:[
+    {q:"She ___ to school every day.", opts:["go","goes","going","gone"], a:1, ex:"She + goes."},
+    {q:"What is the opposite of 'hot'?", opts:["Warm","Cold","Big","Fast"], a:1, ex:"Cold."},
+    {q:"They ___ football yesterday.", opts:["play","plays","played","playing"], a:2, ex:"Played."},
+    {q:"'Library' in Indonesian is ...", opts:["Toko","Perpustakaan","Sekolah","Pasar"], a:1, ex:"Perpustakaan."},
+    {q:"I have ___ apple.", opts:["a","an","the","-"], a:1, ex:"An."},
+    {q:"Which one is a fruit?", opts:["Carrot","Banana","Potato","Cabbage"], a:1, ex:"Banana."},
+    {q:"He is ___ than his brother.", opts:["tall","taller","tallest","more tall"], a:1, ex:"Taller."},
+    {q:"'I am happy' — 'happy' is ...", opts:["Noun","Verb","Adjective","Adverb"], a:2, ex:"Adjective."},
+    {q:"It is 7 o'clock. It is time to ...", opts:["Sleep","Go to school","Eat lunch","Play"], a:1, ex:"Go to school."},
+    {q:"My mother ___ cooking now.", opts:["is","are","was","were"], a:0, ex:"Is."},
+  ]},
+  "PPKn": {color:"#0A2A5E", icon:"fa-solid fa-landmark", desc:"Pancasila, UUD 1945, dan kewarganegaraan.", qs:[
+    {q:"Sila pertama Pancasila adalah ...", opts:["Kemanusiaan yang adil dan beradab","Ketuhanan Yang Maha Esa","Persatuan Indonesia","Keadilan sosial"], a:1, ex:"Ketuhanan Yang Maha Esa."},
+    {q:"Lambang negara Indonesia adalah ...", opts:["Garuda Pancasila","Komodo","Banteng","Padi kapas"], a:0, ex:"Garuda."},
+    {q:"UUD 1945 disahkan pada tanggal ...", opts:["17 Agustus 1945","18 Agustus 1945","20 Mei 1908","1 Juni 1945"], a:1, ex:"18 Agustus 1945."},
+    {q:"Contoh pengamalan sila ke-2 adalah ...", opts:["Beribadah","Menolong korban bencana","Musyawarah","Gotong royong"], a:1, ex:"Menolong."},
+    {q:"Lembaga yang membuat undang-undang adalah ...", opts:["Presiden","DPR","MA","MK"], a:1, ex:"DPR."},
+    {q:"Sikap yang sesuai dengan persatuan adalah ...", opts:["Tawuran","Menghargai perbedaan","Egois","Rasis"], a:1, ex:"Menghargai perbedaan."},
+    {q:"Hak anak di sekolah adalah ...", opts:["Membolos","Mendapatkan pendidikan","Menghukum guru","Merusak fasilitas"], a:1, ex:"Pendidikan."},
+    {q:"Contoh kewajiban warga negara adalah ...", opts:["Membayar pajak","Mendapat bantuan","Memilih ketua kelas","Liburan"], a:0, ex:"Pajak."},
+    {q:"Bhinneka Tunggal Ika artinya ...", opts:["Bersatu kita teguh","Berbeda-beda tetapi tetap satu","Maju terus pantang mundur","Sekali merdeka tetap merdeka"], a:1, ex:"Berbeda-beda tetapi tetap satu."},
+    {q:"Pemilu dilaksanakan setiap ...", opts:["2 tahun","4 tahun","5 tahun","10 tahun"], a:2, ex:"5 tahun."},
+  ]},
+};
+let user = JSON.parse(localStorage.getItem('belajarku_user')||'null') || {name:'', kelas:'9A'};
+let progress = JSON.parse(localStorage.getItem('belajarku_progress')||'{}');
+let scores = JSON.parse(localStorage.getItem('belajarku_scores')||'[]');
+let currentMapel=null, currentQs=[], currentIdx=0, answers=[], checked=false, mode='belajar', startTime=0, timerInt=null, timeLeft=900;
+function save(){ localStorage.setItem('belajarku_user', JSON.stringify(user)); localStorage.setItem('belajarku_progress', JSON.stringify(progress)); localStorage.setItem('belajarku_scores', JSON.stringify(scores)); updateHome(); }
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.getElementById('nameModal').addEventListener('click', e=>{ if(e.target.id==='nameModal') closeModal('nameModal'); });
+function saveName(){ const n=document.getElementById('inputName').value.trim(); if(!n){ alert('Isi nama dulu ya!'); return; } user.name=n; user.kelas=document.getElementById('inputClass').value; save(); closeModal('nameModal'); }
+function resetProgress(){ if(!confirm('Reset semua nilai?')) return; progress={}; scores=[]; save(); }
+function updateHome(){
+  document.getElementById('avatarLetter').textContent = (user.name||'A')[0].toUpperCase();
+  document.getElementById('mascotName').textContent = user.name ? `Halo, ${user.name}! 👋` : 'Halo, Teman! 👋';
+  let total=0, done=0, bintang=0; Object.values(progress).forEach(v=>{ total+=v.score; done++; if(v.score>=90) bintang+=3; else if(v.score>=70) bintang+=2; else if(v.score>=50) bintang+=1; });
+  document.getElementById('totalScoreText').textContent = total+' Poin';
+  document.getElementById('totalBintang').textContent = '⭐ '+bintang;
+  document.getElementById('progressBar').style.width = Math.min(100, total/6)+'%';
+  document.getElementById('progressText').textContent = done===0 ? 'Belum ada soal dikerjakan.' : `${done} mapel sudah dikerjakan • ${bintang} bintang`;
+  const grid=document.getElementById('mapelGrid'); grid.innerHTML='';
+  Object.entries(DATA).forEach(([name,d])=>{
+    const sc = progress[name]?.score ?? null;
+    const el=document.createElement('div'); el.className='mapel'; el.style.setProperty('--c', d.color);
+    el.innerHTML=`<div style="display:flex;justify-content:space-between"><div class="mapel-ic"><i class="${d.icon}"></i></div><span style="font-size:11px;font-weight:900;padding:6px 10px;border-radius:99px;background:#EEF2F7">Kelas 9 • SMP</span></div>
+      <h3>${name}</h3><p>${d.desc}</p>
+      <div class="mapel-meta"><span>📝 10 Soal</span><span>⏱ 15 Menit</span><span>${sc!==null?'⭐ '+Math.round(sc/10)+'/100':'🎯 Belum'}</span></div>
+      <div class="mapel-foot"><div><b>${sc!==null? 'Nilai: '+Math.round(sc/10)+' / 100' : 'Belum dikerjakan'}</b></div><button class="btn-mapel">Mulai →</button></div>`;
+    el.onclick=()=>{ openModalChoice(name); };
+    grid.appendChild(el);
+  });
+  const rank=document.getElementById('rankList'); rank.innerHTML='';
+  if(!scores.length) rank.innerHTML='<p style="text-align:center;color:var(--muted);padding:20px">Belum ada nilai. Kerjakan soal dulu ya!</p>';
+  else [...scores].sort((a,b)=>b.score-a.score).slice(0,5).forEach((s,i)=>{
+    const div=document.createElement('div'); div.className='rank';
+    div.innerHTML=`<div class="rank-num">${i+1}</div><b>${s.name} <span style="display:block;font-size:12px;color:var(--muted);font-weight:500">${s.mapel} • ${s.kelas} • ${s.date}</span></b><span style="font-weight:900;color:var(--navy);font-size:16px">${Math.round(s.score/10)}/100</span>`;
+    rank.appendChild(div);
+  });
+}
+function openModalChoice(mapel){
+  currentMapel=mapel;
+  if(!user.name){ openModal('nameModal'); return; }
+  const m = confirm(`Mau mode apa untuk ${mapel}?\n\nOK = Mode Belajar\nCancel = Mode Ujian`);
+  startQuiz(mapel, m ? 'belajar' : 'ujian');
+}
+function startRandom(){ const keys=Object.keys(DATA); startQuiz(keys[Math.floor(Math.random()*keys.length)],'belajar'); }
+function showTab(tab, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); if(btn) btn.classList.add('active');
+  document.getElementById('tab-mapel').classList.toggle('hidden', tab!=='mapel');
+  document.getElementById('tab-rank').classList.toggle('hidden', tab!=='rank');
+  document.getElementById('tab-tips').classList.toggle('hidden', tab!=='tips');
+}
+function showHome(){ document.getElementById('homePage').classList.remove('hidden'); document.getElementById('quizPage').classList.add('hidden'); document.getElementById('resultPage').classList.add('hidden'); clearInterval(timerInt); updateHome(); window.scrollTo({top:0,behavior:'smooth'}); }
+function startQuiz(mapel, m){
+  currentMapel=mapel; mode=m; currentQs=[...DATA[mapel].qs]; currentIdx=0; answers=Array(10).fill(null); checked=false; timeLeft=900; startTime=Date.now(); clearInterval(timerInt);
+  document.getElementById('homePage').classList.add('hidden'); document.getElementById('resultPage').classList.add('hidden'); document.getElementById('quizPage').classList.remove('hidden');
+  document.getElementById('quizTitle').textContent = mapel + (mode==='ujian' ? ' • Mode Ujian' : ' • Mode Belajar');
+  document.getElementById('checkBtn').style.display = mode==='ujian' ? 'none' : 'inline-flex';
+  timerInt=setInterval(()=>{ timeLeft--; if(timeLeft<=0){ clearInterval(timerInt); finishQuiz(); return; } const mm=String(Math.floor(timeLeft/60)).padStart(2,'0'); const ss=String(timeLeft%60).padStart(2,'0'); document.getElementById('timer').textContent=`⏱ ${mm}:${ss}`; },1000);
+  renderQ(); window.scrollTo({top:0,behavior:'smooth'});
+}
+function renderQ(){
+  const q=currentQs[currentIdx];
+  document.getElementById('qNum').textContent=`Soal ${currentIdx+1} • ${currentMapel} • Sapta Dwija Artam`;
+  document.getElementById('quizSub').textContent=`Soal ${currentIdx+1} dari 10 • ${mode==='ujian' ? 'Mode Ujian' : 'Mode Belajar'}`;
+  document.getElementById('qText').innerHTML=q.q;
+  const dots=document.getElementById('qDots'); dots.innerHTML='';
+  for(let i=0;i<10;i++){ const d=document.createElement('button'); d.className='q-dot'+(i===currentIdx?' active':'')+(answers[i]!==null?' done':''); d.textContent=i+1; d.onclick=()=>{ currentIdx=i; checked=false; renderQ(); }; dots.appendChild(d); }
+  const optsEl=document.getElementById('opts'); optsEl.innerHTML='';
+  q.opts.forEach((opt,i)=>{
+    const b=document.createElement('button'); b.className='opt'+(answers[currentIdx]===i?' selected':'');
+    if(checked){ if(i===q.a) b.classList.add('correct'); else if(i===answers[currentIdx]) b.classList.add('wrong'); }
+    b.innerHTML=`<span class="opt-letter">${'ABCD'[i]}</span><span>${opt}</span>${checked && i===q.a ? '<span style="margin-left:auto">✅</span>' : ''}`;
+    b.onclick=()=>{ if(checked) return; answers[currentIdx]=i; renderQ(); };
+    optsEl.appendChild(b);
+  });
+  const ex=document.getElementById('explainBox');
+  if(checked && mode==='belajar'){ ex.classList.remove('hidden'); ex.innerHTML=`<b>💡 Pembahasan:</b> ${q.ex}`; } else ex.classList.add('hidden');
+  document.getElementById('prevBtn').disabled = currentIdx===0;
+  document.getElementById('nextBtn').textContent = currentIdx===9 ? 'Selesai & Lihat Nilai →' : 'Berikutnya →';
+}
+function checkAnswer(){ if(answers[currentIdx]===null){ alert('Pilih jawaban dulu ya!'); return; } checked=true; renderQ(); }
+function prevQ(){ if(currentIdx>0){ currentIdx--; checked=false; renderQ(); } }
+function nextQ(){ if(answers[currentIdx]===null){ alert('Pilih jawaban dulu ya!'); return; } if(currentIdx<9){ currentIdx++; checked=false; renderQ(); } else finishQuiz(); }
+function finishQuiz(){
+  clearInterval(timerInt);
+  let correct=0; currentQs.forEach((q,i)=>{ if(answers[i]===q.a) correct++; });
+  const score=correct*10;
+  const elapsed=Math.floor((Date.now()-startTime)/1000); const mm=String(Math.floor(elapsed/60)).padStart(2,'0'); const ss=String(elapsed%60).padStart(2,'0');
+  progress[currentMapel]={score:correct*10, date:new Date().toLocaleDateString('id-ID')};
+  scores.push({name:user.name||'Anonim', kelas:user.kelas||'9A', mapel:currentMapel, score:correct*10, date:new Date().toLocaleDateString('id-ID')});
+  save();
+  document.getElementById('quizPage').classList.add('hidden'); document.getElementById('resultPage').classList.remove('hidden');
+  document.getElementById('resultScore').textContent = Math.round(score/10);
+  document.getElementById('resultCircle').style.setProperty('--p', (score)+'%');
+  document.getElementById('resCorrect').textContent=correct; document.getElementById('resWrong').textContent=10-correct; document.getElementById('resTime').textContent=`${mm}:${ss}`;
+  let title='', desc='', emoji='';
+  if(score>=90){ title='🏆 JUARA KELAS!'; desc=`Nilai kamu ${Math.round(score/10)}/100. Kamu dapat ⭐⭐⭐!`; emoji='🏆'; }
+  else if(score>=70){ title='🎉 Hebat!'; desc=`Nilai kamu ${Math.round(score/10)}/100. Dapat ⭐⭐!`; emoji='🎉'; }
+  else if(score>=50){ title='💪 Terus Semangat!'; desc=`Nilai kamu ${Math.round(score/10)}/100. Dapat ⭐!`; emoji='💪'; }
+  else { title='📚 Jangan Menyerah!'; desc=`Nilai kamu ${Math.round(score/10)}/100. Baca pembahasan di bawah, lalu coba lagi.`; emoji='📚'; }
+  document.getElementById('resultTitle').textContent=title; document.getElementById('resultDesc').textContent=desc; document.getElementById('resultEmoji').textContent=emoji;
+  const rev=document.getElementById('reviewList'); rev.innerHTML='<h3 style="margin:12px 0;color:var(--navy)">📋 Pembahasan Semua Soal</h3>';
+  currentQs.forEach((q,i)=>{ const ok=answers[i]===q.a; const div=document.createElement('div'); div.className='review-item '+(ok?'correct':'wrong'); div.innerHTML=`<b>${i+1}. ${q.q} ${ok?'✅':'❌'}</b><p>Jawaban kamu: <b>${answers[i]!==null?q.opts[answers[i]]:'Tidak dijawab'}</b> • Jawaban benar: <b>${q.opts[q.a]}</b><br>💡 ${q.ex}</p>`; rev.appendChild(div); });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function retryQuiz(){ startQuiz(currentMapel, mode); }
+function shareResult(){ const txt=`Nilai ${user.name} di BelajarKu SMP Sapta Dwija Artam — ${currentMapel} Kelas 9: ${Math.round((progress[currentMapel]?.score||0)/10)}/100.`; if(navigator.share){ navigator.share({text:txt}).catch(()=>{}); } else { navigator.clipboard.writeText(txt).then(()=>alert('Nilai tersalin!')); } }
+if(!user.name){ setTimeout(()=>openModal('nameModal'),600); }
+updateHome();
+</script>
+</body>
+</html>
