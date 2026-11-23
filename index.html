@@ -3,22 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACAK SAJA — Ular Tangga SMP Sapta Dwija Artam</title>
+<title>ULAR TANGGA — Permainan Ular Tangga</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#F3F0E8;color:#1A1A1A;min-height:100vh}
 button{font-family:inherit}.hidden{display:none!important}
+.logo-game{width:52px;height:52px;flex-shrink:0;filter:drop-shadow(0 3px 6px rgba(0,0,0,.25))}
+.logo-game-lg{width:96px;height:96px;filter:drop-shadow(0 6px 12px rgba(0,0,0,.25))}
+.logo-game-sm{width:38px;height:38px}
 .topbar{background:#0A2A5E;color:#fff;position:sticky;top:0;z-index:100}
-.topbar-in{max-width:1080px;margin:0 auto;padding:0 16px;height:64px;display:flex;align-items:center;justify-content:space-between}
-.school{display:flex;gap:10px;align-items:center;cursor:pointer;user-select:none}
-.logo-img{width:44px;height:44px;object-fit:contain;border-radius:50%;background:#fff;border:3px solid #FFC107;padding:2px}
-.school b{font-family:'Fraunces',serif;font-size:22px;letter-spacing:-.5px}.school b span{color:#FFC107}
-.school small{display:block;font-size:10px;letter-spacing:1.2px;color:#B9C6E8;font-weight:700}
+.topbar-in{max-width:1080px;margin:0 auto;padding:0 16px;height:68px;display:flex;align-items:center;justify-content:space-between}
+.school{display:flex;gap:12px;align-items:center;cursor:pointer;user-select:none}
+.school b{font-family:'Fraunces',serif;font-size:24px;letter-spacing:-.5px;line-height:1}.school b span{color:#FFC107}
+.school small{display:block;font-size:10px;letter-spacing:1.4px;color:#B9C6E8;font-weight:700;margin-top:2px}
 .btn-top{background:#fff;color:#0A2A5E;border:none;padding:8px 14px;border-radius:99px;font-weight:800;font-size:12px;cursor:pointer}.btn-top.red{background:#E11D2F;color:#fff}
 .wrap{max-width:1080px;margin:0 auto;padding:16px 14px 50px}
-.hero{background:#fff;border:3px solid #0A2A5E;border-radius:18px;padding:16px 18px;display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap;align-items:center;box-shadow:6px 6px 0 #0A2A5E}
-.hero h1{font-family:'Fraunces',serif;font-size:30px;line-height:1.05}.hero h1 em{color:#E11D2F;font-style:italic}
+.hero{background:#fff;border:3px solid #0A2A5E;border-radius:18px;padding:18px;display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;align-items:center;box-shadow:6px 6px 0 #0A2A5E}
+.hero h1{font-family:'Fraunces',serif;font-size:32px;line-height:1.05}.hero h1 em{color:#E11D2F;font-style:italic}
 .hero p{font-size:13px;color:#5A6A85;margin-top:6px;line-height:1.5;max-width:560px}
 .btn{border:none;cursor:pointer;border-radius:99px;padding:12px 18px;font-weight:800;font-size:13px;display:inline-flex;gap:8px;align-items:center}
 .btn-navy{background:#0A2A5E;color:#fff}.btn-red{background:#E11D2F;color:#fff}.btn-gold{background:#FFC107;color:#1A1200}.btn-ghost{background:#fff;border:2px solid #D8E0EC;color:#0A2A5E}
@@ -51,8 +53,8 @@ button{font-family:inherit}.hidden{display:none!important}
 .admin-panel.show{display:block}
 .admin-panel h3{font-size:14px;display:flex;justify-content:space-between;align-items:center}
 .admin-panel h3 span{font-size:11px;background:#E11D2F;padding:4px 8px;border-radius:99px}
-.admin-panel label{font-size:11px;font-weight:800;color:#FFC107;display:block;margin:12px 0 6px;text-transform:uppercase;letter-spacing:.5px}
-.admin-panel select,.admin-panel input{width:100%;padding:10px 12px;border-radius:10px;border:none;background:#fff;color:#0A2A5E;font-weight:800;outline:none}
+.admin-panel label{font-size:11px;font-weight:800;color:#FFC107;display:block;margin:12px 0 6px;text-transform:uppercase}
+.admin-panel select{width:100%;padding:10px 12px;border-radius:10px;border:none;background:#fff;color:#0A2A5E;font-weight:800;outline:none}
 .admin-btn{width:100%;padding:11px;border-radius:99px;border:none;font-weight:800;cursor:pointer;margin-top:8px;font-size:12px}
 .admin-btn.gold{background:#FFC107;color:#1A1200}.admin-btn.red{background:#E11D2F;color:#fff}.admin-btn.white{background:#fff;color:#0A2A5E}
 .admin-row{display:flex;gap:6px}.admin-row button{flex:1}
@@ -60,15 +62,28 @@ button{font-family:inherit}.hidden{display:none!important}
 .modal{position:fixed;inset:0;background:rgba(10,42,94,.6);z-index:998;display:none;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}
 .modal-box{background:#fff;border-radius:22px;padding:26px;width:100%;max-width:440px;text-align:center;border-top:6px solid #FFC107}
 .confetti{position:fixed;inset:0;pointer-events:none;z-index:1000;display:none}
-@media(max-width:520px){.hero h1{font-size:24px}.cell{font-size:10px}.token{width:23px;height:23px;font-size:11px}}
+.footer{margin-top:16px;background:#0A2A5E;color:#fff;border-radius:18px;padding:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.footer b{font-family:'Fraunces',serif;font-size:18px}.footer b span{color:#FFC107}.footer p{font-size:12px;color:#B9C6E8;line-height:1.5}
+@media(max-width:520px){.hero h1{font-size:24px}.cell{font-size:10px}.token{width:23px;height:23px;font-size:11px}.school b{font-size:20px}}
 </style>
 </head>
 <body>
+<template id="logoTemplate">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="48" fill="#0A2A5E" stroke="#FFC107" stroke-width="4"/>
+  <rect x="22" y="22" width="56" height="56" rx="12" fill="#fff" stroke="#E11D2F" stroke-width="3"/>
+  <circle cx="36" cy="36" r="5" fill="#E11D2F"/><circle cx="64" cy="36" r="5" fill="#0A2A5E"/><circle cx="50" cy="50" r="5" fill="#E11D2F"/><circle cx="36" cy="64" r="5" fill="#0A2A5E"/><circle cx="64" cy="64" r="5" fill="#E11D2F"/>
+  <path d="M 78 18 Q 88 30 78 42 Q 68 54 78 66" fill="none" stroke="#22C55E" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="80" cy="18" r="5" fill="#22C55E" stroke="#fff" stroke-width="1.5"/>
+  <text x="50" y="94" font-size="8" font-weight="900" text-anchor="middle" fill="#FFC107" font-family="Arial">ULAR TANGGA</text>
+</svg>
+</template>
+
 <div class="topbar"><div class="topbar-in">
-  <div class="school" id="logoClick" title="Klik 5x untuk Panel Guru">
-    <img src="logo.png" class="logo-img" onerror="this.src='data:image/svg+xml;base64,[STRIPPED]'">
-    <!-- NAMA BARU -->
-    <div><b>ACAK SAJA</b><small>Ular Tangga SMP • Sapta Dwija Artam • Persis Gambar</small></div>
+  <div class="school" id="logoClick">
+    <span class="logo-slot" data-logo="header"></span>
+    <!-- NAMA GAME -->
+    <div><b>ULAR <span>TANGGA</span></b><small>Permainan Ular Tangga • Persis Gambar</small></div>
   </div>
   <div style="display:flex;gap:8px"><button class="btn-top" onclick="location.reload()">🔄 Ulang</button><button class="btn-top red" onclick="document.getElementById('rulesModal').classList.add('show')">📖 Cara Main</button></div>
 </div></div>
@@ -76,17 +91,20 @@ button{font-family:inherit}.hidden{display:none!important}
 <div class="wrap">
   <div class="hero">
     <div>
-      <!-- JUDUL BARU -->
-      <span style="display:inline-flex;gap:6px;align-items:center;background:#FFF9DB;border:1px solid #FDE68A;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:800;color:#92400E">🎲 ACAK SAJA • Ular Tangga SMP</span>
-      <h1 style="margin-top:10px">ACAK SAJA,<br>Siapa Cepat <em>Sampai 100!</em> 🏆</h1>
-      <p>Game Ular Tangga SMP Sapta Dwija Artam — Persis Gambar. Kocok dadu, naik tangga, hindari ular! Acak saja, siapa yang beruntung dia yang menang!</p>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-navy" onclick="document.getElementById('setup').scrollIntoView({behavior:'smooth'})">▶️ Mulai Main</button><button class="btn btn-gold" onclick="toggleSound()">🔊 Suara: <span id="soundLabel">ON</span></button><button class="btn btn-ghost" onclick="openAdmin(true)">🔐 Panel Guru</button></div>
+      <span style="display:inline-flex;gap:6px;align-items:center;background:#FFF9DB;border:1px solid #FDE68A;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:800;color:#92400E">🐍🪜 Permainan ULAR TANGGA</span>
+      <h1 style="margin-top:10px">ULAR TANGGA,<br>Siapa Cepat <em>Sampai 100!</em> 🏆</h1>
+      <p>Ini permainan <b>Ular Tangga</b>. Kocok dadu, naik tangga, hindari ular. Siapa yang beruntung dia yang menang! Semua nama sekarang sudah jadi nama permainannya.</p>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-navy" onclick="document.getElementById('setup').scrollIntoView({behavior:'smooth'})">▶️ Main Ular Tangga</button><button class="btn btn-gold" onclick="toggleSound()">🔊 Suara: <span id="soundLabel">ON</span></button><button class="btn btn-ghost" onclick="openAdmin(true)">🔐 Panel Atur</button></div>
     </div>
-    <div style="background:#FFF9DB;border:2px solid #FDE68A;border-radius:14px;padding:12px 16px;text-align:center;min-width:200px"><div style="font-size:28px">🐍🪜🎲</div><b style="color:#0A2A5E">ACAK SAJA</b><p style="font-size:12px;color:#5A6A85;margin-top:4px">Papan 100 Kotak<br>7 Tangga • 7 Ular • Harus PAS di 100!</p></div>
+    <div style="background:#FFF9DB;border:2px solid #FDE68A;border-radius:16px;padding:16px;width:250px;text-align:center">
+      <span class="logo-slot" data-logo="hero" style="display:block;margin:0 auto"></span>
+      <b style="color:#0A2A5E;font-family:'Fraunces',serif;font-size:20px;display:block;margin-top:8px">ULAR TANGGA</b>
+      <p style="font-size:12px;color:#5A6A85;margin-top:4px;line-height:1.5">Permainan Ular Tangga<br>7 Tangga • 7 Ular • Harus PAS di 100!</p>
+    </div>
   </div>
 
   <div class="setup" id="setup">
-    <div style="flex:1;min-width:260px"><h3 style="color:#0A2A5E">🎮 Setup Pemain — ACAK SAJA</h3>
+    <div style="flex:1;min-width:260px"><h3 style="color:#0A2A5E">🎲 Setup Pemain — ULAR TANGGA</h3><p style="font-size:12px;color:#5A6A85">Isi nama, pilih mode, klik Mulai.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
         <div style="flex:1;min-width:130px"><label style="font-size:12px;font-weight:800">👤 Pemain 1 (Merah)</label><input class="inp" id="p0Name" value="Andi"></div>
         <div style="flex:1;min-width:130px"><label style="font-size:12px;font-weight:800">👤 Pemain 2 (Biru)</label><input class="inp" id="p1Name" value="Budi"></div>
@@ -97,25 +115,31 @@ button{font-family:inherit}.hidden{display:none!important}
     <div style="display:flex;flex-direction:column;gap:10px;min-width:220px">
       <label style="font-size:12px;font-weight:800">Jumlah Pemain</label>
       <select class="inp" id="playerCount" onchange="updatePlayerInputs()"><option value="2">2 Pemain</option><option value="3">3 Pemain</option><option value="4">4 Pemain</option></select>
-      <label style="font-size:12px;font-weight:800">Mode Game</label>
-      <div class="pills"><button type="button" id="modeSeru" class="active" onclick="setMode('seru')">🎲 Seru Saja</button><button type="button" id="modeBelajar" onclick="setMode('belajar')">📚 + Soal</button></div>
-      <button class="btn btn-navy" style="justify-content:center;padding:14px" onclick="startGame()">🚀 Mulai Game →</button>
+      <label style="font-size:12px;font-weight:800">Mode Permainan</label>
+      <div class="pills"><button type="button" id="modeSeru" class="active" onclick="setMode('seru')">🎲 Main Biasa</button><button type="button" id="modeBelajar" onclick="setMode('belajar')">📚 + Soal</button></div>
+      <button class="btn btn-navy" style="justify-content:center;padding:14px" onclick="startGame()">🚀 Mulai Ular Tangga →</button>
     </div>
   </div>
 
   <div class="game" id="gameArea" style="display:none">
-    <div><div class="board-wrap"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px"><h3 style="color:#0A2A5E">🗺️ ACAK SAJA — Papan Ular Tangga</h3><span id="boardInfo" style="font-size:12px;color:#5A6A85;font-weight:700">Giliran: Andi</span></div><div class="board" id="board"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🟩 Tangga</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🟥 Ular</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">⭐ 100 = Menang</span></div><div id="quizBox" class="quiz-box hidden"></div></div></div>
+    <div><div class="board-wrap"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px"><div style="display:flex;gap:10px;align-items:center"><span class="logo-slot" data-logo="board"></span><h3 style="color:#0A2A5E">ULAR TANGGA — Papan Permainan</h3></div><span id="boardInfo" style="font-size:12px;color:#5A6A85;font-weight:700">Giliran: Andi</span></div><div class="board" id="board"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🟩 Tangga</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🟥 Ular</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">⭐ 100 = Menang</span></div><div id="quizBox" class="quiz-box hidden"></div></div></div>
     <div style="display:flex;flex-direction:column;gap:14px">
-      <div class="panel" style="text-align:center"><h3 style="color:#0A2A5E">🎲 ACAK SAJA — Giliran Bermain</h3><div id="turnBadge" class="turn-badge" style="background:#E11D2F;margin-top:10px">🔴 Andi — Giliran Kamu!</div><div class="dice" id="dice"><span>🎲</span></div><p id="diceText" style="font-size:13px;color:#5A6A85">Klik Kocok Dadu!</p><p id="rigInfo" style="font-size:11px;color:#E11D2F;font-weight:800;margin-top:4px"></p><button class="btn btn-red" id="rollBtn" style="width:100%;justify-content:center;margin-top:10px;padding:14px;font-size:15px" onclick="rollDice()">🎲 KOCOK DADU — ACAK SAJA!</button><button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="resetGame()">🔄 Ulang</button></div>
-      <div class="panel"><h3 style="color:#0A2A5E">👥 Pemain</h3><div id="playersList" style="margin-top:10px"></div></div>
-      <div class="panel"><h3 style="color:#0A2A5E">📜 Riwayat</h3><div class="log" id="gameLog" style="margin-top:10px"><div class="log-item">Game dimulai! 🍀</div></div></div>
+      <div class="panel" style="text-align:center"><h3 style="color:#0A2A5E">🎲 ULAR TANGGA — Giliran Bermain</h3><div id="turnBadge" class="turn-badge" style="background:#E11D2F;margin-top:10px">🔴 Andi — Giliran Kamu!</div><div class="dice" id="dice"><span>🎲</span></div><p id="diceText" style="font-size:13px;color:#5A6A85">Klik Kocok Dadu!</p><p id="rigInfo" style="font-size:11px;color:#E11D2F;font-weight:800;margin-top:4px"></p><button class="btn btn-red" id="rollBtn" style="width:100%;justify-content:center;margin-top:10px;padding:14px;font-size:15px" onclick="rollDice()">🎲 KOCOK DADU!</button><button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="resetGame()">🔄 Ulang Permainan</button></div>
+      <div class="panel"><h3 style="color:#0A2A5E">👥 Pemain Ular Tangga</h3><div id="playersList" style="margin-top:10px"></div></div>
+      <div class="panel"><h3 style="color:#0A2A5E">📜 Riwayat Permainan</h3><div class="log" id="gameLog" style="margin-top:10px"><div class="log-item">Permainan Ular Tangga dimulai! 🍀</div></div></div>
     </div>
+  </div>
+
+  <div class="footer">
+    <span class="logo-slot" data-logo="footer"></span>
+    <div><b>ULAR <span>TANGGA</span></b><p>Permainan Ular Tangga — Siapa cepat sampai 100 dia menang!<br>© 2026 ULAR TANGGA • Papan Persis Gambar • 7 Tangga • 7 Ular</p></div>
+    <span style="margin-left:auto;font-size:12px;color:#B9C6E8;font-weight:700">🐍🪜 ULAR TANGGA</span>
   </div>
 </div>
 
 <div class="admin-panel" id="adminPanel">
-  <h3>🔐 PANEL GURU — ACAK SAJA <span>RAHASIA</span></h3>
-  <p style="font-size:11px;color:#B9C6E8;margin-top:4px">Atur siapa yang menang di ACAK SAJA.</p>
+  <div style="display:flex;gap:10px;align-items:center"><span class="logo-slot" data-logo="admin"></span><h3>🔐 PANEL ULAR TANGGA <span>RAHASIA</span></h3></div>
+  <p style="font-size:11px;color:#B9C6E8;margin-top:6px">Atur siapa yang menang di permainan Ular Tangga.</p>
   <label>🏆 Siapa yang HARUS Menang?</label>
   <select id="rigWinner"><option value="-1">— Acak / Fair —</option></select>
   <label>🎯 Mode Atur</label>
@@ -124,18 +148,34 @@ button{font-family:inherit}.hidden{display:none!important}
   <div class="admin-row"><button class="admin-btn white" onclick="forceDice(1)">1</button><button class="admin-btn white" onclick="forceDice(2)">2</button><button class="admin-btn white" onclick="forceDice(3)">3</button><button class="admin-btn white" onclick="forceDice(4)">4</button><button class="admin-btn white" onclick="forceDice(5)">5</button><button class="admin-btn gold" onclick="forceDice(6)">6</button></div>
   <label>⚡ Aksi Cepat</label>
   <button class="admin-btn gold" onclick="teleportWinner()">📍 Teleport Pemenang ke 95</button>
-  <button class="admin-btn white" onclick="teleportLoser()">🐍 Jatuhkan Lawan ke Kotak 3</button>
+  <button class="admin-btn white" onclick="teleportLoser()">🐍 Jatuhkan Lawan ke 3</button>
   <button class="admin-btn white" onclick="swapPositions()">🔄 Tukar Posisi</button>
   <button class="admin-btn red" onclick="resetRig()">❌ Matikan Aturan (Fair Lagi)</button>
   <div class="admin-status" id="adminStatus">Status: Fair</div>
   <button class="admin-btn white" onclick="closeAdmin()">🙈 Sembunyikan Panel</button>
 </div>
 
-<div class="modal" id="winModal"><div class="modal-box"><div style="font-size:64px">🏆</div><h2 style="font-family:'Fraunces',serif;font-size:28px;color:#0A2A5E" id="winTitle">Andi Menang!</h2><p style="color:#5A6A85;font-size:13px;margin:8px 0" id="winDesc"></p><div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:14px;padding:12px;font-size:13px;color:#92400E;font-weight:700" id="winStats"></div><div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-navy" onclick="resetGame()">🔄 Main Lagi — ACAK SAJA!</button><button class="btn btn-ghost" onclick="document.getElementById('winModal').classList.remove('show')">✕ Tutup</button></div></div></div>
-<div class="modal" id="rulesModal"><div class="modal-box" style="text-align:left;max-width:480px"><h2 style="font-family:'Fraunces',serif;color:#0A2A5E">📖 Cara Main — ACAK SAJA</h2><div style="font-size:13px;color:#5A6A85;line-height:1.7;margin:12px 0"><b>1. Kocok Dadu</b> — Pion jalan.<br><b>2. Tangga = Naik</b><br><b>3. Ular = Turun</b><br><b>4. Harus PAS di 100</b><br><b>5. Dapat 6 = Main Lagi</b></div><button class="btn btn-navy" style="width:100%;justify-content:center" onclick="document.getElementById('rulesModal').classList.remove('show')">Mengerti →</button></div></div>
+<div class="modal" id="winModal"><div class="modal-box"><span class="logo-slot" data-logo="win" style="display:block;margin:0 auto"></span><h2 style="font-family:'Fraunces',serif;font-size:28px;color:#0A2A5E;margin-top:10px" id="winTitle">Andi Menang!</h2><p style="color:#5A6A85;font-size:13px;margin:8px 0" id="winDesc"></p><div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:14px;padding:12px;font-size:13px;color:#92400E;font-weight:700" id="winStats"></div><div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-navy" onclick="resetGame()">🔄 Main Lagi — Ular Tangga!</button><button class="btn btn-ghost" onclick="document.getElementById('winModal').classList.remove('show')">✕ Tutup</button></div></div></div>
+<div class="modal" id="rulesModal"><div class="modal-box" style="text-align:left;max-width:480px"><div style="display:flex;gap:10px;align-items:center"><span class="logo-slot" data-logo="rules"></span><h2 style="font-family:'Fraunces',serif;color:#0A2A5E">📖 Cara Main — Ular Tangga</h2></div><div style="font-size:13px;color:#5A6A85;line-height:1.7;margin:12px 0"><b>1. Kocok Dadu</b> — Pion jalan.<br><b>2. Tangga = Naik</b><br><b>3. Ular = Turun</b><br><b>4. Harus PAS di 100</b><br><b>5. Dapat 6 = Main Lagi</b></div><button class="btn btn-navy" style="width:100%;justify-content:center" onclick="document.getElementById('rulesModal').classList.remove('show')">Mengerti — Main Ular Tangga! →</button></div></div>
 <div class="confetti" id="confetti"></div>
 
 <script>
+function installLogos(){
+  const tpl=document.getElementById('logoTemplate');
+  document.querySelectorAll('.logo-slot').forEach(slot=>{
+    const clone=tpl.content.cloneNode(true);
+    const svg=clone.querySelector('svg');
+    const kind=slot.dataset.logo;
+    if(kind==='header'){ svg.setAttribute('class','logo-game'); }
+    else if(kind==='hero'){ svg.setAttribute('class','logo-game-lg'); }
+    else if(kind==='board' || kind==='admin' || kind==='rules'){ svg.setAttribute('class','logo-game-sm'); }
+    else if(kind==='footer'){ svg.setAttribute('class','logo-game'); }
+    else if(kind==='win'){ svg.setAttribute('class','logo-game-lg'); }
+    else { svg.setAttribute('class','logo-game'); }
+    slot.appendChild(clone);
+  });
+}
+installLogos();
 const LADDERS = {4:25, 13:46, 27:56, 42:63, 50:69, 62:81, 74:94};
 const SNAKES = {99:41, 95:56, 87:49, 66:45, 54:31, 43:18, 40:3};
 const QUIZ = [
@@ -151,10 +191,10 @@ let rigWinner=-1, rigMode='off', forcedDice=null;
 let logoClicks=0, logoTimer=null;
 function openAdmin(force=false){ const panel=document.getElementById('adminPanel'); if(force){ panel.classList.add('show'); return; } panel.classList.toggle('show'); }
 function closeAdmin(){ document.getElementById('adminPanel').classList.remove('show'); }
-document.getElementById('logoClick').addEventListener('click',()=>{ logoClicks++; clearTimeout(logoTimer); logoTimer=setTimeout(()=>{ logoClicks=0; },1500); if(logoClicks>=5){ logoClicks=0; openAdmin(); alert('🔐 Panel Guru ACAK SAJA terbuka!'); } });
+document.getElementById('logoClick').addEventListener('click',()=>{ logoClicks++; clearTimeout(logoTimer); logoTimer=setTimeout(()=>{ logoClicks=0; },1500); if(logoClicks>=5){ logoClicks=0; openAdmin(); alert('🔐 Panel Ular Tangga terbuka!'); } });
 document.getElementById('rigWinner').addEventListener('change',e=>{ rigWinner=parseInt(e.target.value); updateAdminStatus(); });
 document.getElementById('rigMode').addEventListener('change',e=>{ rigMode=e.target.value; updateAdminStatus(); });
-function updateAdminStatus(){ const el=document.getElementById('adminStatus'); const rigInfo=document.getElementById('rigInfo'); if(rigWinner===-1 || rigMode==='off'){ el.innerHTML='Status: Fair — tidak ada aturan.'; if(rigInfo) rigInfo.textContent=''; return; } const name=players[rigWinner]?.name || ('Pemain '+(rigWinner+1)); el.innerHTML=`Status: <b style="color:#FFC107">AKTIF</b><br>Pemenang: <b>${name}</b><br>Mode: <b>${rigMode.toUpperCase()}</b>`; if(rigInfo) rigInfo.textContent='🤫 Mode Guru Aktif — ACAK SAJA sudah diatur'; }
+function updateAdminStatus(){ const el=document.getElementById('adminStatus'); const rigInfo=document.getElementById('rigInfo'); if(rigWinner===-1 || rigMode==='off'){ el.innerHTML='Status: Fair — tidak ada aturan.'; if(rigInfo) rigInfo.textContent=''; return; } const name=players[rigWinner]?.name || ('Pemain '+(rigWinner+1)); el.innerHTML=`Status: <b style="color:#FFC107">AKTIF</b><br>Pemenang: <b>${name}</b><br>Mode: <b>${rigMode.toUpperCase()}</b>`; if(rigInfo) rigInfo.textContent='🤫 Mode Atur Ular Tangga Aktif'; }
 function forceDice(n){ forcedDice=n; document.getElementById('diceText').textContent=`🤫 Dadu berikutnya dipaksa jadi ${n}`; updateAdminStatus(); alert(`Dadu berikutnya dipaksa jadi ${n}!`); }
 function teleportWinner(){ if(!gameStarted){ alert('Mulai game dulu!'); return; } if(rigWinner===-1){ alert('Pilih pemenangnya dulu!'); return; } players[rigWinner].pos=95; placeTokens(); renderPlayers(); addLog(`🤫 <b>${players[rigWinner].name}</b> diteleport ke 95`); alert(`${players[rigWinner].name} sudah di 95!`); }
 function teleportLoser(){ if(!gameStarted){ alert('Mulai game dulu!'); return; } players.forEach((p,i)=>{ if(i!==rigWinner){ p.pos=3; } }); placeTokens(); renderPlayers(); alert('Lawan dijatuhkan ke 3!'); }
@@ -207,15 +247,15 @@ function startGame(){
   currentTurn=0; round=1; gameStarted=true;
   document.getElementById('gameArea').style.display='grid';
   buildBoard(); placeTokens(); renderPlayers();
-  document.getElementById('gameLog').innerHTML='<div class="log-item">🎮 ACAK SAJA dimulai! 🍀</div>';
+  document.getElementById('gameLog').innerHTML='<div class="log-item">🎲 Permainan Ular Tangga dimulai! 🍀</div>';
   addLog(`<b>${players[0].name}</b> mulai duluan!`);
   setTimeout(placeTokens,100);
 }
 function resetGame(){
-  if(!gameStarted) return; if(!confirm('Ulang dari awal?')) return;
+  if(!gameStarted) return; if(!confirm('Ulang permainan dari awal?')) return;
   players.forEach(p=>{ p.pos=1; p.ladders=0; p.snakes=0; p.rolls=0; }); currentTurn=0; round=1; document.getElementById('quizBox').classList.add('hidden');
   buildBoard(); placeTokens(); renderPlayers();
-  document.getElementById('gameLog').innerHTML='<div class="log-item">🔄 Game diulang!</div>';
+  document.getElementById('gameLog').innerHTML='<div class="log-item">🔄 Permainan diulang!</div>';
   document.getElementById('dice').innerHTML='<span>🎲</span>'; document.getElementById('diceText').textContent='Klik Kocok Dadu!'; document.getElementById('rollBtn').disabled=false;
 }
 async function rollDice(){
@@ -250,7 +290,7 @@ function askQuiz(p, snakeDest){
     const optsEl=box.querySelector('#quizOpts');
     q.opts.forEach((opt,i)=>{
       const b=document.createElement('button'); b.className='quiz-opt'; b.textContent=`${'ABCD'[i]}. ${opt}`;
-      b.onclick=()=>{ if(i===q.a){ addLog(`✅ <b>${p.name}</b> jawab benar! Selamat dari ular!`); box.innerHTML=`<h4>✅ Benar! Selamat!</h4>`; } else { p.snakes++; p.pos=snakeDest; placeTokens(); addLog(`❌ <b>${p.name}</b> salah! Turun ke ${snakeDest}`); box.innerHTML=`<h4>❌ Salah! Jawaban: ${q.opts[q.a]}</h4>`; } setTimeout(()=>{ box.classList.add('hidden'); if(p.pos===100) winGame(p); else nextTurn(diceValue===6); resolve(); },1200); };
+      b.onclick=()=>{ if(i===q.a){ addLog(`✅ <b>${p.name}</b> jawab benar!`); box.innerHTML=`<h4>✅ Benar!</h4>`; } else { p.snakes++; p.pos=snakeDest; placeTokens(); addLog(`❌ <b>${p.name}</b> salah! Turun ke ${snakeDest}`); box.innerHTML=`<h4>❌ Salah! Jawaban: ${q.opts[q.a]}</h4>`; } setTimeout(()=>{ box.classList.add('hidden'); if(p.pos===100) winGame(p); else nextTurn(diceValue===6); resolve(); },1200); };
       optsEl.appendChild(b);
     });
   });
@@ -258,11 +298,11 @@ function askQuiz(p, snakeDest){
 function nextTurn(stay){ if(!stay){ currentTurn=(currentTurn+1)%players.length; if(currentTurn===0) round++; } isMoving=false; document.getElementById('rollBtn').disabled=false; renderPlayers(); placeTokens(); document.getElementById('diceText').textContent=`Giliran ${players[currentTurn].name}. Klik Kocok Dadu!`; }
 function winGame(p){
   isMoving=false; document.getElementById('rollBtn').disabled=true;
-  document.getElementById('winTitle').textContent=`${p.name} Menang di ACAK SAJA! 🎉`;
-  document.getElementById('winDesc').textContent=`Selamat ${p.name}! Sampai di 100 duluan di putaran ${round}!`;
-  document.getElementById('winStats').innerHTML=`🏆 Pemenang ACAK SAJA: <b>${p.name}</b> • 🎲 Kocok: ${p.rolls}x • 🪜 Tangga: ${p.ladders}x • 🐍 Ular: ${p.snakes}x`;
+  document.getElementById('winTitle').textContent=`${p.name} Menang di Ular Tangga! 🎉`;
+  document.getElementById('winDesc').textContent=`Selamat ${p.name}! Kamu menang permainan Ular Tangga, sampai di 100 duluan di putaran ${round}!`;
+  document.getElementById('winStats').innerHTML=`🏆 Pemenang Ular Tangga: <b>${p.name}</b> • 🎲 Kocok: ${p.rolls}x • 🪜 Tangga: ${p.ladders}x • 🐍 Ular: ${p.snakes}x`;
   document.getElementById('winModal').classList.add('show'); showConfetti();
-  addLog(`🏆 <b>${p.name}</b> MENANG di ACAK SAJA!`);
+  addLog(`🏆 <b>${p.name}</b> MENANG di Ular Tangga!`);
 }
 function showConfetti(){ const c=document.getElementById('confetti'); c.style.display='block'; c.innerHTML=''; for(let i=0;i<80;i++){ const s=document.createElement('div'); s.style.cssText=`position:absolute;left:${Math.random()*100}%;top:-10px;width:10px;height:10px;background:${['#0A2A5E','#E11D2F','#FFC107','#10B981'][i%4]};border-radius:${i%2?'50%':'2px'};animation:fall ${1.5+Math.random()}s linear forwards`; c.appendChild(s); } const st=document.createElement('style'); st.textContent='@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}'; document.head.appendChild(st); setTimeout(()=>{ c.style.display='none'; },3000); }
 window.addEventListener('resize', ()=>{ if(gameStarted) placeTokens(); });
