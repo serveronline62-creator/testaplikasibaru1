@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULAR TANGGA — Permainan Ular Tangga</title>
+<title>ULAR TANGGA — Ular Persis Gambar</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -16,11 +16,11 @@ button{font-family:inherit}.hidden{display:none!important}
 .topbar-in{max-width:1080px;margin:0 auto;padding:0 16px;height:68px;display:flex;align-items:center;justify-content:space-between}
 .school{display:flex;gap:12px;align-items:center;cursor:pointer;user-select:none}
 .school b{font-family:'Fraunces',serif;font-size:24px;letter-spacing:-.5px;line-height:1}.school b span{color:#FFC107}
-.school small{display:block;font-size:10px;letter-spacing:1.4px;color:#B9C6E8;font-weight:700;margin-top:2px}
+.school small{display:block;font-size:10px;letter-spacing:1.2px;color:#B9C6E8;font-weight:700;margin-top:2px}
 .btn-top{background:#fff;color:#0A2A5E;border:none;padding:8px 14px;border-radius:99px;font-weight:800;font-size:12px;cursor:pointer}.btn-top.red{background:#E11D2F;color:#fff}
 .wrap{max-width:1080px;margin:0 auto;padding:16px 14px 50px}
 .hero{background:#fff;border:3px solid #0A2A5E;border-radius:18px;padding:18px;display:flex;gap:16px;justify-content:space-between;flex-wrap:wrap;align-items:center;box-shadow:6px 6px 0 #0A2A5E}
-.hero h1{font-family:'Fraunces',serif;font-size:32px;line-height:1.05}.hero h1 em{color:#E11D2F;font-style:italic}
+.hero h1{font-family:'Fraunces',serif;font-size:30px;line-height:1.05}.hero h1 em{color:#E11D2F;font-style:italic}
 .hero p{font-size:13px;color:#5A6A85;margin-top:6px;line-height:1.5;max-width:560px}
 .btn{border:none;cursor:pointer;border-radius:99px;padding:12px 18px;font-weight:800;font-size:13px;display:inline-flex;gap:8px;align-items:center}
 .btn-navy{background:#0A2A5E;color:#fff}.btn-red{background:#E11D2F;color:#fff}.btn-gold{background:#FFC107;color:#1A1200}.btn-ghost{background:#fff;border:2px solid #D8E0EC;color:#0A2A5E}
@@ -80,26 +80,22 @@ button{font-family:inherit}.hidden{display:none!important}
 </template>
 
 <div class="topbar"><div class="topbar-in">
-  <div class="school" id="logoClick">
-    <span class="logo-slot" data-logo="header"></span>
-    <!-- NAMA GAME -->
-    <div><b>ULAR <span>TANGGA</span></b><small>Permainan Ular Tangga • Persis Gambar</small></div>
-  </div>
+  <div class="school" id="logoClick"><span class="logo-slot" data-logo="header"></span><div><b>ULAR <span>TANGGA</span></b><small>Permainan Ular Tangga • Ular Persis Gambar</small></div></div>
   <div style="display:flex;gap:8px"><button class="btn-top" onclick="location.reload()">🔄 Ulang</button><button class="btn-top red" onclick="document.getElementById('rulesModal').classList.add('show')">📖 Cara Main</button></div>
 </div></div>
 
 <div class="wrap">
   <div class="hero">
     <div>
-      <span style="display:inline-flex;gap:6px;align-items:center;background:#FFF9DB;border:1px solid #FDE68A;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:800;color:#92400E">🐍🪜 Permainan ULAR TANGGA</span>
-      <h1 style="margin-top:10px">ULAR TANGGA,<br>Siapa Cepat <em>Sampai 100!</em> 🏆</h1>
-      <p>Ini permainan <b>Ular Tangga</b>. Kocok dadu, naik tangga, hindari ular. Siapa yang beruntung dia yang menang! Semua nama sekarang sudah jadi nama permainannya.</p>
+      <span style="display:inline-flex;gap:6px;align-items:center;background:#FFF9DB;border:1px solid #FDE68A;padding:6px 12px;border-radius:99px;font-size:12px;font-weight:800;color:#92400E">🐍 Ular Persis Gambar Shutterstock • 🪜 Tangga Putih</span>
+      <h1 style="margin-top:10px">ULAR TANGGA,<br>Ularnya <em>Persis Gambar!</em> 🐍</h1>
+      <p>Ularnya sekarang bukan garis doang — tapi ular beneran yang melingkar, ada bintik, ada mata, ada lidah, warnanya persis kayak gambar yang lu kirim. Coba kena ular pink di 32, langsung jatuh ke 6!</p>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-navy" onclick="document.getElementById('setup').scrollIntoView({behavior:'smooth'})">▶️ Main Ular Tangga</button><button class="btn btn-gold" onclick="toggleSound()">🔊 Suara: <span id="soundLabel">ON</span></button><button class="btn btn-ghost" onclick="openAdmin(true)">🔐 Panel Atur</button></div>
     </div>
-    <div style="background:#FFF9DB;border:2px solid #FDE68A;border-radius:16px;padding:16px;width:250px;text-align:center">
+    <div style="background:#FFF9DB;border:2px solid #FDE68A;border-radius:16px;padding:14px;width:260px;text-align:center">
       <span class="logo-slot" data-logo="hero" style="display:block;margin:0 auto"></span>
-      <b style="color:#0A2A5E;font-family:'Fraunces',serif;font-size:20px;display:block;margin-top:8px">ULAR TANGGA</b>
-      <p style="font-size:12px;color:#5A6A85;margin-top:4px;line-height:1.5">Permainan Ular Tangga<br>7 Tangga • 7 Ular • Harus PAS di 100!</p>
+      <b style="color:#0A2A5E;font-family:'Fraunces',serif;font-size:18px;display:block;margin-top:8px">ULAR TANGGA</b>
+      <p style="font-size:12px;color:#5A6A85;margin-top:4px;line-height:1.6">🐍 Hijau 98→68 • Hijau 92→73<br>🩷 Pink 32→6 • 🟠 Oranye 52→31<br>🟢 Hijau 51→11 • 🟡 Kuning 99→41</p>
     </div>
   </div>
 
@@ -122,7 +118,7 @@ button{font-family:inherit}.hidden{display:none!important}
   </div>
 
   <div class="game" id="gameArea" style="display:none">
-    <div><div class="board-wrap"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px"><div style="display:flex;gap:10px;align-items:center"><span class="logo-slot" data-logo="board"></span><h3 style="color:#0A2A5E">ULAR TANGGA — Papan Permainan</h3></div><span id="boardInfo" style="font-size:12px;color:#5A6A85;font-weight:700">Giliran: Andi</span></div><div class="board" id="board"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🟩 Tangga</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🟥 Ular</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">⭐ 100 = Menang</span></div><div id="quizBox" class="quiz-box hidden"></div></div></div>
+    <div><div class="board-wrap"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px"><div style="display:flex;gap:10px;align-items:center"><span class="logo-slot" data-logo="board"></span><h3 style="color:#0A2A5E">ULAR TANGGA — Papan Persis Gambar</h3></div><span id="boardInfo" style="font-size:12px;color:#5A6A85;font-weight:700">Giliran: Andi</span></div><div class="board" id="board"></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🐍 Ular Persis Gambar</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">🪜 Tangga Putih</span><span style="font-size:11px;font-weight:700;padding:6px 10px;border-radius:99px;background:#F6F8FB;border:1px solid #D8E0EC">⭐ 100 = Menang</span></div><div id="quizBox" class="quiz-box hidden"></div></div></div>
     <div style="display:flex;flex-direction:column;gap:14px">
       <div class="panel" style="text-align:center"><h3 style="color:#0A2A5E">🎲 ULAR TANGGA — Giliran Bermain</h3><div id="turnBadge" class="turn-badge" style="background:#E11D2F;margin-top:10px">🔴 Andi — Giliran Kamu!</div><div class="dice" id="dice"><span>🎲</span></div><p id="diceText" style="font-size:13px;color:#5A6A85">Klik Kocok Dadu!</p><p id="rigInfo" style="font-size:11px;color:#E11D2F;font-weight:800;margin-top:4px"></p><button class="btn btn-red" id="rollBtn" style="width:100%;justify-content:center;margin-top:10px;padding:14px;font-size:15px" onclick="rollDice()">🎲 KOCOK DADU!</button><button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="resetGame()">🔄 Ulang Permainan</button></div>
       <div class="panel"><h3 style="color:#0A2A5E">👥 Pemain Ular Tangga</h3><div id="playersList" style="margin-top:10px"></div></div>
@@ -130,29 +126,17 @@ button{font-family:inherit}.hidden{display:none!important}
     </div>
   </div>
 
-  <div class="footer">
-    <span class="logo-slot" data-logo="footer"></span>
-    <div><b>ULAR <span>TANGGA</span></b><p>Permainan Ular Tangga — Siapa cepat sampai 100 dia menang!<br>© 2026 ULAR TANGGA • Papan Persis Gambar • 7 Tangga • 7 Ular</p></div>
-    <span style="margin-left:auto;font-size:12px;color:#B9C6E8;font-weight:700">🐍🪜 ULAR TANGGA</span>
-  </div>
+  <div class="footer"><span class="logo-slot" data-logo="footer"></span><div><b>ULAR <span>TANGGA</span></b><p>Permainan Ular Tangga — Ular persis gambar Shutterstock.<br>© 2026 ULAR TANGGA • 6 Ular • 7 Tangga</p></div><span style="margin-left:auto;font-size:12px;color:#B9C6E8;font-weight:700">🐍🪜 ULAR TANGGA</span></div>
 </div>
 
 <div class="admin-panel" id="adminPanel">
   <div style="display:flex;gap:10px;align-items:center"><span class="logo-slot" data-logo="admin"></span><h3>🔐 PANEL ULAR TANGGA <span>RAHASIA</span></h3></div>
-  <p style="font-size:11px;color:#B9C6E8;margin-top:6px">Atur siapa yang menang di permainan Ular Tangga.</p>
-  <label>🏆 Siapa yang HARUS Menang?</label>
-  <select id="rigWinner"><option value="-1">— Acak / Fair —</option></select>
-  <label>🎯 Mode Atur</label>
-  <select id="rigMode"><option value="off">OFF — Main Fair</option><option value="soft">SOFT — Dibantu pelan-pelan</option><option value="hard">HARD — PASTI menang cepat</option><option value="lose">REVERSE — Yang dipilih PASTI kalah</option></select>
-  <label>🎲 Dadu Berikutnya (Paksa)</label>
-  <div class="admin-row"><button class="admin-btn white" onclick="forceDice(1)">1</button><button class="admin-btn white" onclick="forceDice(2)">2</button><button class="admin-btn white" onclick="forceDice(3)">3</button><button class="admin-btn white" onclick="forceDice(4)">4</button><button class="admin-btn white" onclick="forceDice(5)">5</button><button class="admin-btn gold" onclick="forceDice(6)">6</button></div>
-  <label>⚡ Aksi Cepat</label>
-  <button class="admin-btn gold" onclick="teleportWinner()">📍 Teleport Pemenang ke 95</button>
-  <button class="admin-btn white" onclick="teleportLoser()">🐍 Jatuhkan Lawan ke 3</button>
-  <button class="admin-btn white" onclick="swapPositions()">🔄 Tukar Posisi</button>
-  <button class="admin-btn red" onclick="resetRig()">❌ Matikan Aturan (Fair Lagi)</button>
-  <div class="admin-status" id="adminStatus">Status: Fair</div>
-  <button class="admin-btn white" onclick="closeAdmin()">🙈 Sembunyikan Panel</button>
+  <p style="font-size:11px;color:#B9C6E8;margin-top:6px">Atur siapa yang menang.</p>
+  <label>🏆 Siapa yang HARUS Menang?</label><select id="rigWinner"><option value="-1">— Acak / Fair —</option></select>
+  <label>🎯 Mode Atur</label><select id="rigMode"><option value="off">OFF — Main Fair</option><option value="soft">SOFT — Dibantu pelan-pelan</option><option value="hard">HARD — PASTI menang cepat</option><option value="lose">REVERSE — Yang dipilih PASTI kalah</option></select>
+  <label>🎲 Dadu Berikutnya (Paksa)</label><div class="admin-row"><button class="admin-btn white" onclick="forceDice(1)">1</button><button class="admin-btn white" onclick="forceDice(2)">2</button><button class="admin-btn white" onclick="forceDice(3)">3</button><button class="admin-btn white" onclick="forceDice(4)">4</button><button class="admin-btn white" onclick="forceDice(5)">5</button><button class="admin-btn gold" onclick="forceDice(6)">6</button></div>
+  <label>⚡ Aksi Cepat</label><button class="admin-btn gold" onclick="teleportWinner()">📍 Teleport Pemenang ke 95</button><button class="admin-btn white" onclick="teleportLoser()">🐍 Jatuhkan Lawan ke 3</button><button class="admin-btn white" onclick="swapPositions()">🔄 Tukar Posisi</button><button class="admin-btn red" onclick="resetRig()">❌ Matikan Aturan</button>
+  <div class="admin-status" id="adminStatus">Status: Fair</div><button class="admin-btn white" onclick="closeAdmin()">🙈 Sembunyikan Panel</button>
 </div>
 
 <div class="modal" id="winModal"><div class="modal-box"><span class="logo-slot" data-logo="win" style="display:block;margin:0 auto"></span><h2 style="font-family:'Fraunces',serif;font-size:28px;color:#0A2A5E;margin-top:10px" id="winTitle">Andi Menang!</h2><p style="color:#5A6A85;font-size:13px;margin:8px 0" id="winDesc"></p><div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:14px;padding:12px;font-size:13px;color:#92400E;font-weight:700" id="winStats"></div><div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn btn-navy" onclick="resetGame()">🔄 Main Lagi — Ular Tangga!</button><button class="btn btn-ghost" onclick="document.getElementById('winModal').classList.remove('show')">✕ Tutup</button></div></div></div>
@@ -176,8 +160,21 @@ function installLogos(){
   });
 }
 installLogos();
+// ===== ULAR & TANGGA PERSIS GAMBAR =====
+// Tangga persis gambar: 4,13,27,42,50,62,74
 const LADDERS = {4:25, 13:46, 27:56, 42:63, 50:69, 62:81, 74:94};
-const SNAKES = {99:41, 95:56, 87:49, 66:45, 54:31, 43:18, 40:3};
+// Ular persis gambar Shutterstock yang lu kirim:
+// 98 hijau, 92 hijau muda, 32 pink panjang, 52 oranye, 51 hijau, 99 kuning
+const SNAKES = {98:68, 92:73, 32:6, 52:31, 51:11, 99:41};
+// Detail ular persis gambar: warna badan, warna bintik, bentuk melingkar
+const SNAKE_STYLE = {
+  98: {body:'#22C55E', belly:'#BBF7D0', spot:'#FDE047', curve:120},
+  92: {body:'#84CC16', belly:'#ECFCCB', spot:'#22C55E', curve:-120},
+  32: {body:'#F472B6', belly:'#FBCFE8', spot:'#1F2937', curve:140},
+  52: {body:'#FB923C', belly:'#FED7AA', spot:'#7C2D12', curve:-140},
+  51: {body:'#16A34A', belly:'#DCFCE7', spot:'#FACC15', curve:100},
+  99: {body:'#EAB308', belly:'#FEF08A', spot:'#15803D', curve:-100},
+};
 const QUIZ = [
   {q:"Hasil dari 3² + 4² = ...", opts:["12","25","16","20"], a:1},
   {q:"Ibu kota Indonesia adalah ...", opts:["Bandung","Surabaya","Jakarta","Medan"], a:2},
@@ -221,12 +218,69 @@ function setMode(m){ mode=m; document.getElementById('modeSeru').classList.toggl
 function toggleSound(){ soundOn=!soundOn; document.getElementById('soundLabel').textContent=soundOn?'ON':'OFF'; }
 function playBeep(f=600,d=120){ if(!soundOn) return; try{ const ctx=new (window.AudioContext||window.webkitAudioContext)(); const o=ctx.createOscillator(); const g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=f; g.gain.value=0.12; o.start(); o.stop(ctx.currentTime+d/1000);}catch(e){} }
 function cellCenter(num){ const row=Math.floor((num-1)/10); let col=(num-1)%10; if(row%2===1) col=9-col; return {x:(col+0.5)*100, y:(9-row+0.5)*100}; }
+
+// ===== GAMBAR ULAR PERSIS GAMBAR - SVG MELINGKAR + BINTIK + MATA + LIDAH =====
+function drawSnake(from, to, style){
+  const a=cellCenter(from), b=cellCenter(to);
+  const curve = style.curve;
+  // Jalur ular melingkar kayak di gambar: S-shape
+  const midX = (a.x+b.x)/2 + curve;
+  const midY = (a.y+b.y)/2;
+  const midX2 = (a.x+b.x)/2 - curve*0.6;
+  const midY2 = (a.y+b.y)/2 + (curve>0?60:-60);
+  const path = `M ${a.x} ${a.y} C ${midX} ${midY} ${midX2} ${midY2} ${b.x} ${b.y} C ${b.x+20} ${b.y+20} ${b.x-20} ${b.y+10} ${b.x} ${b.y}`;
+  // Bintik-bintik di badan ular persis gambar
+  let spots='';
+  for(let i=1;i<=8;i++){
+    const t=i/9;
+    const sx = a.x + (b.x-a.x)*t + Math.sin(t*Math.PI)*curve*0.4;
+    const sy = a.y + (b.y-a.y)*t + Math.cos(t*Math.PI*2)*20;
+    spots += `<circle cx="${sx}" cy="${sy}" r="6" fill="${style.spot}" opacity="0.9"/><circle cx="${sx+14}" cy="${sy+12}" r="4" fill="${style.spot}" opacity="0.7"/>`;
+  }
+  // Kepala ular besar + mata + lidah persis gambar
+  const headAngle = Math.atan2(b.y-a.y, b.x-a.x);
+  const tongueX = a.x + Math.cos(headAngle)*-22;
+  const tongueY = a.y + Math.sin(headAngle)*-22;
+  return `<g>
+    <path d="M ${a.x} ${a.y} Q ${midX} ${midY} ${midX2} ${midY2} T ${b.x} ${b.y}" fill="none" stroke="${style.body}" stroke-width="22" stroke-linecap="round" opacity="0.95"/>
+    <path d="M ${a.x} ${a.y} Q ${midX} ${midY} ${midX2} ${midY2} T ${b.x} ${b.y}" fill="none" stroke="${style.belly}" stroke-width="10" stroke-linecap="round" opacity="0.6" stroke-dasharray="12 8"/>
+    ${spots}
+    <path d="M ${a.x} ${a.y} Q ${midX} ${midY} ${midX2} ${midY2} T ${b.x} ${b.y}" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 10" opacity="0.5"/>
+    <!-- Ekor runcing -->
+    <path d="M ${b.x} ${b.y} L ${b.x+18} ${b.y+8} L ${b.x+6} ${b.y-12} Z" fill="${style.body}" stroke="#fff" stroke-width="1"/>
+    <!-- Kepala -->
+    <ellipse cx="${a.x}" cy="${a.y}" rx="22" ry="18" fill="${style.body}" stroke="#fff" stroke-width="2.5"/>
+    <ellipse cx="${a.x-6}" cy="${a.y-4}" rx="6" ry="7" fill="#fff"/>
+    <ellipse cx="${a.x+6}" cy="${a.y-4}" rx="6" ry="7" fill="#fff"/>
+    <circle cx="${a.x-6}" cy="${a.y-4}" r="3" fill="#000"/>
+    <circle cx="${a.x+6}" cy="${a.y-4}" r="3" fill="#000"/>
+    <circle cx="${a.x-5}" cy="${a.y-5}" r="1" fill="#fff"/>
+    <circle cx="${a.x+7}" cy="${a.y-5}" r="1" fill="#fff"/>
+    <!-- Lidah merah bercabang persis gambar -->
+    <path d="M ${tongueX} ${tongueY} L ${tongueX-8} ${tongueY-6} M ${tongueX} ${tongueY} L ${tongueX-8} ${tongueY+6} M ${tongueX} ${tongueY} L ${tongueX+10} ${tongueY}" stroke="#E11D2F" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <!-- Sisik -->
+    <circle cx="${a.x-10}" cy="${a.y+8}" r="3" fill="${style.spot}" opacity="0.8"/>
+    <circle cx="${a.x+10}" cy="${a.y+8}" r="3" fill="${style.spot}" opacity="0.8"/>
+  </g>`;
+}
+
 function buildBoard(){
   const board=document.getElementById('board'); board.innerHTML='';
   for(let r=9;r>=0;r--){ let nums=[]; for(let c=0;c<10;c++) nums.push(r*10+c+1); if(r%2===1) nums.reverse(); nums.forEach(num=>{ const cell=document.createElement('div'); cell.className='cell '+colorFor(num); cell.id='cell-'+num; cell.textContent=num; board.appendChild(cell); }); }
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','0 0 1000 1000'); svg.setAttribute('class','board-svg');
-  svg.innerHTML = `${Object.entries(LADDERS).map(([from,to])=>{ const a=cellCenter(parseInt(from)), b=cellCenter(parseInt(to)); const dx=b.x-a.x, dy=b.y-a.y; const len=Math.hypot(dx,dy); const ux=dx/len, uy=dy/len; const px=-uy, py=ux; const off=18; const x1=a.x+px*off, y1=a.y+py*off, x2=b.x+px*off, y2=b.y+py*off, x3=a.x-px*off, y3=a.y-py*off, x4=b.x-px*off, y4=b.y-py*off; let rungs=''; for(let i=1;i<6;i++){ const t=i/6; rungs+=`<line x1="${x1+(x2-x1)*t}" y1="${y1+(y2-y1)*t}" x2="${x3+(x4-x3)*t}" y2="${y3+(y4-y3)*t}" stroke="#fff" stroke-width="7" stroke-linecap="round"/>`; } return `<g><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="8" stroke-linecap="round"/><line x1="${x3}" y1="${y3}" x2="${x4}" y2="${y4}" stroke="#fff" stroke-width="8" stroke-linecap="round"/>${rungs}</g>`; }).join('')}
-    ${Object.entries(SNAKES).map(([from,to],idx)=>{ const a=cellCenter(parseInt(from)), b=cellCenter(parseInt(to)); const colors=['#22C55E','#A855F7','#F97316','#EC4899','#14B8A6','#84CC16','#EF4444']; const col=colors[idx%colors.length]; const midX=(a.x+b.x)/2 + (idx%2===0?120:-120); const midY=(a.y+b.y)/2 + (idx%3===0?-80:80); const midX2=(a.x+b.x)/2 + (idx%2===0?-80:80); const midY2=(a.y+b.y)/2 + (idx%2===0?100:-60); return `<g><path d="M ${a.x} ${a.y} Q ${midX} ${midY} ${midX2} ${midY2} T ${b.x} ${b.y}" fill="none" stroke="${col}" stroke-width="18" stroke-linecap="round"/><circle cx="${a.x}" cy="${a.y}" r="16" fill="${col}" stroke="#fff" stroke-width="3"/><text x="${a.x}" y="${a.y+2}" font-size="10" text-anchor="middle">🐍</text></g>`; }).join('')}`;
+  // TANGGA PUTIH PERSIS GAMBAR
+  let laddersSVG = Object.entries(LADDERS).map(([from,to])=>{
+    const a=cellCenter(parseInt(from)), b=cellCenter(parseInt(to)); const dx=b.x-a.x, dy=b.y-a.y; const len=Math.hypot(dx,dy); const ux=dx/len, uy=dy/len; const px=-uy, py=ux; const off=20;
+    const x1=a.x+px*off, y1=a.y+py*off, x2=b.x+px*off, y2=b.y+py*off, x3=a.x-px*off, y3=a.y-py*off, x4=b.x-px*off, y4=b.y-py*off;
+    let rungs=''; for(let i=1;i<7;i++){ const t=i/7; rungs+=`<line x1="${x1+(x2-x1)*t}" y1="${y1+(y2-y1)*t}" x2="${x3+(x4-x3)*t}" y2="${y3+(y4-y3)*t}" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke="#E5E7EB"/>`; }
+    return `<g><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#fff" stroke-width="9" stroke-linecap="round"/><line x1="${x3}" y1="${y3}" x2="${x4}" y2="${y4}" stroke="#fff" stroke-width="9" stroke-linecap="round"/>${rungs}</g>`;
+  }).join('');
+  // ULAR PERSIS GAMBAR
+  let snakesSVG = Object.entries(SNAKES).map(([from,to])=>{
+    const style = SNAKE_STYLE[from];
+    return drawSnake(parseInt(from), parseInt(to), style);
+  }).join('');
+  svg.innerHTML = laddersSVG + snakesSVG;
   board.appendChild(svg);
 }
 function getCellPos(num){ const cell=document.getElementById('cell-'+num); if(!cell) return {x:0,y:0}; const board=document.getElementById('board').getBoundingClientRect(); const r=cell.getBoundingClientRect(); return {x:r.left-board.left+r.width/2, y:r.top-board.top+r.height/2}; }
