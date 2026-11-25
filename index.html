@@ -3,652 +3,324 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<meta name="theme-color" content="#000000" />
-<title>Split Screen Recorder - FIX BG Mulus</title>
+<title>Split Recorder - SUPER HEMAT ANTI LEG</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#000;--panel:#0a0a0c;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.06);--surface-hover:rgba(255,255,255,.12);--text:#fff;--muted:rgba(255,255,255,.55);--accent:#6366f1;--accent-2:#8b5cf6;--green:#10b981;--red:#ef4444;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
-.app{height:100vh;height:100dvh;display:flex;align-items:center;justify-content:center}
+:root{--panel:#0a0a0c;--border:rgba(255,255,255,.08);--surface:rgba(255,255,255,.06);--accent:#6366f1;--accent-2:#8b5cf6;--green:#10b981}
+html,body{height:100%;background:#000;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden}
+.app{height:100dvh;display:flex;align-items:center;justify-content:center}
 .phone-frame{position:relative;background:#000;display:flex;flex-direction:column;overflow:hidden}
 .phone-frame.mode-9-16{width:min(100vw,calc(100dvh*9/16));height:min(100dvh,calc(100vw*16/9))}
 .phone-frame.mode-16-9{width:min(100vw,calc(100dvh*16/9));height:min(100dvh,calc(100vw*9/16))}
-.phone-frame.mode-asli{width:100vw;height:100dvh}
-.video-area{flex:1 1 0;min-height:0;position:relative;display:flex;flex-direction:column;overflow:hidden}
-.screen{position:relative;flex:1 1 0;min-height:0;overflow:hidden;background:#0d0d0f;display:flex;align-items:center;justify-content:center}
-.screen-live{flex:.8 1 0}.screen-upload{flex:1.2 1 0}
-.screen video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;background:#000;display:block;touch-action:none;cursor:grab}
-.live-canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:none;touch-action:none;pointer-events:none;z-index:6}
-.pan-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);padding:6px 11px;border-radius:999px;font-size:10px;font-weight:700;color:#fff;background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.15);z-index:7;pointer-events:none;opacity:0;transition:.3s;white-space:nowrap}
-.pan-hint.show{opacity:1}
-.screen-tools{position:absolute;right:10px;bottom:12px;z-index:9;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none}
-.screen-tools>*{pointer-events:auto}
-.tool-toggle{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.55);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.tool-toggle svg{width:16px;height:16px}
-.tool-toggle.open{background:rgba(99,102,241,.85)}
-.tool-panel{display:none;flex-direction:column;gap:8px;padding:10px;border-radius:14px;background:rgba(12,12,16,.92);border:1px solid rgba(255,255,255,.12)}
-.tool-panel.open{display:flex}
-.pos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:96px}
-.pos-grid button{width:100%;aspect-ratio:1/1;border-radius:6px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);cursor:pointer;display:flex;align-items:center;justify-content:center}
-.pos-grid button::after{content:'';width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35)}
-.pos-grid button.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.6)}
-.pos-grid button.active::after{background:var(--accent);transform:scale(1.5)}
-.tool-row{display:flex;align-items:center;gap:5px}
-.tool-row button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.zoom-label{flex:1;text-align:center;font-size:10px;font-weight:800;color:rgba(255,255,255,.8)}
-.divider{flex:0 0 2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);z-index:20;position:relative;cursor:ns-resize;touch-action:none}
-.divider::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32)}
-.divider.vert{background:linear-gradient(180deg,transparent,rgba(255,255,255,.4),transparent);cursor:ew-resize}
-.split-pct{position:absolute;left:calc(50% + 22px);top:50%;transform:translateY(-50%);padding:4px 8px;border-radius:8px;background:rgba(99,102,241,.95);color:#fff;font-size:10px;font-weight:800;pointer-events:none;opacity:0;z-index:2;white-space:nowrap}
-.divider.dragging .split-pct{opacity:1}
-.badge{position:absolute;top:12px;left:12px;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.8px;color:#fff;z-index:10;display:inline-flex;align-items:center;gap:5px;border:1px solid rgba(255,255,255,.15);pointer-events:none}
-.badge.live{background:rgba(239,68,68,.85)}.badge.live .dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:pulseDot 1.5s infinite}
-.badge.upload{background:rgba(99,102,241,.85)}
-@keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.4}}
-.rec-badge{position:absolute;top:calc(12px + var(--safe-top));left:50%;transform:translateX(-50%) translateY(-10px);padding:7px 14px;border-radius:999px;background:rgba(239,68,68,.95);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;gap:7px;z-index:30;opacity:0;pointer-events:none;transition:.25s}
-.rec-badge.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.rec-badge .rec-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulseDot 1s infinite}
-.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:12px;text-align:center;padding:20px;pointer-events:none;z-index:5}
-.placeholder svg{width:40px;height:40px;opacity:.4;stroke:currentColor;fill:none;stroke-width:1.5}
+.video-area{flex:1;min-height:0;position:relative;display:flex;flex-direction:column;overflow:hidden}
+.screen{position:relative;flex:1;min-height:0;overflow:hidden;background:#0d0d0f;display:flex;align-items:center;justify-content:center}
+.screen-live{flex:.8}.screen-upload{flex:1.2}
+.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.live-canvas{position:absolute;inset:0;width:100%;height:100%;display:none;z-index:6;pointer-events:none}
+.badge{position:absolute;top:12px;left:12px;padding:5px 10px;border-radius:999px;font-size:10px;font-weight:800;z-index:10;pointer-events:none}
+.badge.live{background:rgba(239,68,68,.85)}.badge.upload{background:rgba(99,102,241,.85)}
+.placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.55);font-size:12px;text-align:center;z-index:5;pointer-events:none}
 .placeholder.hidden{opacity:0;visibility:hidden}
-.video-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.12);z-index:12;cursor:pointer}
-.video-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-.control-panel{flex:0 0 auto;background:var(--panel);border-top:1px solid var(--border);padding:12px 14px calc(12px + var(--safe-bottom));display:flex;flex-direction:column;gap:10px;z-index:25;overflow-y:auto;max-height:55vh}
+.divider{flex:0 0 2px;background:rgba(255,255,255,.4);z-index:20;cursor:ns-resize;touch-action:none;position:relative}
+.divider::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3)}
+.divider.vert{cursor:ew-resize}
+.rec-badge{position:absolute;top:12px;left:50%;transform:translateX(-50%);padding:7px 14px;border-radius:999px;background:rgba(239,68,68,.95);font-size:12px;font-weight:800;display:flex;gap:7px;z-index:30;opacity:0;pointer-events:none}
+.rec-badge.show{opacity:1}
+.control-panel{flex:0 0 auto;background:var(--panel);border-top:1px solid var(--border);padding:12px 14px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;z-index:25;overflow-y:auto;max-height:55vh}
 .ctrl-row{display:flex;align-items:center;justify-content:center;gap:8px}
-.circle-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
-.circle-btn svg{width:18px;height:18px}.circle-btn:active{transform:scale(.9)}.circle-btn:disabled{opacity:.3;pointer-events:none}
-.circle-btn.primary{width:52px;height:52px;background:linear-gradient(135deg,var(--accent),var(--accent-2));border-color:transparent}
-.circle-btn.primary svg{width:22px;height:22px}
-.pill{padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
-.pill svg{width:14px;height:14px}.pill:active{transform:scale(.95)}.pill:disabled{opacity:.35;pointer-events:none}
+.circle-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.circle-btn.primary{width:52px;height:52px;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.pill{padding:8px 12px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:#fff;font-size:11px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .pill.active{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.4);color:var(--green)}
 .pill.bg-active{background:rgba(139,92,246,.18);border-color:rgba(139,92,246,.5);color:#c4b5fd}
-.pill.icon-only{padding:8px;width:34px;justify-content:center}
-.split-row{gap:6px;padding:0 2px}.split-label{font-size:9px;font-weight:800;letter-spacing:1px;color:var(--muted);margin-right:2px}
-.split-btn{flex:1 1 0;padding:7px 2px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:10px;font-weight:800;cursor:pointer}
+.pill:disabled{opacity:.35;pointer-events:none}
+.split-btn{flex:1;padding:7px 2px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:#fff;font-size:10px;font-weight:800;cursor:pointer}
 .split-btn.active{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.55);color:#c7c9ff}
-.expand-row{gap:6px;padding:0 2px}
-.expand-btn{flex:1 1 0;padding:9px 4px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:10px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;position:relative}
-.expand-btn.open,.expand-btn.has-value{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.55);color:#c7c9ff}
-.expand-btn .expand-value{color:#c7c9ff}.expand-btn .expand-dot{position:absolute;top:4px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--green);display:none}
-.expand-btn.has-value .expand-dot{display:block}
-.expand-btn.swap-quick{flex:0 0 42px}.expand-btn.swap-quick.active{background:rgba(16,185,129,.2);border-color:rgba(16,185,129,.55);color:var(--green)}
-.swap-full-btn{padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%}
-.swap-full-btn.active{background:rgba(16,185,129,.18);border-color:rgba(16,185,129,.5);color:var(--green)}
+.expand-btn{flex:1;padding:9px 4px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:#fff;font-size:10px;font-weight:800;cursor:pointer}
+.expand-btn.open{background:rgba(99,102,241,.2);border-color:rgba(99,102,241,.55)}
 .expand-panel{display:none;padding-top:2px}.expand-panel.open{display:block}
-.ticker-row{gap:6px}.ticker-input{flex:1 1 0;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:11px;font-weight:600;outline:none;font-family:inherit}
-.ticker-input:focus{border-color:rgba(99,102,241,.6)}
-.ticker-btn{flex:0 0 auto;width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
-.ticker-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);overflow:hidden;z-index:15;pointer-events:none;display:none}
+.ticker-input{flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:#fff;font-size:11px;outline:none}
+.ticker-overlay{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);overflow:hidden;z-index:15;display:none;pointer-events:none}
 .ticker-overlay.show{display:block}.ticker-track{position:absolute;inset:0;overflow:hidden}
-.ticker-item{position:absolute;left:0;top:50%;white-space:nowrap;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);will-change:transform}
-.ticker-speed-range{flex:1 1 0;height:6px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,.12);border-radius:3px;outline:none;cursor:pointer}
-.ticker-speed-range::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));cursor:pointer}
-.ticker-speed-value{font-size:10px;font-weight:800;color:#c7c9ff;min-width:34px;text-align:center;padding:3px 6px;border-radius:6px;background:rgba(99,102,241,.18);border:1px solid rgba(99,102,241,.35)}
-.record-btn{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#ff3366,#e60045);color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 20px rgba(255,51,102,.35);margin-top:2px}
-.record-btn:active{transform:scale(.97)}.record-btn:disabled{opacity:.5;pointer-events:none}
-.record-btn .rec-indicator{width:14px;height:14px;border-radius:50%;background:#fff}
-.record-btn.recording{background:linear-gradient(135deg,#2a2a2e,#1a1a1e);animation:recPulse 1.5s infinite}
-.record-btn.recording .rec-indicator{border-radius:3px}
-@keyframes recPulse{0%,100%{box-shadow:0 4px 20px rgba(239,68,68,.3)}50%{box-shadow:0 4px 24px rgba(239,68,68,.7)}}
-input[type="file"]{display:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(20px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.ticker-item{position:absolute;left:0;top:50%;white-space:nowrap;font-weight:800;color:#fff;will-change:transform}
+.record-btn{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#ff3366,#e60045);color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.record-btn.recording{background:#1a1a1e}
+input[type=file]{display:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
 .modal.show{display:flex}
-.modal-card{width:100%;max-width:420px;background:#16161a;border-radius:24px;border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;max-height:100%}
-.modal-header{padding:18px 20px;font-size:16px;font-weight:700;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-header button{background:var(--surface);border:none;color:var(--muted);width:32px;height:32px;border-radius:50%;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.modal-card{width:100%;max-width:420px;background:#16161a;border-radius:24px;border:1px solid var(--border);overflow:hidden}
+.modal-header{padding:18px 20px;font-weight:700;border-bottom:1px solid var(--border);display:flex;justify-content:space-between}
+.modal-header button{background:var(--surface);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer}
 .modal-body{padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
-.modal-body video{width:100%;border-radius:14px;background:#000;max-height:55vh}
-.modal-info{font-size:12px;color:var(--muted);text-align:center}
-.modal-actions{display:flex;gap:8px;flex-direction:column}
-.modal-actions .modal-btn{padding:14px;border-radius:14px;border:none;font-size:14px;font-weight:700;color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.modal-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2))}
-.modal-btn.secondary{background:var(--surface);border:1px solid var(--border)}
+.modal-body video{width:100%;border-radius:14px;background:#000}
+.modal-actions{display:flex;flex-direction:column;gap:8px}
+.modal-btn{padding:14px;border-radius:14px;border:none;font-weight:700;color:#fff;cursor:pointer}
+.modal-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2))}.modal-btn.secondary{background:var(--surface);border:1px solid var(--border)}
 .bg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.bg-option{aspect-ratio:16/10;border-radius:12px;border:2px solid rgba(255,255,255,.12);background:#1a1a1e;color:#fff;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.bg-option.active{border-color:#a78bfa;box-shadow:0 0 0 3px rgba(139,92,246,.25)}
-.bg-option.off-bg{background:#131316;color:var(--muted)}.bg-option.blur-bg{background:linear-gradient(135deg,#4b5563,#1f2937)}
-.bg-upload-label{padding:14px;border-radius:14px;background:var(--surface);border:1px dashed rgba(255,255,255,.25);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:700}
-.toast{position:fixed;bottom:calc(240px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:rgba(30,30,35,.98);color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;font-weight:600;border:1px solid var(--border);opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:85%;text-align:center}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.error{background:rgba(239,68,68,.95)}.toast.success{background:rgba(16,185,129,.95)}
-.loader{position:absolute;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:50;color:#fff;font-size:13px;font-weight:600}
+.bg-option{aspect-ratio:16/10;border-radius:12px;border:2px solid rgba(255,255,255,.12);background:#1a1a1e;color:#fff;font-size:11px;font-weight:800;cursor:pointer}
+.bg-option.active{border-color:#a78bfa}
+.bg-upload-label{padding:14px;border-radius:14px;background:var(--surface);border:1px dashed rgba(255,255,255,.25);cursor:pointer;text-align:center;font-size:13px;font-weight:700}
+.toast{position:fixed;bottom:240px;left:50%;transform:translateX(-50%);background:rgba(30,30,35,.98);padding:12px 20px;border-radius:14px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:200;max-width:85%;text-align:center}
+.toast.show{opacity:1}.toast.error{background:rgba(239,68,68,.95)}.toast.success{background:rgba(16,185,129,.95)}
+.loader{position:absolute;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;z-index:50}
 .loader.show{display:flex}.spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hidden{display:none!important}
-.screen-live.floating{position:absolute!important;flex:none!important;border-radius:16px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.75),0 0 0 2px rgba(255,255,255,.25);z-index:40;cursor:grab;touch-action:none;background:#0d0d0f}
-.screen-live.floating .badge.live{top:6px;left:6px;padding:3px 7px;font-size:8px}
-.float-pin-btn{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.7);color:#fff;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:10}
-.screen-live.floating .float-pin-btn{display:flex}
-.float-resize{position:absolute;bottom:2px;right:2px;width:22px;height:22px;cursor:nwse-resize;display:none;z-index:10;touch-action:none}
-.float-resize::before{content:'';position:absolute;bottom:4px;right:4px;width:10px;height:10px;border-right:2px solid rgba(255,255,255,.75);border-bottom:2px solid rgba(255,255,255,.75)}
-.screen-live.floating .float-resize{display:block}
-@media(max-height:700px){.control-panel{padding:8px 12px calc(8px + var(--safe-bottom));gap:8px}.circle-btn{width:38px;height:38px}.circle-btn.primary{width:46px;height:46px}.pill{padding:7px 10px;font-size:10px}.record-btn{padding:12px;font-size:13px}}
+.screen-live.floating{position:absolute!important;flex:none!important;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.75),0 0 0 2px rgba(255,255,255,.25);z-index:40;cursor:grab}
+.video-progress{position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.12);z-index:12}
+.video-progress-fill{height:100%;width:0%;background:var(--accent)}
 </style>
 </head>
 <body>
 <div class="app"><div class="phone-frame mode-9-16" id="phoneFrame">
 <div class="video-area" id="videoArea">
-<div class="screen screen-live" id="liveScreen">
-<span class="badge live" id="liveBadge" style="display:none"><span class="dot"></span><span id="liveBadgeText">LIVE</span></span>
-<video id="liveVideo" autoplay playsinline muted></video>
-<canvas class="live-canvas" id="liveCanvas"></canvas>
-<div class="placeholder" id="livePlaceholder"><svg viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg><span>Kamera belum aktif</span></div>
-<div class="pan-hint" id="liveHint">✋ Geser · cubit untuk zoom</div>
-<div class="screen-tools hidden" id="liveTools"><div class="tool-panel" data-panel><div class="pos-grid" data-grid></div><div class="tool-row"><button type="button" data-zoom="-">−</button><span class="zoom-label" data-zoom-label>1.0×</span><button type="button" data-zoom="+">+</button><button type="button" data-reset>↺</button></div></div><button class="tool-toggle" type="button" data-toggle>✛</button></div>
-<button class="float-pin-btn" id="btnFloatPin" type="button">✕</button><div class="float-resize" id="floatResize"></div>
+<div class="screen screen-live" id="liveScreen"><span class="badge live" id="liveBadge" style="display:none">● LIVE</span><video id="liveVideo" autoplay playsinline muted></video><canvas class="live-canvas" id="liveCanvas"></canvas><div class="placeholder" id="livePlaceholder">📹<span>Kamera belum aktif</span></div></div>
+<div class="divider" id="divider"></div>
+<div class="screen screen-upload" id="uploadScreen"><span class="badge upload">UPLOAD</span><video id="uploadVideo" playsinline preload="metadata" autoplay></video><div class="placeholder" id="uploadPlaceholder">⬆️<span>Upload video / Layar</span></div><div class="video-progress"><div class="video-progress-fill" id="videoProgressFill"></div></div></div>
+<div class="ticker-overlay" id="tickerOverlay"><div class="ticker-track" id="tickerTrack"><span class="ticker-item"></span></div></div>
 </div>
-<div class="divider" id="divider"><span class="split-pct" id="splitPct">40% / 60%</span></div>
-<div class="screen screen-upload" id="uploadScreen">
-<span class="badge upload" id="uploadBadge"><span id="uploadBadgeText">UPLOAD</span></span>
-<video id="uploadVideo" playsinline preload="metadata" autoplay></video>
-<div class="placeholder" id="uploadPlaceholder"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>Upload video dari galeri<br>atau klik "Layar"</span></div>
-<div class="pan-hint" id="uploadHint">✋ Geser · cubit untuk zoom</div>
-<div class="screen-tools hidden" id="uploadTools"><div class="tool-panel" data-panel><div class="pos-grid" data-grid></div><div class="tool-row"><button type="button" data-zoom="-">−</button><span class="zoom-label" data-zoom-label>1.0×</span><button type="button" data-zoom="+">+</button><button type="button" data-reset>↺</button></div></div><button class="tool-toggle" type="button" data-toggle>✛</button></div>
-<div class="video-progress" id="videoProgress"><div class="video-progress-fill" id="videoProgressFill"></div></div>
-</div>
-<div class="ticker-overlay" id="tickerOverlay"><div class="ticker-track" id="tickerTrack"><span class="ticker-item"></span><span class="ticker-item"></span></div></div>
-</div>
-<div class="rec-badge" id="recBadge"><span class="rec-dot"></span><span id="recTimer">00:00</span></div>
+<div class="rec-badge" id="recBadge"><span>●</span><span id="recTimer">00:00</span></div>
 <div class="control-panel">
-<div class="ctrl-row">
-<button class="circle-btn" id="btnBack" title="Mundur 5 detik">⏮</button>
-<button class="circle-btn primary" id="btnPlayPause" title="Play/Pause">▶</button>
-<button class="circle-btn" id="btnNext" title="Maju 5 detik">⏭</button>
-<button class="circle-btn" id="btnStop" title="Stop">⏹</button>
-</div>
-<div class="ctrl-row">
-<button class="pill" id="btnStartCam">📹 Kamera</button>
-<button class="pill" id="btnScreen">🖥️ Layar</button>
-<button class="pill icon-only hidden" id="btnSwitchCam">🔄</button>
-<button class="pill" id="btnMic">🎤 Mic</button>
-<button class="pill" id="btnBg">🎨 BG</button>
-<button class="pill" id="btnUpload">⬆️ Upload</button>
-<button class="pill" id="btnQuality"><span id="qualityLabel">HD</span></button>
-</div>
-<div class="ctrl-row expand-row">
-<button class="expand-btn" data-expand="split" id="expandSplitBtn">📐 Split <span class="expand-value" id="expandSplitLabel">40%</span><span class="expand-dot"></span></button>
-<button class="expand-btn" data-expand="aspect" id="expandAspectBtn">📱 Rasio <span class="expand-value" id="expandAspectLabel">9:16</span><span class="expand-dot"></span></button>
-<button class="expand-btn" data-expand="float" id="expandFloatBtn">📌 Float <span class="expand-value" id="expandFloatLabel"></span><span class="expand-dot"></span></button>
-<button class="expand-btn" data-expand="ticker" id="expandTickerBtn">📝 Teks <span class="expand-value" id="expandTickerLabel"></span><span class="expand-dot"></span></button>
-<button class="expand-btn swap-quick" id="btnSwapScreens" title="Tukar">⇅</button>
-</div>
-<div class="expand-panel" data-panel-for="split">
-<div class="ctrl-row split-row"><span class="split-label">SPLIT</span><button class="split-btn" data-split="0">0%</button><button class="split-btn" data-split="0.3">30%</button><button class="split-btn" data-split="0.5">50%</button><button class="split-btn" data-split="0.7">70%</button><button class="split-btn" data-split="1">100%</button></div>
-<div class="ctrl-row" style="padding-top:6px"><button class="swap-full-btn" id="btnSwapFull"><span id="swapFullText">Tukar Posisi LIVE ↔ UPLOAD</span></button></div>
-</div>
-<div class="expand-panel" data-panel-for="aspect"><div class="ctrl-row split-row"><span class="split-label">RASIO</span><button class="split-btn" data-aspect="asli">ASLI</button><button class="split-btn" data-aspect="16:9">16:9</button><button class="split-btn active" data-aspect="9:16">9:16</button></div></div>
-<div class="expand-panel" data-panel-for="float">
-<div class="ctrl-row split-row"><span class="split-label">UKURAN</span><button class="split-btn" data-float-size="0.20">S</button><button class="split-btn active" data-float-size="0.30">M</button><button class="split-btn" data-float-size="0.40">L</button><button class="split-btn" data-float-size="0.50">XL</button></div>
-<div class="ctrl-row split-row" style="padding-top:6px"><span class="split-label">POSISI</span><button class="split-btn" data-float-pos="tl">↖</button><button class="split-btn" data-float-pos="tr">↗</button><button class="split-btn" data-float-pos="center">⊙</button><button class="split-btn" data-float-pos="bl">↙</button><button class="split-btn" data-float-pos="br">↘</button></div>
-<div class="ctrl-row" style="padding-top:6px"><button class="swap-full-btn" id="btnToggleFloat"><span id="floatToggleText">Aktifkan Mode Mengambang</span></button></div>
-</div>
-<div class="expand-panel" data-panel-for="ticker">
-<div class="ctrl-row ticker-row"><input type="text" id="tickerInput" class="ticker-input" placeholder="Teks berjalan di bawah..." maxlength="200"><button class="ticker-btn" id="tickerSizeDown">A−</button><button class="ticker-btn" id="tickerSizeUp">A+</button><button class="pill icon-only" id="tickerToggle">▶</button></div>
-<div class="ctrl-row ticker-row" style="padding-top:6px"><span>🐢</span><input type="range" id="tickerSpeedRange" class="ticker-speed-range" min="30" max="500" step="10" value="100"><span>🐇</span><span class="ticker-speed-value" id="tickerSpeedValue">100</span></div>
-</div>
-<button class="record-btn" id="btnRecord"><span class="rec-indicator"></span><span class="rec-text">Mulai Rekam</span></button>
+<div class="ctrl-row"><button class="circle-btn" id="btnBack">⏮</button><button class="circle-btn primary" id="btnPlayPause">▶</button><button class="circle-btn" id="btnNext">⏭</button><button class="circle-btn" id="btnStop">⏹</button></div>
+<div class="ctrl-row"><button class="pill" id="btnStartCam">📹 Kamera</button><button class="pill" id="btnScreen">🖥️ Layar</button><button class="pill" id="btnMic">🎤 Mic</button><button class="pill" id="btnBg">🎨 BG</button><button class="pill" id="btnUpload">⬆️ Upload</button><button class="pill" id="btnQuality"><span id="qualityLabel">HEMAT</span></button></div>
+<div class="ctrl-row"><button class="expand-btn" data-expand="split">📐 Split</button><button class="expand-btn" data-expand="aspect">📱 Rasio</button><button class="expand-btn" data-expand="float">📌 Float</button><button class="expand-btn" data-expand="ticker">📝 Teks</button><button class="expand-btn" id="btnSwapScreens">⇅</button></div>
+<div class="expand-panel" data-panel-for="split"><div class="ctrl-row"><button class="split-btn" data-split="0">0%</button><button class="split-btn" data-split="0.3">30%</button><button class="split-btn active" data-split="0.4">40%</button><button class="split-btn" data-split="0.5">50%</button><button class="split-btn" data-split="0.7">70%</button><button class="split-btn" data-split="1">100%</button></div></div>
+<div class="expand-panel" data-panel-for="aspect"><div class="ctrl-row"><button class="split-btn" data-aspect="asli">ASLI</button><button class="split-btn" data-aspect="16:9">16:9</button><button class="split-btn active" data-aspect="9:16">9:16</button></div></div>
+<div class="expand-panel" data-panel-for="float"><div class="ctrl-row"><button class="split-btn" data-float-size="0.20">S</button><button class="split-btn active" data-float-size="0.30">M</button><button class="split-btn" data-float-size="0.40">L</button></div><div class="ctrl-row" style="margin-top:6px"><button class="split-btn" data-float-pos="tl">↖</button><button class="split-btn" data-float-pos="tr">↗</button><button class="split-btn" data-float-pos="center">⊙</button><button class="split-btn" data-float-pos="bl">↙</button><button class="split-btn" data-float-pos="br">↘</button></div><div class="ctrl-row" style="margin-top:6px"><button class="pill" id="btnToggleFloat" style="width:100%;justify-content:center">Aktifkan Float</button></div></div>
+<div class="expand-panel" data-panel-for="ticker"><div class="ctrl-row"><input id="tickerInput" class="ticker-input" placeholder="Teks berjalan..." maxlength="200"><button class="pill" id="tickerToggle">▶</button></div></div>
+<div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:8px 10px;font-size:11px;line-height:1.4">⚡ <b>MODE SUPER HEMAT AKTIF:</b> BG 240px • Segmentasi 2x/detik • Rekam 540p 24fps • Blur dimatikan biar tidak leg</div>
+<button class="record-btn" id="btnRecord"><span>●</span><span class="rec-text">Mulai Rekam</span></button>
 </div>
 <div class="loader" id="loader"><div class="spinner"></div><span id="loaderText">Memproses...</span></div>
 </div></div>
 <input type="file" id="fileInput" accept="video/*" />
-<div class="modal" id="bgModal"><div class="modal-card"><div class="modal-header"><span>🎨 Ganti Background</span><button id="btnCloseBgModal">✕</button></div><div class="modal-body"><div class="bg-grid" id="bgGrid"><button class="bg-option off-bg active" data-bg="off">🚫 Nonaktif</button><button class="bg-option blur-bg" data-bg="blur">💨 Blur</button><button class="bg-option" data-bg="gradient1" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">Gradient</button><button class="bg-option" data-bg="gradient2" style="background:linear-gradient(135deg,#f97316,#ec4899)">Sunset</button><button class="bg-option" data-bg="gradient3" style="background:linear-gradient(135deg,#10b981,#06b6d4)">Ocean</button><button class="bg-option" data-bg="gradient4" style="background:linear-gradient(135deg,#1f2937,#111827)">Dark</button></div><label class="bg-upload-label"><input type="file" id="bgImageInput" accept="image/*" style="display:none">🖼️ Upload Gambar Background</label><div class="modal-info" id="bgInfo">Mode hemat: BG diproses di 480px + 30fps biar rekam mulus.</div></div></div></div>
-<div class="modal" id="previewModal"><div class="modal-card"><div class="modal-header"><span>✅ Hasil Rekaman</span><button id="btnClosePreview">✕</button></div><div class="modal-body"><video id="previewVideo" controls playsinline></video><div class="modal-info" id="previewInfo"></div><div class="modal-actions"><button class="modal-btn primary" id="btnSaveGallery">Simpan ke Galeri</button><button class="modal-btn secondary" id="btnDownload">Unduh File</button></div></div></div></div>
+<div class="modal" id="bgModal"><div class="modal-card"><div class="modal-header"><span>🎨 Ganti Background - Hemat</span><button id="btnCloseBgModal">✕</button></div><div class="modal-body"><div class="bg-grid"><button class="bg-option active" data-bg="off">🚫 Nonaktif</button><button class="bg-option" data-bg="gradient1" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">Gradient</button><button class="bg-option" data-bg="gradient2" style="background:linear-gradient(135deg,#f97316,#ec4899)">Sunset</button><button class="bg-option" data-bg="gradient3" style="background:linear-gradient(135deg,#10b981,#06b6d4)">Ocean</button><button class="bg-option" data-bg="gradient4" style="background:linear-gradient(135deg,#1f2937,#111827)">Dark</button><button class="bg-option" data-bg="image">🖼️ Gambar</button></div><label class="bg-upload-label"><input type="file" id="bgImageInput" accept="image/*" style="display:none">Upload Gambar Background</label><div style="font-size:12px;color:rgba(255,255,255,.55);text-align:center">Blur dihapus karena bikin leg. Pakai Gradient / Gambar saja.</div></div></div></div>
+<div class="modal" id="previewModal"><div class="modal-card"><div class="modal-header"><span>✅ Hasil Rekaman</span><button id="btnClosePreview">✕</button></div><div class="modal-body"><video id="previewVideo" controls playsinline></video><div id="previewInfo" style="font-size:12px;color:rgba(255,255,255,.55);text-align:center"></div><div class="modal-actions"><button class="modal-btn primary" id="btnSaveGallery">Simpan / Bagikan</button><button class="modal-btn secondary" id="btnDownload">Unduh File</button></div></div></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"></script>
 <script>
-/* ===== KONFIG FIX BG MULUS ===== */
-const QUALITY_PRESETS={'480':{w:540,bitrate:2000000,label:'SD'},'720':{w:720,bitrate:4000000,label:'HD'},'1080':{w:1080,bitrate:8000000,label:'FHD'}};
-const QUALITY_ORDER=['480','720','1080'];
+/* ===== SUPER HEMAT - ANTI LEG ===== */
 const BG_GRADIENTS={gradient1:['#6366f1','#8b5cf6'],gradient2:['#f97316','#ec4899'],gradient3:['#10b981','#06b6d4'],gradient4:['#1f2937','#111827']};
-// FIX UTAMA: proses BG di resolusi rendah + throttle
-const BG_PROCESS_W = 480;
-const BG_FPS = 30;
-const BG_FRAME_MS = 1000 / BG_FPS;
+// KUNCI 1: Resolusi BG super kecil
+const BG_W=240;
+// KUNCI 2: Segmentasi cuma 2x per detik, BUKAN 30x
+const SEG_INTERVAL=500;
+// KUNCI 3: Rekam ringan
+const REC_W=540, REC_FPS=24, REC_BITRATE=2500000;
 
-const state={stream:null,facingMode:'user',screenOnUpload:false,micStream:null,micEnabled:false,uploadReady:false,isRecording:false,mediaRecorder:null,recordedChunks:[],recStartTime:0,timerInterval:null,quality:'720',aspectMode:'9:16',splitRatio:0.4,swapped:false,views:{live:{zoom:1,panX:.5,panY:.5},upload:{zoom:1,panX:.5,panY:.5}},previewBlob:null,previewUrl:null,bg:{mode:'off',image:null},ticker:{text:'',size:24,enabled:false,speed:100,startTime:Date.now()},floating:{enabled:false,x:.62,y:.06,w:.32,aspect:9/16}};
+const state={stream:null,facingMode:'user',micStream:null,micEnabled:false,uploadReady:false,isRecording:false,mediaRecorder:null,recordedChunks:[],recStartTime:0,timerInterval:null,aspectMode:'9:16',splitRatio:.4,swapped:false,bg:{mode:'off',image:null},ticker:{text:'',enabled:false},floating:{enabled:false,x:.62,y:.06,w:.32}};
 const $=id=>document.getElementById(id);
-const liveVideo=$('liveVideo'),uploadVideo=$('uploadVideo'),liveScreen=$('liveScreen'),uploadScreen=$('uploadScreen'),videoArea=$('videoArea'),phoneFrame=$('phoneFrame'),livePlaceholder=$('livePlaceholder'),uploadPlaceholder=$('uploadPlaceholder'),btnStartCam=$('btnStartCam'),btnScreen=$('btnScreen'),btnSwitchCam=$('btnSwitchCam'),btnMic=$('btnMic'),btnBg=$('btnBg'),btnUpload=$('btnUpload'),btnQuality=$('btnQuality'),btnRecord=$('btnRecord'),fileInput=$('fileInput'),recBadge=$('recBadge'),recTimerEl=$('recTimer'),loader=$('loader'),loaderText=$('loaderText'),toast=$('toast'),previewModal=$('previewModal'),previewVideo=$('previewVideo'),previewInfo=$('previewInfo'),btnClosePreview=$('btnClosePreview'),btnSaveGallery=$('btnSaveGallery'),btnDownload=$('btnDownload'),qualityLabel=$('qualityLabel'),recText=btnRecord.querySelector('.rec-text'),splitPct=$('splitPct'),divider=$('divider'),bgModal=$('bgModal'),btnCloseBgModal=$('btnCloseBgModal'),bgImageInput=$('bgImageInput'),liveBadge=$('liveBadge'),btnPlayPause=$('btnPlayPause'),btnBack=$('btnBack'),btnNext=$('btnNext'),btnStop=$('btnStop'),videoProgress=$('videoProgress'),videoProgressFill=$('videoProgressFill'),tickerOverlay=$('tickerOverlay'),tickerTrack=$('tickerTrack'),tickerInput=$('tickerInput'),tickerSizeDown=$('tickerSizeDown'),tickerSizeUp=$('tickerSizeUp'),tickerToggle=$('tickerToggle'),tickerSpeedRange=$('tickerSpeedRange'),tickerSpeedValue=$('tickerSpeedValue'),btnSwapScreens=$('btnSwapScreens'),btnSwapFull=$('btnSwapFull'),swapFullText=$('swapFullText'),btnToggleFloat=$('btnToggleFloat'),floatToggleText=$('floatToggleText'),btnFloatPin=$('btnFloatPin'),floatResizeEl=$('floatResize');
-const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-function showToast(msg,type=''){toast.textContent=msg;toast.className='toast show '+(type||'');clearTimeout(toast._t);toast._t=setTimeout(()=>toast.className='toast',2200)}
-function showLoader(t){loaderText.textContent=t||'Memproses...';loader.classList.add('show')}
-function hideLoader(){loader.classList.remove('show')}
+const liveVideo=$('liveVideo'),uploadVideo=$('uploadVideo'),liveScreen=$('liveScreen'),uploadScreen=$('uploadScreen'),videoArea=$('videoArea'),phoneFrame=$('phoneFrame'),livePlaceholder=$('livePlaceholder'),uploadPlaceholder=$('uploadPlaceholder'),btnStartCam=$('btnStartCam'),btnScreen=$('btnScreen'),btnMic=$('btnMic'),btnBg=$('btnBg'),btnUpload=$('btnUpload'),btnRecord=$('btnRecord'),fileInput=$('fileInput'),recBadge=$('recBadge'),recTimerEl=$('recTimer'),loader=$('loader'),loaderText=$('loaderText'),toast=$('toast'),previewModal=$('previewModal'),previewVideo=$('previewVideo'),previewInfo=$('previewInfo'),btnClosePreview=$('btnClosePreview'),btnSaveGallery=$('btnSaveGallery'),btnDownload=$('btnDownload'),recText=btnRecord.querySelector('.rec-text'),divider=$('divider'),bgModal=$('bgModal'),btnCloseBgModal=$('btnCloseBgModal'),bgImageInput=$('bgImageInput'),liveBadge=$('liveBadge'),btnPlayPause=$('btnPlayPause'),btnBack=$('btnBack'),btnNext=$('btnNext'),btnStop=$('btnStop'),videoProgressFill=$('videoProgressFill'),tickerOverlay=$('tickerOverlay'),tickerTrack=$('tickerTrack'),tickerInput=$('tickerInput'),tickerToggle=$('tickerToggle'),btnSwapScreens=$('btnSwapScreens'),btnToggleFloat=$('btnToggleFloat');
+function showToast(m,t=''){toast.textContent=m;toast.className='toast show '+t;clearTimeout(toast._t);toast._t=setTimeout(()=>toast.className='toast',2200)}
+function showLoader(t){loaderText.textContent=t||'Memproses...';loader.classList.add('show')} function hideLoader(){loader.classList.remove('show')}
 
-/* ===== CANVAS BG - FIX MULUS ===== */
-const liveCanvas=$('liveCanvas');
-const liveCanvasCtx=liveCanvas.getContext('2d',{alpha:false,desynchronized:true,willReadFrequently:false});
-let bgRAF=null,lastBgTime=0,segMaskCanvas=null,segMaskCtx=null;
-let bgGradientCache=null,bgGradientKey='';
-let selfieSeg=null,segReady=false,lastSegResult=null;
+/* ===== BG SUPER HEMAT ===== */
+const liveCanvas=$('liveCanvas'), liveCtx=liveCanvas.getContext('2d',{alpha:false,desynchronized:true});
+let selfieSeg=null, segReady=false, segMask=null, lastSegTime=0, bgRAF=null, lastBgDraw=0;
+let cachedBgCanvas=null, cachedBgKey='';
+let workCanvas=document.createElement('canvas'), workCtx=workCanvas.getContext('2d',{willReadFrequently:false});
 
-// Buat gradient sekali saja, jangan tiap frame
-function getGradient(w,h,mode){
-  const key=mode+'_'+w+'x'+h;
-  if(bgGradientCache && bgGradientKey===key) return bgGradientCache;
-  const c=document.createElement('canvas');c.width=w;c.height=h;
-  const ctx=c.getContext('2d');
-  const [c1,c2]=BG_GRADIENTS[mode]||BG_GRADIENTS.gradient1;
-  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,c1);g.addColorStop(1,c2);
-  ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
-  bgGradientCache=c;bgGradientKey=key;
-  return c;
+function getCachedBg(w,h){
+  const key=state.bg.mode+'_'+w+'x'+h;
+  if(cachedBgCanvas && cachedBgKey===key) return cachedBgCanvas;
+  cachedBgCanvas=document.createElement('canvas');cachedBgCanvas.width=w;cachedBgCanvas.height=h;
+  const c=cachedBgCanvas.getContext('2d');
+  if(state.bg.image){ c.drawImage(state.bg.image,0,0,w,h); }
+  else if(BG_GRADIENTS[state.bg.mode]){ const [a,b]=BG_GRADIENTS[state.bg.mode]; const g=c.createLinearGradient(0,0,w,h); g.addColorStop(0,a); g.addColorStop(1,b); c.fillStyle=g; c.fillRect(0,0,w,h); }
+  else { c.fillStyle='#000'; c.fillRect(0,0,w,h); }
+  cachedBgKey=key; return cachedBgCanvas;
 }
-// Gambar background dari cache (cepat)
-function drawCachedBg(ctx,w,h){
-  const m=state.bg.mode;
-  if(m==='blur'){
-    // Blur ringan: gambar video diperkecil dulu, baru blur - jauh lebih ringan
-    ctx.filter='blur(8px) brightness(0.85)';
-    ctx.drawImage(liveVideo,0,0,w,h);
-    ctx.filter='none';
-  } else if(state.bg.image){
-    ctx.drawImage(state.bg.image,0,0,w,h);
-  } else if(BG_GRADIENTS[m]){
-    ctx.drawImage(getGradient(w,h,m),0,0);
-  } else {
-    ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);
-  }
-}
-function initSegmentation(){
+function initSeg(){
   if(selfieSeg) return;
-  try{
-    selfieSeg=new SelfieSegmentation({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${f}`});
-    selfieSeg.setOptions({modelSelection:0}); // 0 = CEPAT, 1 = berat & patah
-    selfieSeg.onResults(onSegResults);
+  try{ selfieSeg=new SelfieSegmentation({locateFile:f=>`https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${f}`});
+    selfieSeg.setOptions({modelSelection:0});
+    selfieSeg.onResults(r=>{
+      // Simpan mask di canvas 240px, JANGAN di resolusi full
+      if(!segMask){ segMask=document.createElement('canvas'); }
+      if(segMask.width!==BG_W){ segMask.width=BG_W; segMask.height=Math.round(BG_W*9/16); }
+      segMask.getContext('2d').drawImage(r.segmentationMask,0,0,BG_W,segMask.height);
+    });
     segReady=true;
-  }catch(e){console.warn('Seg gagal',e)}
+  }catch(e){}
 }
-function onSegResults(res){
-  lastSegResult=res.segmentationMask;
-  // Simpan mask di canvas kecil, jangan di resolusi full
-  if(!segMaskCanvas){segMaskCanvas=document.createElement('canvas');segMaskCtx=segMaskCanvas.getContext('2d',{willReadFrequently:false})}
-  const w=BG_PROCESS_W;
-  const h=Math.round(w*9/16);
-  if(segMaskCanvas.width!==w){segMaskCanvas.width=w;segMaskCanvas.height=h}
-  segMaskCtx.drawImage(res.segmentationMask,0,0,w,h);
-}
-// LOOP BG - THROTTLE 30fps + RESOLUSI RENDAH
+// LOOP BG: cuma gambar ulang 15fps, segmentasi 2x/detik
 async function bgLoop(ts){
   bgRAF=requestAnimationFrame(bgLoop);
-  if(state.bg.mode==='off' || !state.stream || !liveVideo.videoWidth) {
-    if(liveCanvas.style.display!=='none') liveCanvas.style.display='none';
-    return;
-  }
-  // THROTTLE: skip kalau belum 33ms
-  if(ts-lastBgTime<BG_FRAME_MS) return;
-  lastBgTime=ts;
-  const w=BG_PROCESS_W;
-  const h=Math.round(w*liveVideo.videoHeight/liveVideo.videoWidth);
-  if(liveCanvas.width!==w){liveCanvas.width=w;liveCanvas.height=h}
+  if(state.bg.mode==='off'||!state.stream||!liveVideo.videoWidth){ liveCanvas.style.display='none'; return; }
+  // Gambar ulang max 15fps
+  if(ts-lastBgDraw<66) return;
+  lastBgDraw=ts;
+  const w=BG_W, h=Math.round(w*liveVideo.videoHeight/liveVideo.videoWidth);
+  if(liveCanvas.width!==w){ liveCanvas.width=w; liveCanvas.height=h; }
   liveCanvas.style.display='block';
-  const ctx=liveCanvasCtx;
-  ctx.imageSmoothingEnabled=true;
-  ctx.imageSmoothingQuality='low'; // low = cepat
-  // 1. Background (dari cache)
-  drawCachedBg(ctx,w,h);
-  // 2. Kirim frame ke segmentasi (async, tidak blocking)
-  if(segReady && selfieSeg){
-    try{ await selfieSeg.send({image:liveVideo}); }catch(e){}
+  liveCtx.imageSmoothingEnabled=true; liveCtx.imageSmoothingQuality='low';
+  // 1. BG dari cache (0ms)
+  liveCtx.drawImage(getCachedBg(w,h),0,0);
+  // 2. Segmentasi JARANG - ini kunci anti leg
+  if(segReady && selfieSeg && ts-lastSegTime>SEG_INTERVAL){
+    lastSegTime=ts;
+    // Jangan await blocking, fire & forget
+    selfieSeg.send({image:liveVideo}).catch(()=>{});
   }
-  // 3. Gambar orang pakai composite - TANPA getImageData (yang bikin patah)
-  if(segMaskCanvas && lastSegResult){
-    ctx.save();
-    ctx.globalCompositeOperation='source-over';
-    // Gambar mask dulu sebagai alpha, lalu video
-    const tmp=document.createElement('canvas');tmp.width=w;tmp.height=h;
-    const tctx=tmp.getContext('2d');
-    tctx.drawImage(segMaskCanvas,0,0);
-    tctx.globalCompositeOperation='source-in';
-    tctx.drawImage(liveVideo,0,0,w,h);
-    ctx.drawImage(tmp,0,0);
-    ctx.restore();
+  // 3. Tempel orang pakai mask lama (kalau belum ada mask baru, pakai yang lama - tetap mulus)
+  if(segMask){
+    // Composite ringan: gambar video ke work canvas, potong pakai mask, tempel ke liveCanvas
+    if(workCanvas.width!==w){ workCanvas.width=w; workCanvas.height=h; }
+    workCtx.clearRect(0,0,w,h);
+    workCtx.drawImage(segMask,0,0);
+    workCtx.globalCompositeOperation='source-in';
+    workCtx.drawImage(liveVideo,0,0,w,h);
+    workCtx.globalCompositeOperation='source-over';
+    liveCtx.drawImage(workCanvas,0,0);
   } else {
-    ctx.drawImage(liveVideo,0,0,w,h);
+    liveCtx.drawImage(liveVideo,0,0,w,h);
   }
 }
-function startBgLoop(){ if(!bgRAF) bgRAF=requestAnimationFrame(bgLoop); }
 function setBgMode(mode){
   state.bg.mode=mode;
+  cachedBgCanvas=null; cachedBgKey='';
   document.querySelectorAll('.bg-option').forEach(b=>b.classList.toggle('active',b.dataset.bg===mode));
   btnBg.classList.toggle('bg-active',mode!=='off');
-  if(mode!=='off'){ initSegmentation(); startBgLoop(); showToast(mode==='blur'?'BG Blur aktif (mode hemat)':'BG aktif'); }
-  else { liveCanvas.style.display='none'; showToast('BG nonaktif'); }
+  if(mode!=='off'){ initSeg(); if(!bgRAF) bgRAF=requestAnimationFrame(bgLoop); showToast('BG aktif - mode hemat','success'); }
+  else { liveCanvas.style.display='none'; showToast('BG off'); }
   bgModal.classList.remove('show');
 }
 
-/* ===== VIEW / ZOOM / PAN ===== */
-const VIEW_CTRL=[{key:'live',screen:liveScreen,video:liveVideo,tools:$('liveTools'),hint:$('liveHint')},{key:'live',screen:liveScreen,video:liveVideo,tools:$('liveTools'),hint:$('liveHint')},{key:'upload',screen:uploadScreen,video:uploadVideo,tools:$('uploadTools'),hint:$('uploadHint')}];
-function applyView(c){
-  const v=state.views[c.key]; if(!v) return;
-  const vid=c.video; if(!vid.videoWidth) return;
-  const cw=c.screen.clientWidth,ch=c.screen.clientHeight;
-  const vw=vid.videoWidth,vh=vid.videoHeight;
-  const scale=Math.max(cw/vw,ch/vh)*v.zoom;
-  const dw=vw*scale,dh=vh*scale;
-  const maxX=Math.max(0,(dw-cw)/2),maxY=Math.max(0,(dh-ch)/2);
-  const x=(cw-dw)/2 + (0.5-v.panX)*2*maxX;
-  const y=(ch-dh)/2 + (0.5-v.panY)*2*maxY;
-  vid.style.width=dw+'px';vid.style.height=dh+'px';vid.style.left=x+'px';vid.style.top=y+'px';
-  const label=c.tools.querySelector('[data-zoom-label]'); if(label) label.textContent=v.zoom.toFixed(1)+'×';
-  // Canvas BG ikut zoom yang sama
-  if(c.key==='live' && liveCanvas.style.display!=='none'){
-    liveCanvas.style.width=dw+'px';liveCanvas.style.height=dh+'px';liveCanvas.style.left=x+'px';liveCanvas.style.top=y+'px';
-  }
-}
-function applyAllViews(){VIEW_CTRL.forEach(applyView)}
-VIEW_CTRL.forEach(c=>{
-  const grid=c.tools.querySelector('[data-grid]');
-  if(grid && !grid.children.length){
-    const pos=[[0,0],[.5,0],[1,0],[0,.5],[.5,.5],[1,.5],[0,1],[.5,1],[1,1]];
-    pos.forEach(([x,y])=>{const b=document.createElement('button');b.type='button';b.onclick=()=>{state.views[c.key].panX=x;state.views[c.key].panY=y;applyView(c)};grid.appendChild(b)});
-  }
-  c.tools.querySelector('[data-toggle]').onclick=e=>{e.stopPropagation();const p=c.tools.querySelector('[data-panel]');const open=p.classList.contains('open');document.querySelectorAll('.tool-panel').forEach(x=>x.classList.remove('open'));document.querySelectorAll('.tool-toggle').forEach(x=>x.classList.remove('open'));if(!open){p.classList.add('open');c.tools.querySelector('[data-toggle]').classList.add('open');c.hint.classList.add('show');setTimeout(()=>c.hint.classList.remove('show'),2500)}};
-  c.tools.querySelectorAll('[data-zoom]').forEach(b=>b.onclick=()=>{const v=state.views[c.key];v.zoom=clamp(v.zoom+(b.dataset.zoom==='+'?0.2:-0.2),1,6);applyView(c)});
-  c.tools.querySelector('[data-reset]').onclick=()=>{state.views[c.key]={zoom:1,panX:.5,panY:.5};applyView(c)};
-  let drag=null,lastDist=0;
-  c.video.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,panX:state.views[c.key].panX,panY:state.views[c.key].panY};c.video.setPointerCapture(e.pointerId)});
-  c.video.addEventListener('pointermove',e=>{if(!drag) return;const v=state.views[c.key];v.panX=clamp(drag.panX-(e.clientX-drag.x)/c.screen.clientWidth*0.6,0,1);v.panY=clamp(drag.panY-(e.clientY-drag.y)/c.screen.clientHeight*0.6,0,1);applyView(c)});
-  c.video.addEventListener('pointerup',()=>drag=null);
-  c.video.addEventListener('wheel',e=>{e.preventDefault();const v=state.views[c.key];v.zoom=clamp(v.zoom+(e.deltaY<0?0.2:-0.2),1,6);applyView(c)},{passive:false});
-});
-liveVideo.addEventListener('loadedmetadata',()=>applyAllViews());
-uploadVideo.addEventListener('loadedmetadata',()=>applyAllViews());
-
 /* ===== ASPECT / SPLIT / SWAP / FLOAT ===== */
-function isLandscape(){ if(state.aspectMode==='16:9') return true; if(state.aspectMode==='9:16') return false; return videoArea.clientWidth>videoArea.clientHeight; }
-function updateDivider(){divider.classList.toggle('vert',isLandscape());videoArea.style.flexDirection=isLandscape()?'row':'column'}
-function setAspectMode(mode){
-  if(state.isRecording){showToast('Stop rekaman dulu untuk ganti rasio','error');return}
-  state.aspectMode=mode;phoneFrame.classList.remove('mode-9-16','mode-16-9','mode-asli');phoneFrame.classList.add('mode-'+mode.replace(':','-'));
-  document.querySelectorAll('[data-aspect]').forEach(b=>b.classList.toggle('active',b.dataset.aspect===mode));
-  $('expandAspectLabel').textContent=mode;
-  requestAnimationFrame(()=>{updateDivider();applyAllViews();updateTickerDOM();if(state.floating.enabled) updateFloatingPosition()});
-  showToast('Rasio: '+mode);
-}
-document.querySelectorAll('[data-aspect]').forEach(b=>b.onclick=()=>{setAspectMode(b.dataset.aspect);setTimeout(closeAllExpand,120)});
-function closeAllExpand(){document.querySelectorAll('.expand-panel').forEach(p=>p.classList.remove('open'));document.querySelectorAll('.expand-btn').forEach(b=>b.classList.remove('open'))}
-document.querySelectorAll('.expand-btn').forEach(btn=>{if(!btn.dataset.expand) return;btn.onclick=()=>{const panel=document.querySelector(`.expand-panel[data-panel-for="${btn.dataset.expand}"]`);const was=panel.classList.contains('open');closeAllExpand();if(!was){panel.classList.add('open');btn.classList.add('open');if(btn.dataset.expand==='ticker') setTimeout(()=>tickerInput.focus(),60)}}});
-function applySplitToLayout(){
-  const r=clamp(state.splitRatio,0,1);
-  const first=state.swapped?uploadScreen:liveScreen;
-  const second=state.swapped?liveScreen:uploadScreen;
-  first.style.flex=`${r} 1 0`;second.style.flex=`${1-r} 1 0`;
-  $('expandSplitLabel').textContent=Math.round(r*100)+'%';
-  splitPct.textContent=Math.round(r*100)+'% / '+Math.round((1-r)*100)+'%';
-}
-function updateSplitPresets(){document.querySelectorAll('[data-split]').forEach(b=>b.classList.toggle('active',Math.abs(parseFloat(b.dataset.split)-state.splitRatio)<0.01))}
-function setSplit(r){state.splitRatio=clamp(r,0,1);applySplitToLayout();updateSplitPresets();requestAnimationFrame(applyAllViews)}
-document.querySelectorAll('[data-split]').forEach(b=>b.onclick=()=>{setSplit(parseFloat(b.dataset.split));setTimeout(closeAllExpand,120)});
-function swapScreens(){
-  if(state.isRecording){showToast('Stop rekaman dulu','error');return}
-  if(state.floating.enabled){showToast('Nonaktifkan float dulu','error');return}
-  state.swapped=!state.swapped;
-  const f=state.swapped?uploadScreen:liveScreen, s=state.swapped?liveScreen:uploadScreen;
-  f.style.order='1';divider.style.order='2';s.style.order='3';
-  applySplitToLayout();updateSwapBtns();requestAnimationFrame(applyAllViews);
-  showToast(state.swapped?'🔄 UPLOAD di atas, LIVE di bawah':'🔄 LIVE di atas, UPLOAD di bawah','success');
-}
-function updateSwapBtns(){btnSwapScreens.classList.toggle('active',state.swapped);btnSwapFull.classList.toggle('active',state.swapped);swapFullText.textContent=state.swapped?'Kembalikan Posisi Semula':'Tukar Posisi LIVE ↔ UPLOAD'}
-btnSwapScreens.onclick=swapScreens;btnSwapFull.onclick=swapScreens;
-function toggleFloating(force){
-  if(state.isRecording){showToast('Stop rekaman dulu','error');return}
-  const next=typeof force==='boolean'?force:!state.floating.enabled;state.floating.enabled=next;
-  if(next && state.swapped){state.swapped=false;liveScreen.style.order='';uploadScreen.style.order=''}
-  applyFloatingLayout();updateFloatUI();
-  showToast(next?'📌 Live mengambang — geser bebas':'Live kembali ke split','success');
-}
-function applyFloatingLayout(){
-  if(!state.floating.enabled){liveScreen.classList.remove('floating');liveScreen.style.position='';liveScreen.style.left='';liveScreen.style.top='';liveScreen.style.width='';liveScreen.style.height='';divider.style.display='';applySplitToLayout();requestAnimationFrame(applyAllViews);return}
-  liveScreen.classList.add('floating');divider.style.display='none';uploadScreen.style.flex='1 1 0';liveScreen.style.flex='none';liveScreen.style.position='absolute';updateFloatingPosition();requestAnimationFrame(applyAllViews);
-}
-function updateFloatingPosition(){
-  const f=state.floating;if(!f.enabled) return;
-  const aw=videoArea.clientWidth,ah=videoArea.clientHeight;if(!aw||!ah) return;
-  if(liveVideo.videoWidth) f.aspect=liveVideo.videoWidth/liveVideo.videoHeight;
-  let w=f.w*aw,h=w/f.aspect;if(h>ah*.92){h=ah*.92;w=h*f.aspect}if(w>aw*.85){w=aw*.85;h=w/f.aspect}
-  let x=clamp(f.x*aw,0,Math.max(0,aw-w)),y=clamp(f.y*ah,0,Math.max(0,ah-h));
-  liveScreen.style.left=x+'px';liveScreen.style.top=y+'px';liveScreen.style.width=w+'px';liveScreen.style.height=h+'px';applyView(VIEW_CTRL[0]);
-}
-function updateFloatUI(){floatToggleText.textContent=state.floating.enabled?'Kembalikan ke Split':'Aktifkan Mode Mengambang';btnToggleFloat.classList.toggle('active',state.floating.enabled);$('expandFloatLabel').textContent=state.floating.enabled?'ON':'';expandFloatBtnToggle()}
-function expandFloatBtnToggle(){}
-btnToggleFloat.onclick=()=>toggleFloating();
-btnFloatPin.onclick=()=>toggleFloating(false);
-document.querySelectorAll('[data-float-size]').forEach(b=>b.onclick=()=>{state.floating.w=parseFloat(b.dataset.floatSize);document.querySelectorAll('[data-float-size]').forEach(x=>x.classList.toggle('active',x===b));if(state.floating.enabled) updateFloatingPosition()});
-document.querySelectorAll('[data-float-pos]').forEach(b=>b.onclick=()=>{const p=b.dataset.floatPos;if(p==='tl'){state.floating.x=.04;state.floating.y=.04}else if(p==='tr'){state.floating.x=.62;state.floating.y=.04}else if(p==='center'){state.floating.x=.34;state.floating.y=.3}else if(p==='bl'){state.floating.x=.04;state.floating.y=.6}else if(p==='br'){state.floating.x=.62;state.floating.y=.6}if(state.floating.enabled) updateFloatingPosition()});
-let floatDrag=null;
-liveScreen.addEventListener('pointerdown',e=>{if(!state.floating.enabled||state.isRecording) return;if(e.target.closest('#btnFloatPin')) return;floatDrag={sx:e.clientX,sy:e.clientY,ox:state.floating.x,oy:state.floating.y};liveScreen.setPointerCapture(e.pointerId)});
-liveScreen.addEventListener('pointermove',e=>{if(!floatDrag) return;state.floating.x=floatDrag.ox+(e.clientX-floatDrag.sx)/videoArea.clientWidth;state.floating.y=floatDrag.oy+(e.clientY-floatDrag.sy)/videoArea.clientHeight;updateFloatingPosition()});
-liveScreen.addEventListener('pointerup',()=>floatDrag=null);
-let dividerDrag=false;
-divider.addEventListener('pointerdown',e=>{if(state.floating.enabled) return;dividerDrag=true;divider.classList.add('dragging');divider.setPointerCapture(e.pointerId)});
-divider.addEventListener('pointermove',e=>{if(!dividerDrag) return;const r=videoArea.getBoundingClientRect();const ratio=isLandscape()?(e.clientX-r.left)/r.width:(e.clientY-r.top)/r.height;setSplit(r)});
-divider.addEventListener('pointerup',()=>{dividerDrag=false;divider.classList.remove('dragging')});
+function isLand(){ if(state.aspectMode==='16:9') return true; if(state.aspectMode==='9:16') return false; return videoArea.clientWidth>videoArea.clientHeight; }
+function updateDivider(){ divider.classList.toggle('vert',isLand()); videoArea.style.flexDirection=isLand()?'row':'column'; }
+function setAspect(m){ if(state.isRecording){showToast('Stop rekaman dulu','error');return} state.aspectMode=m; phoneFrame.classList.remove('mode-9-16','mode-16-9','mode-asli'); phoneFrame.classList.add('mode-'+m.replace(':','-')); document.querySelectorAll('[data-aspect]').forEach(b=>b.classList.toggle('active',b.dataset.aspect===m)); requestAnimationFrame(()=>{updateDivider();updateTickerDOM(); if(state.floating.enabled) updateFloat()}); showToast('Rasio: '+m); }
+document.querySelectorAll('[data-aspect]').forEach(b=>b.onclick=()=>{setAspect(b.dataset.aspect);closeAll()});
+function closeAll(){ document.querySelectorAll('.expand-panel').forEach(p=>p.classList.remove('open')); document.querySelectorAll('.expand-btn').forEach(b=>b.classList.remove('open')); }
+document.querySelectorAll('.expand-btn').forEach(btn=>{ if(!btn.dataset.expand) return; btn.onclick=()=>{ const p=document.querySelector(`.expand-panel[data-panel-for="${btn.dataset.expand}"]`); const was=p.classList.contains('open'); closeAll(); if(!was){p.classList.add('open'); btn.classList.add('open');} }});
+function applySplit(){ const r=state.splitRatio; const f=state.swapped?uploadScreen:liveScreen, s=state.swapped?liveScreen:uploadScreen; f.style.flex=`${r} 1 0`; s.style.flex=`${1-r} 1 0`; }
+document.querySelectorAll('[data-split]').forEach(b=>b.onclick=()=>{ state.splitRatio=parseFloat(b.dataset.split); document.querySelectorAll('[data-split]').forEach(x=>x.classList.toggle('active',x===b)); applySplit(); closeAll(); });
+function swap(){ if(state.isRecording){showToast('Stop rekaman dulu','error');return} if(state.floating.enabled){showToast('Matikan float dulu','error');return} state.swapped=!state.swapped; const f=state.swapped?uploadScreen:liveScreen, s=state.swapped?liveScreen:uploadScreen; f.style.order='1'; divider.style.order='2'; s.style.order='3'; applySplit(); showToast(state.swapped?'UPLOAD di atas':'LIVE di atas','success'); }
+btnSwapScreens.onclick=swap;
+function toggleFloat(force){ if(state.isRecording){showToast('Stop rekaman dulu','error');return} const n=typeof force==='boolean'?force:!state.floating.enabled; state.floating.enabled=n; if(n && state.swapped){state.swapped=false; liveScreen.style.order=''; uploadScreen.style.order='';} applyFloat(); btnToggleFloat.textContent=n?'Kembalikan ke Split':'Aktifkan Float'; showToast(n?'Float ON - geser bebas':'Float OFF','success'); }
+function applyFloat(){ if(!state.floating.enabled){ liveScreen.classList.remove('floating'); liveScreen.style.cssText=''; divider.style.display=''; applySplit(); return; } liveScreen.classList.add('floating'); divider.style.display='none'; uploadScreen.style.flex='1 1 0'; updateFloat(); }
+function updateFloat(){ const f=state.floating; if(!f.enabled) return; const aw=videoArea.clientWidth, ah=videoArea.clientHeight; let w=f.w*aw, h=w/(liveVideo.videoWidth/liveVideo.videoHeight||9/16); if(h>ah*.92){h=ah*.92; w=h*(liveVideo.videoWidth/liveVideo.videoHeight||9/16)} let x=Math.max(0,Math.min(aw-w,f.x*aw)), y=Math.max(0,Math.min(ah-h,f.y*ah)); liveScreen.style.left=x+'px'; liveScreen.style.top=y+'px'; liveScreen.style.width=w+'px'; liveScreen.style.height=h+'px'; }
+btnToggleFloat.onclick=()=>toggleFloat();
+document.querySelectorAll('[data-float-size]').forEach(b=>b.onclick=()=>{ state.floating.w=parseFloat(b.dataset.floatSize); if(state.floating.enabled) updateFloat(); });
+document.querySelectorAll('[data-float-pos]').forEach(b=>b.onclick=()=>{ const p=b.dataset.floatPos; if(p==='tl'){state.floating.x=.04;state.floating.y=.04}else if(p==='tr'){state.floating.x=.62;state.floating.y=.04}else if(p==='center'){state.floating.x=.34;state.floating.y=.3}else if(p==='bl'){state.floating.x=.04;state.floating.y=.6}else if(p==='br'){state.floating.x=.62;state.floating.y=.6} if(state.floating.enabled) updateFloat(); });
+let fDrag=null;
+liveScreen.addEventListener('pointerdown',e=>{ if(!state.floating.enabled||state.isRecording) return; fDrag={sx:e.clientX,sy:e.clientY,ox:state.floating.x,oy:state.floating.y}; liveScreen.setPointerCapture(e.pointerId); });
+liveScreen.addEventListener('pointermove',e=>{ if(!fDrag) return; state.floating.x=fDrag.ox+(e.clientX-fDrag.sx)/videoArea.clientWidth; state.floating.y=fDrag.oy+(e.clientY-fDrag.sy)/videoArea.clientHeight; updateFloat(); });
+liveScreen.addEventListener('pointerup',()=>fDrag=null);
+let dDrag=false;
+divider.addEventListener('pointerdown',e=>{ if(state.floating.enabled) return; dDrag=true; divider.setPointerCapture(e.pointerId); });
+divider.addEventListener('pointermove',e=>{ if(!dDrag) return; const r=videoArea.getBoundingClientRect(); const ratio=isLand()?(e.clientX-r.left)/r.width:(e.clientY-r.top)/r.height; state.splitRatio=Math.max(0,Math.min(1,ratio)); applySplit(); });
+divider.addEventListener('pointerup',()=>dDrag=false);
 
-/* ===== KAMERA / MIC / UPLOAD / LAYAR ===== */
-async function startCamera(){
-  try{
-    showLoader('Mengaktifkan kamera...');
-    if(state.stream) state.stream.getTracks().forEach(t=>t.stop());
-    state.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:state.facingMode,width:{ideal:1280},height:{ideal:720}},audio:false});
-    liveVideo.srcObject=state.stream;liveVideo.muted=true;await liveVideo.play();
-    livePlaceholder.classList.add('hidden');liveBadge.style.display='inline-flex';btnSwitchCam.classList.remove('hidden');
-    $('liveTools').classList.remove('hidden');
-    hideLoader();showToast('Kamera aktif','success');
-  }catch(e){hideLoader();showToast('Gagal akses kamera: '+e.message,'error')}
-}
-async function toggleMic(){
-  try{
-    if(!state.micEnabled){
-      state.micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});
-      state.micEnabled=true;btnMic.classList.add('active');showToast('Mic aktif','success');
-    }else{state.micStream.getTracks().forEach(t=>t.stop());state.micStream=null;state.micEnabled=false;btnMic.classList.remove('active');showToast('Mic nonaktif')}
-  }catch(e){showToast('Gagal akses mic','error')}
-}
-btnStartCam.onclick=startCamera;btnMic.onclick=toggleMic;
-btnSwitchCam.onclick=async()=>{state.facingMode=state.facingMode==='user'?'environment':'user';await startCamera()};
+/* ===== KAMERA / MIC / UPLOAD ===== */
+async function startCam(){ try{ showLoader('Mengaktifkan kamera...'); if(state.stream) state.stream.getTracks().forEach(t=>t.stop()); state.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:state.facingMode,width:{ideal:640},height:{ideal:480}},audio:false}); liveVideo.srcObject=state.stream; await liveVideo.play(); livePlaceholder.classList.add('hidden'); liveBadge.style.display='block'; hideLoader(); showToast('Kamera aktif','success'); }catch(e){ hideLoader(); showToast('Gagal kamera: '+e.message,'error'); } }
+async function toggleMic(){ try{ if(!state.micEnabled){ state.micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}}); state.micEnabled=true; btnMic.classList.add('active'); showToast('Mic ON','success'); } else { state.micStream.getTracks().forEach(t=>t.stop()); state.micStream=null; state.micEnabled=false; btnMic.classList.remove('active'); showToast('Mic OFF'); } }catch(e){ showToast('Gagal mic','error'); } }
+btnStartCam.onclick=startCam; btnMic.onclick=toggleMic;
 btnUpload.onclick=()=>fileInput.click();
-fileInput.onchange=e=>{const f=e.target.files[0];if(!f) return;const url=URL.createObjectURL(f);uploadVideo.src=url;uploadVideo.loop=true;uploadVideo.muted=false;uploadVideo.play();uploadPlaceholder.classList.add('hidden');state.uploadReady=true;$('uploadTools').classList.remove('hidden');showToast('Video terupload','success')};
-btnScreen.onclick=async()=>{
-  try{
-    const s=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
-    uploadVideo.srcObject=s;await uploadVideo.play();uploadPlaceholder.classList.add('hidden');state.screenOnUpload=true;state.uploadReady=true;showToast('Layar aktif','success');
-  }catch(e){showToast('Batal / gagal rekam layar','error')}
-};
-btnPlayPause.onclick=()=>{if(uploadVideo.paused){uploadVideo.play();btnPlayPause.innerHTML='⏸'}else{uploadVideo.pause();btnPlayPause.innerHTML='▶'}};
+fileInput.onchange=e=>{ const f=e.target.files[0]; if(!f) return; uploadVideo.src=URL.createObjectURL(f); uploadVideo.loop=true; uploadVideo.play(); uploadPlaceholder.classList.add('hidden'); state.uploadReady=true; showToast('Video terupload','success'); };
+btnScreen.onclick=async()=>{ try{ const s=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true}); uploadVideo.srcObject=s; await uploadVideo.play(); uploadPlaceholder.classList.add('hidden'); state.uploadReady=true; showToast('Layar aktif','success'); }catch(e){ showToast('Batal rekam layar','error'); } };
+btnPlayPause.onclick=()=>{ if(uploadVideo.paused){uploadVideo.play(); btnPlayPause.textContent='⏸'} else {uploadVideo.pause(); btnPlayPause.textContent='▶'} };
 btnBack.onclick=()=>uploadVideo.currentTime=Math.max(0,uploadVideo.currentTime-5);
 btnNext.onclick=()=>uploadVideo.currentTime=Math.min(uploadVideo.duration||0,uploadVideo.currentTime+5);
-btnStop.onclick=()=>{uploadVideo.pause();uploadVideo.currentTime=0;btnPlayPause.innerHTML='▶'};
-uploadVideo.addEventListener('timeupdate',()=>{if(uploadVideo.duration) videoProgressFill.style.width=(uploadVideo.currentTime/uploadVideo.duration*100)+'%';if(uploadVideo.ended && state.isRecording){/* jangan auto-stop, biar user yang stop */}});
-videoProgress.onclick=e=>{const r=videoProgress.getBoundingClientRect();uploadVideo.currentTime=(e.clientX-r.left)/r.width*uploadVideo.duration};
-
-/* ===== KUALITAS ===== */
-function applyQuality(q){
-  state.quality=q;qualityLabel.textContent=QUALITY_PRESETS[q].label;
-  // FIX: kalau BG aktif, jangan paksa FHD - turunkan ke HD biar mulus
-  if(state.bg.mode!=='off' && q==='1080'){ showToast('BG aktif: kualitas rekam otomatis HD biar mulus'); }
-}
-btnQuality.onclick=()=>{const idx=QUALITY_ORDER.indexOf(state.quality);const next=QUALITY_ORDER[(idx+1)%QUALITY_ORDER.length];applyQuality(next);showToast('Kualitas: '+QUALITY_PRESETS[next].label)};
+btnStop.onclick=()=>{ uploadVideo.pause(); uploadVideo.currentTime=0; btnPlayPause.textContent='▶'; };
+uploadVideo.addEventListener('timeupdate',()=>{ if(uploadVideo.duration) videoProgressFill.style.width=(uploadVideo.currentTime/uploadVideo.duration*100)+'%'; });
+$('btnQuality').onclick=()=>showToast('Mode Hemat terkunci: 540p 24fps biar tidak leg','success');
 
 /* ===== BG MODAL ===== */
 btnBg.onclick=()=>bgModal.classList.add('show');
 btnCloseBgModal.onclick=()=>bgModal.classList.remove('show');
-bgModal.addEventListener('click',e=>{if(e.target===bgModal) bgModal.classList.remove('show')});
-document.querySelectorAll('.bg-option').forEach(b=>b.onclick=()=>setBgMode(b.dataset.bg));
-bgImageInput.onchange=e=>{const f=e.target.files[0];if(!f) return;const url=URL.createObjectURL(f);const img=new Image();img.onload=()=>{state.bg.image=img;setBgMode('image');showToast('Gambar BG terpasang','success')};img.src=url};
+bgModal.addEventListener('click',e=>{ if(e.target===bgModal) bgModal.classList.remove('show'); });
+document.querySelectorAll('.bg-option').forEach(b=>b.onclick=()=>{
+  if(b.dataset.bg==='image'){ bgImageInput.click(); return; }
+  setBgMode(b.dataset.bg);
+});
+bgImageInput.onchange=e=>{ const f=e.target.files[0]; if(!f) return; const img=new Image(); img.onload=()=>{ state.bg.image=img; setBgMode('image'); }; img.src=URL.createObjectURL(f); };
 
-/* ===== TICKER ===== */
+/* ===== TICKER - RINGAN ===== */
+let tickerRAF=null, tickerX=0;
 function updateTickerDOM(){
-  const h=state.ticker.enabled && state.ticker.text ? 36 : 0;
-  tickerOverlay.style.height=h+'px';tickerOverlay.classList.toggle('show',h>0);
-  document.documentElement.style.setProperty('--ticker-offset',h+'px');
-  document.querySelectorAll('.ticker-item').forEach(el=>{el.textContent=state.ticker.text;el.style.fontSize=state.ticker.size+'px';el.style.top='50%';el.style.transform='translateY(-50%)'});
-  if(h>0) startTickerAnim();
+  const h=state.ticker.enabled && state.ticker.text ? 32 : 0;
+  tickerOverlay.style.height=h+'px'; tickerOverlay.classList.toggle('show',h>0);
+  const el=tickerTrack.querySelector('.ticker-item'); el.textContent=state.ticker.text; el.style.fontSize='20px'; el.style.transform='translateY(-50%)';
+  if(h>0){ cancelAnimationFrame(tickerRAF); tickerX=videoArea.clientWidth; let last=performance.now(); const loop=(now)=>{ const dt=(now-last)/1000; last=now; tickerX-=90*dt; if(tickerX< -300) tickerX=videoArea.clientWidth; el.style.transform=`translate(${tickerX}px,-50%)`; tickerRAF=requestAnimationFrame(loop); }; tickerRAF=requestAnimationFrame(loop); }
+  else cancelAnimationFrame(tickerRAF);
 }
-let tickerRAF=null,tickerX=0;
-function startTickerAnim(){
-  cancelAnimationFrame(tickerRAF);
-  const items=document.querySelectorAll('.ticker-item');
-  const trackW=tickerTrack.clientWidth||videoArea.clientWidth;
-  const textW=items[0].offsetWidth||300;
-  const total=trackW+textW;
-  const speed=state.ticker.speed; // px per detik
-  let last=performance.now();
-  function loop(now){
-    const dt=(now-last)/1000;last=now;
-    tickerX-=speed*dt;
-    if(tickerX< -textW) tickerX=trackW;
-    items[0].style.transform=`translate(${tickerX}px,-50%)`;
-    items[1].style.transform=`translate(${tickerX+textW+80}px,-50%)`;
-    tickerRAF=requestAnimationFrame(loop);
-  }
-  tickerX=trackW; tickerRAF=requestAnimationFrame(loop);
-}
-tickerInput.oninput=()=>{state.ticker.text=tickerInput.value;updateTickerDOM()};
-tickerToggle.onclick=()=>{state.ticker.enabled=!state.ticker.enabled;if(state.ticker.enabled && !state.ticker.text) state.ticker.text=tickerInput.value||'Teks berjalan';updateTickerDOM();showToast(state.ticker.enabled?'Ticker ON':'Ticker OFF')};
-tickerSizeDown.onclick=()=>{state.ticker.size=Math.max(14,state.ticker.size-2);updateTickerDOM()};
-tickerSizeUp.onclick=()=>{state.ticker.size=Math.min(48,state.ticker.size+2);updateTickerDOM()};
-tickerSpeedRange.oninput=()=>{state.ticker.speed=parseInt(tickerSpeedRange.value);tickerSpeedValue.textContent=state.ticker.speed};
+tickerInput.oninput=()=>{ state.ticker.text=tickerInput.value; updateTickerDOM(); };
+tickerToggle.onclick=()=>{ state.ticker.enabled=!state.ticker.enabled; if(state.ticker.enabled && !state.ticker.text) state.ticker.text=tickerInput.value||'Teks berjalan'; updateTickerDOM(); };
 
-/* ===== REKAM - FIX MULUS ===== */
-let recCanvas=null,recCtx=null,recRAF=null;
-function startTimer(){state.recStartTime=Date.now();recBadge.classList.add('show');state.timerInterval=setInterval(()=>{const s=Math.floor((Date.now()-state.recStartTime)/1000);recTimerEl.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500)}
-function stopTimer(){clearInterval(state.timerInterval);recBadge.classList.remove('show')}
-function drawComposite(){
+/* ===== REKAM SUPER HEMAT ===== */
+let recCanvas=null, recCtx=null, recRAF=null, lastRecDraw=0;
+function startTimer(){ state.recStartTime=Date.now(); recBadge.classList.add('show'); state.timerInterval=setInterval(()=>{ const s=Math.floor((Date.now()-state.recStartTime)/1000); recTimerEl.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); },500); }
+function stopTimer(){ clearInterval(state.timerInterval); recBadge.classList.remove('show'); }
+function drawComposite(ts){
   if(!state.isRecording) return;
-  // FIX: rekam di resolusi sesuai kualitas, tapi BG sudah diproses di 480px jadi tidak berat
-  const preset=QUALITY_PRESETS[state.quality];
-  const isLand=isLandscape();
-  const W=isLand?preset.w:Math.round(preset.w*9/16);
-  const H=isLand?Math.round(preset.w*9/16):preset.w;
-  if(!recCanvas){recCanvas=document.createElement('canvas');recCtx=recCanvas.getContext('2d',{alpha:false,desynchronized:true})}
-  if(recCanvas.width!==W){recCanvas.width=W;recCanvas.height=H}
+  recRAF=requestAnimationFrame(drawComposite);
+  // KUNCI: Rekam cuma 24fps, bukan 60fps
+  if(ts-lastRecDraw<1000/REC_FPS) return;
+  lastRecDraw=ts;
+  const isL=isLand();
+  const W=isL?REC_W:Math.round(REC_W*9/16), H=isL?Math.round(REC_W*9/16):REC_W;
+  if(!recCanvas){ recCanvas=document.createElement('canvas'); recCtx=recCanvas.getContext('2d',{alpha:false,desynchronized:true}); }
+  if(recCanvas.width!==W){ recCanvas.width=W; recCanvas.height=H; }
   const ctx=recCtx;
-  ctx.fillStyle='#000';ctx.fillRect(0,0,W,H);
-  // Hitung split
-  const r=state.floating.enabled?1:state.splitRatio;
-  const drawOne=(vid,canvasEl,x,y,w,h)=>{
-    if(!vid || !vid.videoWidth) return;
-    // Gambar dari canvas BG kalau BG aktif & ini live, kalau tidak langsung dari video
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+  const drawOne=(vid,x,y,w,h)=>{
+    if(!vid||!vid.videoWidth) return;
     let src=vid;
     if(vid===liveVideo && state.bg.mode!=='off' && liveCanvas.width>0) src=liveCanvas;
-    // Cover fit
     const vw=src.videoWidth||src.width, vh=src.videoHeight||src.height;
-    const scale=Math.max(w/vw,h/vh);
-    const dw=vw*scale,dh=vh*scale;
-    const dx=x+(w-dw)/2, dy=y+(h-dh)/2;
-    // Clip ke area
-    ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
-    ctx.drawImage(src,dx,dy,dw,dh);
+    const sc=Math.max(w/vw,h/vh), dw=vw*sc, dh=vh*sc;
+    ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+    // imageSmoothing low = cepat
+    ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='low';
+    ctx.drawImage(src,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
     ctx.restore();
   };
   if(state.floating.enabled){
-    drawOne(uploadVideo,null,0,0,W,H);
+    drawOne(uploadVideo,0,0,W,H);
     const fw=W*state.floating.w, fh=fw/(liveVideo.videoWidth/liveVideo.videoHeight||9/16);
-    drawOne(liveVideo,null,state.floating.x*W,state.floating.y*H,fw,fh);
+    drawOne(liveVideo,state.floating.x*W,state.floating.y*H,fw,fh);
   } else {
-    if(!isLand){
-      const h1=H*r, h2=H-h1;
-      if(!state.swapped){ drawOne(liveVideo,null,0,0,W,h1); drawOne(uploadVideo,null,0,h1,W,h2); }
-      else { drawOne(uploadVideo,null,0,0,W,h1); drawOne(liveVideo,null,0,h1,W,h2); }
-      ctx.fillStyle='rgba(255,255,255,.4)';ctx.fillRect(0,h1-1,W,2);
-    } else {
-      const w1=W*r, w2=W-w1;
-      if(!state.swapped){ drawOne(liveVideo,null,0,0,w1,H); drawOne(uploadVideo,null,w1,0,w2,H); }
-      else { drawOne(uploadVideo,null,0,0,w1,H); drawOne(liveVideo,null,w1,0,w2,H); }
-      ctx.fillStyle='rgba(255,255,255,.4)';ctx.fillRect(w1-1,0,2,H);
-    }
+    const r=state.splitRatio;
+    if(!isL){ const h1=H*r; if(!state.swapped){ drawOne(liveVideo,0,0,W,h1); drawOne(uploadVideo,0,h1,W,H-h1); } else { drawOne(uploadVideo,0,0,W,h1); drawOne(liveVideo,0,h1,W,H-h1); } ctx.fillStyle='rgba(255,255,255,.4)'; ctx.fillRect(0,h1-1,W,2); }
+    else { const w1=W*r; if(!state.swapped){ drawOne(liveVideo,0,0,w1,H); drawOne(uploadVideo,w1,0,W-w1,H); } else { drawOne(uploadVideo,0,0,w1,H); drawOne(liveVideo,w1,0,W-w1,H); } }
   }
-  // Ticker di rekaman juga
-  if(state.ticker.enabled && state.ticker.text){
-    ctx.fillStyle='rgba(0,0,0,.7)';ctx.fillRect(0,H-36,W,36);
-    ctx.fillStyle='#fff';ctx.font=`800 ${state.ticker.size}px sans-serif`;
-    const tw=ctx.measureText(state.ticker.text).width;
-    const x=W-((Date.now()/10*state.ticker.speed/100)%(W+tw))+tw;
-    // Sederhana: teks diam di tengah biar tidak berat saat rekam
-    ctx.fillText(state.ticker.text,20,H-10);
-  }
-  recRAF=requestAnimationFrame(drawComposite);
+  if(state.ticker.enabled && state.ticker.text){ ctx.fillStyle='rgba(0,0,0,.7)'; ctx.fillRect(0,H-30,W,30); ctx.fillStyle='#fff'; ctx.font='800 18px sans-serif'; ctx.fillText(state.ticker.text,12,H-9); }
 }
 async function startRecording(){
-  if(!state.stream && !state.uploadReady){showToast('Aktifkan kamera / upload video dulu','error');return}
-  if(state.isRecording){stopRecording();return}
+  if(!state.stream && !state.uploadReady){ showToast('Aktifkan kamera / upload dulu','error'); return; }
+  if(state.isRecording){ stopRecording(); return; }
   try{
-    showLoader('Menyiapkan rekaman...');
-    // FIX: kalau BG aktif, paksa bitrate lebih rendah & 30fps biar mulus
-    const preset=QUALITY_PRESETS[state.quality];
-    let bitrate=preset.bitrate;
-    let fps=30; // FIX: JANGAN 60fps kalau BG aktif
-    if(state.bg.mode!=='off'){
-      bitrate=Math.min(bitrate,4000000);
-      fps=30;
-      showToast('BG aktif → rekam di 30fps + HD biar mulus');
-    }
-    // Canvas komposit
-    const isLand=isLandscape();
-    const W=isLand?preset.w:Math.round(preset.w*9/16);
-    const H=isLand?Math.round(preset.w*9/16):preset.w;
-    recCanvas=document.createElement('canvas');recCanvas.width=W;recCanvas.height=H;
-    recCtx=recCanvas.getContext('2d',{alpha:false,desynchronized:true});
-    state.isRecording=true;
-    drawComposite();
-    // FIX UTAMA: captureStream(30) bukan 60
-    const canvasStream=recCanvas.captureStream(fps);
+    showLoader('Menyiapkan rekaman hemat...');
+    const isL=isLand();
+    const W=isL?REC_W:Math.round(REC_W*9/16), H=isL?Math.round(REC_W*9/16):REC_W;
+    recCanvas=document.createElement('canvas'); recCanvas.width=W; recCanvas.height=H; recCtx=recCanvas.getContext('2d',{alpha:false,desynchronized:true});
+    state.isRecording=true; lastRecDraw=0; recRAF=requestAnimationFrame(drawComposite);
+    // KUNCI: captureStream 24fps + VP8 + 2.5Mbps
+    const canvasStream=recCanvas.captureStream(REC_FPS);
     const tracks=[...canvasStream.getVideoTracks()];
     if(state.micEnabled && state.micStream) tracks.push(...state.micStream.getAudioTracks());
-    const combined=new MediaStream(tracks);
-    const mime=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'].find(m=>MediaRecorder.isTypeSupported(m))||'';
+    const mime=['video/webm;codecs=vp8,opus','video/webm'].find(m=>MediaRecorder.isTypeSupported(m))||'';
     state.recordedChunks=[];
-    state.mediaRecorder=new MediaRecorder(combined,{mimeType:mime||undefined,videoBitsPerSecond:bitrate});
-    state.mediaRecorder.ondataavailable=e=>{if(e.data.size>0) state.recordedChunks.push(e.data)};
-    state.mediaRecorder.onstop=onRecordingStop;
-    // FIX: timeslice 500ms biar chunk tidak menumpuk & tidak patah
-    state.mediaRecorder.start(500);
-    btnRecord.classList.add('recording');recText.textContent='Stop Rekam';
-    startTimer();hideLoader();showToast('● Merekam...','success');
-    // Kunci tombol yang tidak boleh diubah saat rekam
-    [btnStartCam,btnScreen,btnUpload,btnQuality,btnBg,btnSwapScreens].forEach(b=>b.disabled=true);
-  }catch(e){hideLoader();state.isRecording=false;showToast('Gagal rekam: '+e.message,'error')}
+    state.mediaRecorder=new MediaRecorder(new MediaStream(tracks),{mimeType:mime||undefined,videoBitsPerSecond:REC_BITRATE});
+    state.mediaRecorder.ondataavailable=e=>{ if(e.data.size>0) state.recordedChunks.push(e.data); };
+    state.mediaRecorder.onstop=onStop;
+    state.mediaRecorder.start(1000); // chunk 1 detik, tidak menumpuk
+    btnRecord.classList.add('recording'); recText.textContent='Stop Rekam'; startTimer(); hideLoader(); showToast('● Merekam - Mode Hemat','success');
+    [btnStartCam,btnScreen,btnUpload,btnBg,btnSwapScreens].forEach(b=>b.disabled=true);
+  }catch(e){ hideLoader(); state.isRecording=false; showToast('Gagal rekam: '+e.message,'error'); }
 }
-function stopRecording(){
-  if(!state.isRecording) return;
-  state.isRecording=false;
-  cancelAnimationFrame(recRAF);
-  if(state.mediaRecorder && state.mediaRecorder.state!=='inactive') state.mediaRecorder.stop();
-  btnRecord.classList.remove('recording');recText.textContent='Mulai Rekam';
-  stopTimer();
-  [btnStartCam,btnScreen,btnUpload,btnQuality,btnBg,btnSwapScreens].forEach(b=>b.disabled=false);
-  showLoader('Menyimpan video...');
-}
-function onRecordingStop(){
-  hideLoader();
-  const blob=new Blob(state.recordedChunks,{type:state.mediaRecorder.mimeType||'video/webm'});
-  state.previewBlob=blob;
-  if(state.previewUrl) URL.revokeObjectURL(state.previewUrl);
-  state.previewUrl=URL.createObjectURL(blob);
-  previewVideo.src=state.previewUrl;
-  previewInfo.textContent=`Durasi ${recTimerEl.textContent} • Ukuran ${(blob.size/1024/1024).toFixed(1)} MB • ${state.quality==='1080'?'FHD':state.quality==='720'?'HD':'SD'} • ${state.bg.mode!=='off'?'BG ON (30fps mulus)':'BG OFF'}`;
-  previewModal.classList.add('show');
-}
+function stopRecording(){ if(!state.isRecording) return; state.isRecording=false; cancelAnimationFrame(recRAF); if(state.mediaRecorder && state.mediaRecorder.state!=='inactive') state.mediaRecorder.stop(); btnRecord.classList.remove('recording'); recText.textContent='Mulai Rekam'; stopTimer(); [btnStartCam,btnScreen,btnUpload,btnBg,btnSwapScreens].forEach(b=>b.disabled=false); showLoader('Menyimpan...'); }
+function onStop(){ hideLoader(); const blob=new Blob(state.recordedChunks,{type:state.mediaRecorder.mimeType||'video/webm'}); const url=URL.createObjectURL(blob); previewVideo.src=url; previewInfo.textContent=`Durasi ${recTimerEl.textContent} • ${(blob.size/1024/1024).toFixed(1)} MB • 540p 24fps • Mode Hemat Anti Leg`; previewModal.classList.add('show'); state._blob=blob; state._url=url; }
 btnRecord.onclick=startRecording;
-btnClosePreview.onclick=()=>{previewModal.classList.remove('show');previewVideo.pause()};
-btnDownload.onclick=()=>{
-  if(!state.previewBlob) return;
-  const a=document.createElement('a');a.href=state.previewUrl;a.download=`split-recorder-${Date.now()}.webm`;a.click();showToast('Video diunduh','success');
-};
-btnSaveGallery.onclick=async()=>{
-  if(!state.previewBlob) return;
-  try{
-    const file=new File([state.previewBlob],'split-recorder.webm',{type:state.previewBlob.type});
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:'Split Recorder'});
-      showToast('Dibagikan ke galeri','success');
-    } else { btnDownload.click(); }
-  }catch(e){ btnDownload.click(); }
-};
-/* ===== INIT ===== */
-applySplitToLayout();updateSplitPresets();updateDivider();updateSwapBtns();applyQuality('720');
-window.addEventListener('resize',()=>{updateDivider();applyAllViews();if(state.floating.enabled) updateFloatingPosition()});
-window.addEventListener('orientationchange',()=>setTimeout(()=>{updateDivider();applyAllViews()},300));
+btnClosePreview.onclick=()=>{ previewModal.classList.remove('show'); previewVideo.pause(); };
+btnDownload.onclick=()=>{ if(!state._blob) return; const a=document.createElement('a'); a.href=state._url; a.download=`recorder-hemat-${Date.now()}.webm`; a.click(); };
+btnSaveGallery.onclick=async()=>{ if(!state._blob) return; try{ const f=new File([state._blob],'recorder.webm',{type:state._blob.type}); if(navigator.share && navigator.canShare({files:[f]})){ await navigator.share({files:[f]}); showToast('Dibagikan','success'); } else btnDownload.click(); }catch(e){ btnDownload.click(); } };
+
+/* INIT */
+applySplit(); updateDivider();
+window.addEventListener('resize',()=>{ updateDivider(); if(state.floating.enabled) updateFloat(); });
 </script>
 </body>
 </html>
